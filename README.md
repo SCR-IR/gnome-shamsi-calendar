@@ -6,7 +6,7 @@
 + نمایش تعطیلی‌ها و مناسبت‌های رسمی تقویم ج.ا. ایران
 ---
 
-![Screenshot](https://github.com/scr-ir/gnome-shamsi-calendar/blob/master/shamsi-calendar%40gnome.scr.ir/Screenshot.gif?raw=true)
+![Screenshot](https://github.com/SCR-IR/gnome-shamsi-calendar/blob/main/Screenshot.gif?raw=true)
 
 #### Install , نصب:
 > * Clone the repository (Download) , دریافت مخزن
