@@ -2,11 +2,11 @@
 ### Persian calendar and prayer tiems for *Gnome-Shell*
 ---
 + قابلیت نمایش همزمان سه تاریخ هجری‌شمسی، هجری‌قمری و میلادی
-+ محاسبه و نمایش اوقات شرعی
++ محاسبه و نمایش اوقات شرعی و پخش اذان با تنظیمات پیشرفته
 + نمایش تعطیلی‌ها و مناسبت‌های رسمی تقویم ج.ا. ایران
 ---
 
-![Screenshot](https://github.com/scr-ir/gnome-shamsi-calendar/blob/master/shamsi-calendar%40gnome.scr.ir/Screenshot.png?raw=true)
+![Screenshot](https://github.com/scr-ir/gnome-shamsi-calendar/blob/master/shamsi-calendar%40gnome.scr.ir/Screenshot.gif?raw=true)
 
 #### Install , نصب:
 > * Clone the repository (Download) , دریافت مخزن
@@ -25,6 +25,3 @@
 * :octocat: https://github.com/scr-ir/gnome-shamsi-calendar
 * :link: https://extensions.gnome.org/extension/3618/
 
-شروع این پروژه از مخزن زیر، برگرفته شده و قرار است در آینده، مسیر جداگانه‌ای را در پیش بگیرد
-
-* https://github.com/omid/Persian-Calendar-for-Gnome-Shell

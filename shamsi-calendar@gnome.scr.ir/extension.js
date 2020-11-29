@@ -20,6 +20,7 @@ const PersianDate = extension.imports.PersianDate;
 const Tarikh = extension.imports.Tarikh;
 const Calendar = extension.imports.calendar;
 const PrayTimes = extension.imports.PrayTimes.prayTimes;
+const player = extension.imports.sound.player;
 
 const Events = extension.imports.Events;
 const str = extension.imports.strFunctions;
@@ -307,11 +308,12 @@ const ShamsiCalendar = new Lang.Class({
   },
 
   _prayerTimeLoop: function () {
-    if (_prayTimeIs !== '') {
+    if (_prayTimeIs !== '' && !player.isPlaying()) {
       _prayTimeIs = '';
       if (Schema.get_boolean('custom-color')) {
         _mainLable.set_style('color: ' + Schema.get_string(_labelSchemaName()));
       }
+      // that._calendar._update();
     }
     if (this._prayerTimeout) {
       MainLoop.source_remove(this._prayerTimeout);
@@ -713,8 +715,39 @@ function checkPrayTime() {
       settings.PlaySound === 'never' ||
       (settings.PlaySound === 'ramazan' && islamic[1] !== 9)
     ) continue;
-
+    if (settings.SoundId === '_custom_') {
+      settings.SoundUri = Schema.get_string('praytime-' + tName + '-sound-uri');
+    } else {
+      const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/sounds/';
+      const sounds = {
+        "azan_01": [
+          'اذان ۱ ،مرحوم مؤذن‌زاده',
+          'azan_01.mp3'
+        ],
+        "doa_01": [
+          'ذکر قبل اذان ۱',
+          'doa_01.mp3'
+        ],
+        "salawat_01": [
+          'صلوات ۱',
+          'salawat_01.mp3'
+        ],
+        "alert_01": [
+          'هشدار صوتی ساده ۱',
+          'alert_01.mp3'
+        ],
+        // "_custom_": [
+        //   'انتخاب فایل سفارشی ←',
+        //   '_custom_'
+        // ],
+      };
+      settings.SoundUri = soundsUri + sounds[settings.SoundId][1];
+    }
     _prayTimeIs = tName;
+    player.setVolume(Schema.get_double('praytime-play-valume'));
+    player.setUri(settings.SoundUri);
+    // player.onEnd = () => that._calendar._update();
+    player.play();
     if (Schema.get_boolean('custom-color')) {
       _mainLable.set_style('color: ' + Schema.get_string('pray-time-color'));
     }

@@ -4,8 +4,6 @@
   "name": "Iranian Persian Calendar",
   "original-authors": "jdf.scr.ir",
   "shell-version": [
-    "3.24",
-    "3.26",
     "3.28",
     "3.30",
     "3.34",
@@ -15,5 +13,5 @@
   ],
   "url": "https://github.com/scr-ir/gnome-shamsi-calendar",
   "uuid": "shamsi-calendar@gnome.scr.ir",
-  "version": 8
+  "version": 9
 }

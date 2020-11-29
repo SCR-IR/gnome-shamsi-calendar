@@ -6,7 +6,7 @@
  * @author : JDF.SCR.IR
  * @website : https://jdf.scr.ir
  * @license : GNU/LGPL
- * @version : 2.0.0
+ * @version : 2.0.0 alpha نسخه‌ی آزمایشی غیررسمی
  * 
  * هجری‌شمسی ۱۱۷۸ تا ۱۶۳۳ : دوره‌ی انطباق کامل کبیسه‌بندی جلالی با اعتدال بهاری
  * Persian:[1178-1633] = JD:[2378211-2544760]
@@ -518,13 +518,7 @@ const julianDay_to_dayOfWeek = (julianDay) => {
 const mohreZaman_be_hameh = (mohreZaman) => {//موقت + اصلاح شود مثل پایین‌تر
   return roozeJulian_be_hameh(timeStamp_to_julianDay(mohreZaman));
 };
-// mohreZaman_be_hameh <<==>> timeStamp_to_all
-// const timeStamp_to_all = (timeStamp) => {
-//   let date0 = new Date(timeStamp);
-//   return julianDay_to_all(timeStamp_to_julianDay(timeStamp, [
-//     date0.getHours(), date0.getMinutes(), date0.getSeconds(), date0.getMilliseconds()
-//   ]));
-// };
+
 const timeStamp_to_all = (timeStamp) => {
   let date0 = new Date(timeStamp);
   let [gYear, gMonth, gDay, hour, minute, second, miliSecond] = [
@@ -594,15 +588,6 @@ const is_islamic_leap = (iY) => {
     return is_islamicA_leap(iY);
   }
 }
-
-// const is_etedali_leap = (year) => {
-//   const br = [
-//     -61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181,
-//     1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178
-//   ];
-//   let i = br.findIndex(v => v > year);
-//   return ((((1 + year - (((br[i] - year) < 6) ? br[i] - 33 : br[i - 1])) % 33) % 4) === 1);
-// }
 
 const mName = {
   shamsi: ['', 'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
@@ -1045,6 +1030,115 @@ const change_islamicA = (change, dateTime = null) => {
 }
 
 
+const persian_to_dayOfWeek = (year, month, day) => {
+  return ((persian_to_julianDay(year, month, day) + 2) % 7);
+}
+const gregorian_to_dayOfWeek = (year, month, day) => {
+  return ((gregorian_to_julianDay(year, month, day) + 2) % 7);
+}
+const islamic_to_dayOfWeek = (year, month, day) => {
+  return ((islamic_to_julianDay(year, month, day) + 2) % 7);
+}
+const islamicA_to_dayOfWeek = (year, month, day) => {
+  return ((islamicA_to_julianDay(year, month, day) + 2) % 7);
+}
+
+
+
+const persian_to_julianDay_in_monthStart = (year, month) => {
+  return persian_to_julianDay(year, month, 1);
+}
+const gregorian_to_julianDay_in_monthStart = (year, month) => {
+  return gregorian_to_julianDay(year, month, 1);
+}
+const islamic_to_julianDay_in_monthStart = (year, month) => {
+  return islamic_to_julianDay(year, month, 1);
+}
+const islamicA_to_julianDay_in_monthStart = (year, month) => {
+  return islamicA_to_julianDay(year, month, 1);
+}
+
+const persian_to_julianDay_in_monthEnd = (year, month) => {
+  return persian_to_julianDay(year, month, daysOfMonth_persian(year, month));
+}
+const gregorian_julianDay_in_to_monthEnd = (year, month) => {
+  return gregorian_to_julianDay(year, month, daysOfMonth_gregorian(year, month));
+}
+const islamic_to_julianDay_in_monthEnd = (year, month) => {
+  return islamic_to_julianDay(year, month, daysOfMonth_islamic(year, month));
+}
+const islamicA_to_julianDay_in_monthEnd = (year, month) => {
+  return islamicA_to_julianDay(year, month, daysOfMonth_islamicA(year, month));
+}
+
+
+
+const persian_to_dayOfWeek_in_monthStart = (year, month) => {
+  return ((persian_to_julianDay(year, month, 1) + 2) % 7);
+}
+const gregorian_to_dayOfWeek_in_monthStart = (year, month) => {
+  return ((gregorian_to_julianDay(year, month, 1) + 2) % 7);
+}
+const islamic_to_dayOfWeek_in_monthStart = (year, month) => {
+  return ((islamic_to_julianDay(year, month, 1) + 2) % 7);
+}
+const islamicA_to_dayOfWeek_in_monthStart = (year, month) => {
+  return ((islamicA_to_julianDay(year, month, 1) + 2) % 7);
+}
+
+const persian_to_dayOfWeek_in_monthEnd = (year, month) => {
+  return ((persian_to_julianDay(year, month, daysOfMonth_persian(year, month)) + 2) % 7);
+}
+const gregorian_to_dayOfWeek_in_monthEnd = (year, month) => {
+  return ((gregorian_to_julianDay(year, month, daysOfMonth_gregorian(year, month)) + 2) % 7);
+}
+const islamic_to_dayOfWeek_in_monthEnd = (year, month) => {
+  return ((islamic_to_julianDay(year, month, daysOfMonth_islamic(year, month)) + 2) % 7);
+}
+const islamicA_to_dayOfWeek_in_monthEnd = (year, month) => {
+  return ((islamicA_to_julianDay(year, month, daysOfMonth_islamicA(year, month)) + 2) % 7);
+}
+
+
+
+const firstNthDayOfWeek_in_persianMonth = (year, month, nthDayOfWeek) => {
+  let mStartJD = persian_to_julianDay(year, month, 1);
+  return (mStartJD + ((7 + nthDayOfWeek - ((mStartJD + 2) % 7)) % 7));
+}
+const firstNthDayOfWeek_in_gregorianMonth = (year, month, nthDayOfWeek) => {
+  let mStartJD = gregorian_to_julianDay(year, month, 1);
+  return (mStartJD + ((7 + nthDayOfWeek - ((mStartJD + 2) % 7)) % 7));
+}
+const firstNthDayOfWeek_in_islamicMonth = (year, month, nthDayOfWeek) => {
+  let mStartJD = islamic_to_julianDay(year, month, 1);
+  return (mStartJD + ((7 + nthDayOfWeek - ((mStartJD + 2) % 7)) % 7));
+}
+const firstNthDayOfWeek_in_islamicAMonth = (year, month, nthDayOfWeek) => {
+  let mStartJD = islamicA_to_julianDay(year, month, 1);
+  return (mStartJD + ((7 + nthDayOfWeek - ((mStartJD + 2) % 7)) % 7));
+}
+
+const lastNthDayOfWeek_in_persianMonth = (year, month, nthDayOfWeek) => {
+  let mEndJD = persian_to_julianDay(year, month, daysOfMonth_persian(year, month));
+  return (mEndJD - ((7 + ((mEndJD + 2) % 7) - nthDayOfWeek) % 7));
+}
+const lastNthDayOfWeek_in_gregorianMonth = (year, month, nthDayOfWeek) => {
+  let mEndJD = gregorian_to_julianDay(year, month, daysOfMonth_gregorian(year, month));
+  return (mEndJD - ((7 + ((mEndJD + 2) % 7) - nthDayOfWeek) % 7));
+}
+const lastNthDayOfWeek_in_islamicMonth = (year, month, nthDayOfWeek) => {
+  let mEndJD = islamic_to_julianDay(year, month, daysOfMonth_islamic(year, month));
+  return (mEndJD - ((7 + ((mEndJD + 2) % 7) - nthDayOfWeek) % 7));
+}
+const lastNthDayOfWeek_in_islamicAMonth = (year, month, nthDayOfWeek) => {
+  let mEndJD = islamicA_to_julianDay(year, month, daysOfMonth_islamicA(year, month));
+  return (mEndJD - ((7 + ((mEndJD + 2) % 7) - nthDayOfWeek) % 7));
+}
+
+
+
+
+
 // const roozeHafteh = ['شنبه', 'یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
 
 const roozeHafteh = new Proxy(
@@ -1063,10 +1157,6 @@ const roozeHafteh = new Proxy(
     }
   }
 );
-
-// const roozShomar=(year=1300)=>{
-
-// }
 
 const TarikhObject = function (timeStamp = Date.now()) {
 
@@ -1090,8 +1180,7 @@ const TarikhObject = function (timeStamp = Date.now()) {
     },
 
     [_setTime](hour, minute, second, miliSecond) {
-      let julianDayFloat = /*~~(this[_all].julianDay + 0.5)*/this[_all].julianDay + (time_to_miliSeconds(hour, minute, second, miliSecond) / 86400000) - 0.5;
-      // this[_all].julianDay = julianDay;
+      let julianDayFloat = this[_all].julianDay + (time_to_miliSeconds(hour, minute, second, miliSecond) / 86400000) - 0.5;
       this[_all].julianDayFloat = julianDayFloat;
       this[_all].timeStamp = julianDay_to_timeStamp(julianDayFloat);
       this[_all].time = [hour, minute, second, miliSecond];
@@ -1177,7 +1266,7 @@ const TarikhObject = function (timeStamp = Date.now()) {
       ] = [
           ~~(a.julianDayFloat) + (this[_all].julianDayFloat % 1),
           ~~(a.julianDay + 0.5),
-          a.timeStamp/* + time_to_miliSeconds(this[_all].time[0], this[_all].time[1], this[_all].time[2], this[_all].time[3])*/,
+          a.timeStamp,
           a.persian,
           a.gregorian,
           a.islamic,
@@ -1365,7 +1454,6 @@ const TarikhObject = function (timeStamp = Date.now()) {
         dTJ = change_islamicA(change, [...this[_all].islamicA, ...this[_all].time]);
       }
       this[_all] = julianDay_to_all(dTJ[7]);
-      // console.log('chOut:',dTJ)
       this[_setTime](dTJ[3], dTJ[4], dTJ[5], dTJ[6]);
     },
 
@@ -1380,24 +1468,6 @@ const TarikhObject = function (timeStamp = Date.now()) {
         return diff_islamicA(date1, this[_all].islamicA);
       }
     }
-
-    // get Date(){
-    //   return (new Date(this[_all].timeStamp));
-    // },
-    // toString(){
-    //   return 
-    // },
-    // [Symbol.toPrimitive](hint) {
-
-    //   return 'this[_all]'+hint;
-    // }
-
-
-
-
-
-
-
 
   };
 }

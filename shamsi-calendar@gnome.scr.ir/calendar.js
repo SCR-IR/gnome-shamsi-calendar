@@ -11,6 +11,7 @@ const PersianDate = extension.imports.PersianDate;
 const Tarikh = extension.imports.Tarikh;
 
 const PrayTimes = extension.imports.PrayTimes.prayTimes;
+const player = extension.imports.sound.player;
 
 const str = extension.imports.strFunctions;
 const Events = extension.imports.Events;
@@ -525,35 +526,27 @@ Calendar.prototype = {
     let _eventsBox3 = new St.BoxLayout({
       style: 'background-color: #323236; margin-bottom: 5px;'
     });
-
-    let tabBtn = new St.Button({
-      label: 'اوقات شرعی',
-      style_class: 'pcalendar-tab' +
-        ((this._selectedTab === 'prayTimes') ? ' pcalendar-selected-tab' : '')
-    });
-    tabBtn.connect('clicked', () => {
-      this._selectedTab = 'prayTimes';
-      this._update();
-    });
-    _eventsBox3.add(tabBtn);
-
-    tabBtn = new St.Button({
-      label: 'مناسبت‌ها',
-      style_class: 'pcalendar-tab' +
-        ((this._selectedTab === 'events') ? ' pcalendar-selected-tab' : '')
-    });
-    tabBtn.connect('clicked', () => {
-      this._selectedTab = 'events';
-      this._update();
-    });
-    _eventsBox3.add(tabBtn);
-
+    let tabs = {
+      prayTimes: "اوقات شرعی",
+      events: "مناسبت‌ها"
+    };
+    for (let i in tabs) {
+      let tabBtn = new St.Button({
+        label: tabs[i],
+        style_class: 'pcalendar-tab' +
+          ((this._selectedTab === i) ? ' pcalendar-selected-tab' : '')
+      });
+      tabBtn.connect('clicked', () => {
+        this._selectedTab = i;
+        this._update();
+      });
+      _eventsBox3.add(tabBtn);
+    }
     _eventsBox3.add(new St.Button({
       label: '',
       style_class: 'pcalendar-tab-space',
       x_expand: true
     }));
-
     this.actorLeft.layout_manager.attach(_eventsBox3, 0, ++evTopPosition, 1, 1);
 
 
@@ -621,7 +614,7 @@ Calendar.prototype = {
         let playAzan = Schema.get_boolean('praytime-play-and-notify');
         let playAzanBtn = new St.Button({
           child: new St.Label({
-            text: 'اعلان ' + ((playAzan) ? '☑' : '☐'),
+            text: 'اذان‌گو ' + ((playAzan) ? '☑' : '☐'),
             x_align: Clutter.ActorAlign.CENTER,
             x_expand: true,
             style: 'text-align: center; color: #' + ((playAzan) ? '269' : '666')
@@ -729,6 +722,15 @@ Calendar.prototype = {
         }
       }
 
+    }
+
+    if (player.isPlaying()) {
+      let btn = new St.Button({ label: 'توقف پخش صدا', style_class: 'pcalendar-praytimes-azan' });
+      btn.connect('clicked', Lang.bind(btn, () => {
+        player.pause();
+        this._update();
+      }));
+      this.actorLeft.layout_manager.attach(btn, 0, ++evTopPosition, 1, 1);
     }
 
   }
