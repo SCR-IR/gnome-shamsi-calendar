@@ -17,7 +17,7 @@ const extension = ExtensionUtils.getCurrentExtension();
 const convenience = extension.imports.convenience;
 
 const PersianDate = extension.imports.PersianDate;
-const HijriDate = extension.imports.HijriDate;
+const Tarikh = extension.imports.Tarikh;
 const Calendar = extension.imports.calendar;
 
 const Events = extension.imports.Events;
@@ -27,7 +27,7 @@ const Schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calend
 const ConverterTypes = {
   fromPersian: 0,
   fromGregorian: 1,
-  fromHijri: 2
+  fromIslamic: 2
 };
 
 let _indicator,
@@ -36,7 +36,8 @@ let _indicator,
 
 
 function _labelSchemaName(events1 = null) {
-  if (events1 === null) events1 = new Events.Events().getEvents(new Date())[1];
+  let dateObj = new Tarikh.TarikhObject();
+  if (events1 === null) events1 = new Events.Events().getEvents(dateObj.all)[1];
   return (events1) ? 'holiday-color' : 'not-holiday-color';
 }
 
@@ -64,7 +65,8 @@ const ShamsiCalendar = new Lang.Class({
       this.label.set_style('color: ' + Schema.get_string(_labelSchemaName()));
     }
 
-    let isHoliday = new Events.Events().getEvents(new Date())[1];
+    let dateObj = new Tarikh.TarikhObject();
+    let isHoliday = new Events.Events().getEvents(dateObj.all)[1];
     let that = this;
     this.schema_not_holiday_color_change_signal = Schema.connect('changed::not-holiday-color', Lang.bind(
       that, function () {
@@ -144,7 +146,7 @@ const ShamsiCalendar = new Lang.Class({
      */
     // /////////////////////////////
 
-    this._today = '';
+    this._todayJD = '';
 
     let vbox = new St.BoxLayout({ vertical: true, style_class: '-pcalendar pcalendar-font' });
     let calendar = new PopupMenu.PopupBaseMenuItem({
@@ -201,7 +203,7 @@ const ShamsiCalendar = new Lang.Class({
         ExtensionUtils.openPrefs();
       } else {
         // support previous gnome shell versions.
-        launch_extension_prefs(extension.metadata.uuid);
+        launch_extension_prefs_inOldGnome(extension.metadata.uuid);
         // Util.spawn([
         //     'gnome-shell-extension-prefs',
         //     extension.metadata.uuid
@@ -235,9 +237,8 @@ const ShamsiCalendar = new Lang.Class({
       style_class: 'system-menu-action pcalendar-preferences-button'
     });
     todayIcon.connect('clicked', function () {
-      let now = new Date();
-      now = PersianDate.PersianDate.gregorianToPersian(now.getFullYear(), now.getMonth() + 1, now.getDate());
-      that._calendar.setDate(now);
+      that._calendar._selectedDateObj.setNow();
+      that._calendar._update();
     });
     actionButtons.actor.add(todayIcon/*, { expand: true, x_fill: false }*/);
 
@@ -262,89 +263,77 @@ const ShamsiCalendar = new Lang.Class({
     nowroozIcon.connect('clicked', function () {
       /* calculate exact hour/minute/second of the next new year.
        it calculate with some small differences!*/
-      let now = new Date();
-      let pdate = PersianDate.PersianDate.gregorianToPersian(
-        now.getFullYear(),
-        now.getMonth() + 1,
-        now.getDate()
-      );
 
-      let month_delta = 12 - pdate.month;
-      let day_delta, nowrooz;
+      let month_delta = 12 - dateObj.persianMonth;
+      let day_delta, nowrooz = '';
       if (month_delta >= 6) {
-        day_delta = 31 - pdate.day;
+        day_delta = 31 - dateObj.persianDay;
       } else {
-        day_delta = 30 - pdate.day;
+        day_delta = 30 - dateObj.persianDay;
       }
 
-      if (month_delta !== 0) {
-        nowrooz = month_delta + ' ماه و ';
-      } else {
-        nowrooz = '';
-      }
+      if (dateObj.persianMonth !== 12) nowrooz += month_delta + ' ماه و ';
 
       if (day_delta !== 0) {
-        nowrooz = nowrooz + day_delta + ' روز مانده به ';
-        nowrooz = nowrooz + 'نوروز سال ' + (pdate.year + 1);
+        nowrooz += day_delta + ' روز مانده به ';
+        nowrooz += 'نوروز سال ' + (dateObj.persianYear + 1);
       }
 
-      notify(str.format(nowrooz) + (day_delta < 7 ? str.format(' * ') : ''));
+      notify(str.numbersFormat(nowrooz) + (day_delta < 7 ? str.numbersFormat(' * ') : ''));
     });
     actionButtons.actor.add(nowroozIcon/*, { expand: true, x_fill: false }*/);
 
     this.menu.connect('open-state-changed', Lang.bind(that, function (menu, isOpen) {
       if (isOpen) {
-        let now = new Date();
-        now = PersianDate.PersianDate.gregorianToPersian(now.getFullYear(), now.getMonth() + 1, now.getDate());
-        that._calendar.setDate(now);
+        that._calendar._selectedDateObj.setNow();
+        that._calendar._update();
       }
     }));
   },
 
   _updateDate: function (skip_notification, force) {
-    let _date = new Date();
-    let _dayOfWeek = _date.getDay();
-    let events = new Events.Events().getEvents(_date, 150);
-    // convert to Persian
-    _date = PersianDate.PersianDate.gregorianToPersian(_date.getFullYear(), _date.getMonth() + 1, _date.getDate());
+    let _dateObj = new Tarikh.TarikhObject();
 
     // if today is "today" just return, don't change anything!
-    if (!force && this._today === _date.yearDays) {
-      return true;
-    }
+    if (!force && this._todayJD === _dateObj.julianDay) return true;
 
-    // set today as "today"
-    this._today = _date.yearDays;
+    // set todayJulianDay as "today"
+    this._todayJD = _dateObj.julianDay;
 
     // set indicator label and popupmenu
 
-
+    let events = new Events.Events().getEvents(_dateObj.all, 150);
     if (Schema.get_boolean('custom-color')) {
       // that.label.set_style(null);
       this.label.set_style('color: ' + Schema.get_string(_labelSchemaName(events[1])));
     }
 
-
     this.label.set_text(
-      str.format(
-        this._calendar.format(
+      str.numbersFormat(
+        str.dateStrFormat(
           Schema.get_string('widget-format'),
-          _date.day,
-          _date.month,
-          _date.year,
-          _dayOfWeek,
+          _dateObj.persianDay,
+          _dateObj.persianMonth,
+          _dateObj.persianYear,
+          _dateObj.dayOfWeek,
           'persian'
         )
       )
     );
 
-    _date = str.format(_date.day + ' ' + PersianDate.PersianDate.p_month_names[_date.month - 1] + ' ' + _date.year);
     if (!skip_notification) {
       let notifyTxt = "";
       for (let evObj of events[0]) {
-        notifyTxt += str.format(evObj.symbol + ' ' + evObj.event + ((evObj.holiday) ? ' (تعطیل)' : '') + '\n');
+        notifyTxt += str.numbersFormat(evObj.symbol + ' ' + evObj.event + ((evObj.holiday) ? ' (تعطیل)' : '') + '\n');
       }
-      notify(_date, notifyTxt);
+      notify(
+        str.numbersFormat(
+          _dateObj.persianDay + ' ' +
+          PersianDate.PersianDate.p_month_names[_dateObj.persianMonth - 1] +
+          ' ' + _dateObj.persianYear
+        ),
+        notifyTxt
+      );
     }
 
     return true;
@@ -393,19 +382,19 @@ const ShamsiCalendar = new Lang.Class({
     fromGregorian.connect('clicked', Lang.bind(this, this._toggleConverter));
     fromGregorian.TypeID = ConverterTypes.fromGregorian;
 
-    let fromHijri = new St.Button({
+    let fromIslamic = new St.Button({
       reactive: true,
       can_focus: true,
       track_hover: true,
       x_expand: true,
       label: _('از هـ.قمری'),
-      accessible_name: 'fromHijri',
-      style_class: 'popup-menu-item button pcalendar-button fromHijri'
+      accessible_name: 'fromIslamic',
+      style_class: 'popup-menu-item button pcalendar-button fromIslamic'
     });
-    fromHijri.connect('clicked', Lang.bind(this, this._toggleConverter));
-    fromHijri.TypeID = ConverterTypes.fromHijri;
+    fromIslamic.connect('clicked', Lang.bind(this, this._toggleConverter));
+    fromIslamic.TypeID = ConverterTypes.fromIslamic;
 
-    middleBox.add(fromHijri);
+    middleBox.add(fromIslamic);
     middleBox.add(fromGregorian);
     middleBox.add(fromPersian);
 
@@ -461,55 +450,50 @@ const ShamsiCalendar = new Lang.Class({
     let day = this.converterDay.get_text();
 
     // check if data is numerical and not empty
-    if (isNaN(day) || isNaN(month) || isNaN(year) || !day || !month || !year || year.length !== 4) {
-      return;
-    }
+    if (!day || !month || !year) return;
 
-    let gDate,
-      hDate,
-      pDate;
+    [year, month, day] = [parseInt(year), parseInt(month), parseInt(day)];
 
-    year = parseInt(year);
-    month = parseInt(month);
-    day = parseInt(day);
+    let cDateObj = new Tarikh.TarikhObject();
+    let checkInputDate = false;
 
     switch (this._activeConverter) {
       case ConverterTypes.fromGregorian:
-        pDate = PersianDate.PersianDate.gregorianToPersian(year, month, day);
-        hDate = HijriDate.HijriDate.toHijri(year, month, day);
+        checkInputDate = Tarikh.check_gregorian(year, month, day, false);
+        if (checkInputDate) cDateObj.gregorian = [year, month, day];
         break;
-
       case ConverterTypes.fromPersian:
-        gDate = PersianDate.PersianDate.persianToGregorian(year, month, day);
-        hDate = HijriDate.HijriDate.toHijri(gDate.year, gDate.month, gDate.day);
+        checkInputDate = Tarikh.check_persian(year, month, day, false);
+        if (checkInputDate) cDateObj.persian = [year, month, day];
         break;
-
-      case ConverterTypes.fromHijri:
-        gDate = HijriDate.HijriDate.fromHijri(year, month, day);
-        pDate = PersianDate.PersianDate.gregorianToPersian(gDate.year, gDate.month, gDate.day);
+      case ConverterTypes.fromIslamic:
+        checkInputDate = Tarikh.check_islamic(year, month, day, false);
+        if (checkInputDate) cDateObj.islamic = [year, month, day];
         break;
-
       default:
-      // do nothing
+        return;
     }
 
-    // calc day of week
-    let $dayOfWeek = new Date(year, month, day);
-    if (gDate) {
-      $dayOfWeek = new Date(gDate.year, gDate.month, gDate.day);
+    if (!checkInputDate) {
+      let button = new St.Button({
+        label: 'تاریـخ وارد‌شده، صحیح نیست!\nاین تاریخ در تقویم وجود ندارد.',
+        x_expand: true,
+        style_class: 'pcalendar-day pcalendar-date-label'
+      });
+      this.convertedDatesVbox.add(button);
+      return;
     }
-    $dayOfWeek = $dayOfWeek.getDay();
 
     // add persian date
-    if (pDate) {
+    if (this._activeConverter !== ConverterTypes.fromPersian) {
       let button = new St.Button({
-        label: str.format(
-          this._calendar.format(
+        label: str.numbersFormat(
+          str.dateStrFormat(
             Schema.get_string('persian-display-format'),
-            pDate.day,
-            pDate.month,
-            pDate.year,
-            $dayOfWeek,
+            cDateObj.persianDay,
+            cDateObj.persianMonth,
+            cDateObj.persianYear,
+            cDateObj.dayOfWeek,
             'persian'
           )
         ) + ' هجری شمسی',
@@ -524,17 +508,17 @@ const ShamsiCalendar = new Lang.Class({
       }));
     }
 
-    // add hijri date
-    if (hDate) {
+    // add islamic date
+    if (this._activeConverter !== ConverterTypes.fromIslamic) {
       let button = new St.Button({
-        label: str.format(
-          this._calendar.format(
-            Schema.get_string('hijri-display-format'),
-            hDate.day,
-            hDate.month,
-            hDate.year,
-            $dayOfWeek,
-            'hijri'
+        label: str.numbersFormat(
+          str.dateStrFormat(
+            Schema.get_string('islamic-display-format'),
+            cDateObj.islamicDay,
+            cDateObj.islamicMonth,
+            cDateObj.islamicYear,
+            cDateObj.dayOfWeek,
+            'islamic'
           )
         ) + ' هجری قمری',
         // x_align: Clutter.ActorAlign.CENTER,
@@ -549,15 +533,15 @@ const ShamsiCalendar = new Lang.Class({
     }
 
     // add gregorian date
-    if (gDate) {
+    if (this._activeConverter !== ConverterTypes.fromGregorian) {
       let button = new St.Button({
-        label: str.format(
-          this._calendar.format(
+        label: str.numbersFormat(
+          str.dateStrFormat(
             Schema.get_string('gregorian-display-format'),
-            gDate.day,
-            gDate.month,
-            gDate.year,
-            $dayOfWeek,
+            cDateObj.gregorianDay,
+            cDateObj.gregorianMonth,
+            cDateObj.gregorianYear,
+            cDateObj.dayOfWeek,
             'gregorian'
           )
         ) + ' میلادی',
@@ -634,16 +618,16 @@ function enable() {
 }
 
 function disable() {
-  Schema.disconnect(_indicator.schema_color_change_signal);
+  Schema.disconnect(_indicator.schema_not_holiday_color_change_signal);
+  Schema.disconnect(_indicator.schema_holiday_color_change_signal);
   Schema.disconnect(_indicator.schema_custom_color_signal);
   Schema.disconnect(_indicator.schema_widget_format_signal);
   Schema.disconnect(_indicator.schema_position_signal);
-
   _indicator.destroy();
   MainLoop.source_remove(_timer);
 }
 
-function launch_extension_prefs(uuid) {
+function launch_extension_prefs_inOldGnome(uuid) {
   let appSys = Shell.AppSystem.get_default();
   let app = appSys.lookup_app('gnome-shell-extension-prefs.desktop');
   let info = app.get_app_info();

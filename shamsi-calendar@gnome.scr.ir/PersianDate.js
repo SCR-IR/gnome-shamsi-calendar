@@ -14,7 +14,7 @@ PersianDate.checkDate = function (py, pm, pd) {
   return !(py < 0 || py > 32767 || pm < 1 || pm > 12 || pd < 1 || pd > PersianDate.pDaysInMonth(py, pm));
 };
 
-PersianDate.isKabiseh = function (py, outType = 'bool') {
+PersianDate.isKabiseh = function (year, outType = 'bool') {
   types = {
     'int': [0, 1],
     'bool': [false, true],

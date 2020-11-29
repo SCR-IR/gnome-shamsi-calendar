@@ -316,11 +316,11 @@ persian.prototype = {
     ], false];
 
     this.events[12][last_wednesday_of_year - 1] = [[
-      ['چارشنبه سوری، جشن شب چهارشنبه آخر']
+      ['چهارشنبه سوری، جشن شب چهارشنبه آخر']
     ], false];
 
     this.events[12][last_wednesday_of_year] = [[
-      ['چارشنبه آخر']
+      ['چهارشنبه آخر']
     ], false];
 
   }

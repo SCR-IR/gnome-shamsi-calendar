@@ -130,6 +130,10 @@
     min-width: 1.5em;
 }
 
+.pcalendar-date-label {
+    color:#eeeeee;
+}
+
 .pcalendar-date-label:hover {
     background-color: rgba(128, 128, 128, .1);
 }
@@ -173,7 +177,7 @@
     border-left: none;
 }
 
-.pcalendar-button.fromHijri {
+.pcalendar-button.fromIslamic {
     border-radius: 3px 0 0 3px;
     border-right: none;
 }

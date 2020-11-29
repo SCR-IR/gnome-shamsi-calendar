@@ -3,13 +3,11 @@ const extension = ExtensionUtils.getCurrentExtension();
 const convenience = extension.imports.convenience;
 
 const PersianDate = extension.imports.PersianDate;
-const HijriDate = extension.imports.HijriDate;
 
 const persian = extension.imports.events.persian;
 const world = extension.imports.events.world;
 const iranSolar = extension.imports.events.iranSolar;
 const iranLunar = extension.imports.events.iranLunar;
-// const persianPersonage = extension.imports.events.persianPersonage;// Merged to iranSolar
 
 const Schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
 
@@ -35,53 +33,18 @@ Events.prototype = {
     }
   },
 
-  getEvents: function (today, maxLineLength = 40) {
+  getEvents: function (todayObj, maxLineLength = 40) {
+    this._today = todayObj;
     this._maxLineLength = maxLineLength;
     this._events = [];
-    this._isHoliday = false;
-    this._today = [];
-
-    // if it is friday
-    if (today.getDay() === 5) {
-      this._isHoliday = true;
-    }
-
-    // store gregorian date of today
-    this._today[0] = [today.getFullYear(), today.getMonth() + 1, today.getDate()];
-
-    // convert to Persian
-    today = PersianDate.PersianDate.gregorianToPersian(today.getFullYear(), today.getMonth() + 1, today.getDate());
-    // store persian date of today
-    this._today[1] = [today.year, today.month, today.day];
-    // store hijri date of today
-    today = HijriDate.HijriDate.toHijri(this._today[0][0], this._today[0][1], this._today[0][2]);
-    this._today[2] = [today.year, today.month, today.day];
-
+    this._isHoliday = Schema.get_boolean('none-work-' + this._today.dayOfWeek);
     this._eventsList.forEach(this._checkEvent, this);
     return [this._events, this._isHoliday];
   },
 
   _checkEvent: function (el) {
-    let type = 0;
-
-    switch (el.type) {
-      case 'gregorian':
-        type = 0;
-        break;
-      case 'persian':
-        type = 1;
-        break;
-      case 'hijri':
-        type = 2;
-        break;
-      default:
-      // do nothing
-    }
-
-    // if event is available, set event
-    // and if it is holiday, set today as holiday!
-    let evArr = el.events[this._today[type][1]][this._today[type][2]];
-    let sym = ['▫', '▪', '◆'];
+    let evArr = el.events[this._today[el.type][1]][this._today[el.type][2]];
+    let sym = { persian: '▪', islamic: '◆', gregorian: '▫' };
     if (evArr) {
       let events = evArr[0];
       for (let i in events) {
@@ -101,7 +64,7 @@ Events.prototype = {
 
         this._events[this._events.length] = {
           type: el.type,
-          symbol: sym[type],
+          symbol: sym[el.type],
           event: event,
           holiday: (events[i][1] !== undefined) ? true : false
         };

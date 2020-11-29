@@ -8,7 +8,7 @@ const extension = ExtensionUtils.getCurrentExtension();
 const convenience = extension.imports.convenience;
 
 const PersianDate = extension.imports.PersianDate;
-const HijriDate = extension.imports.HijriDate;
+const Tarikh = extension.imports.Tarikh;
 
 const str = extension.imports.strFunctions;
 const Events = extension.imports.Events;
@@ -19,10 +19,11 @@ function _rotate(a, b, x, y) {
   return (Schema.get_boolean('rotaton-to-vertical')) ? [7 - b, 8 - a + 1, y, x] : [a, b, x, y];
 }
 
-function _sameDay(dateA, dateB) {
-  return (dateA.year === dateB.year &&
-    dateA.month === dateB.month &&
-    dateA.day === dateB.day);
+function _colPosition(rtl) {
+  return ((
+    Schema.get_boolean('reverse-direction') && rtl ||
+    !Schema.get_boolean('reverse-direction') && !rtl
+  ) ? 6 : 0);
 }
 
 function Calendar() {
@@ -30,19 +31,11 @@ function Calendar() {
 }
 
 Calendar.prototype = {
-  weekdayAbbr: ['شنبه', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'جمعه'],
+  _selectedDateObj: new Tarikh.TarikhObject(),
   _rtl: (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL),
   // weekdayAbbr: ['شـ', 'یـ', 'د', 'سـ', 'چـ', 'پـ', 'جـ'],
-  _weekStart: 6,
 
   _init: function () {
-    // Start off with the current date
-    this._selectedDate = new Date();
-    this._selectedDate = PersianDate.PersianDate.gregorianToPersian(
-      this._selectedDate.getFullYear(),
-      this._selectedDate.getMonth() + 1,
-      this._selectedDate.getDate()
-    );
 
     this.actorRight = new St.Widget({
       style_class: 'pcalendar-actor-right',
@@ -69,15 +62,6 @@ Calendar.prototype = {
   },
 
   // Sets the calendar to show a specific date
-  setDate: function (date) {
-    if (!_sameDay(date, this._selectedDate)) {
-      this._selectedDate = date;
-    }
-
-    this._update();
-  },
-
-  // Sets the calendar to show a specific date
   format: function (format, day, month, year, dow, calendar) {
     let phrases = {
       gregorian: {
@@ -92,7 +76,7 @@ Calendar.prototype = {
         weekdayShort: ['شـ', 'یـ', 'د', 'سـ', 'چـ', 'پـ', 'جـ'],
         weekdayLong: ['شنبه', 'یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'],
       },
-      hijri: {
+      islamic: {
         monthShort: ['محر', 'صفر', 'رب۱', 'رب۲', 'جم۱', 'جم۲', 'رجب', 'شعب', 'رمض', 'شوا', 'ذیق', 'ذیح'],
         monthLong: ['محرم', 'صفر', 'ربیع‌الاول', 'ربیع‌الثانی', 'جمادی‌الاول', 'جمادی‌الثانی', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذیقعده', 'ذیحجه'],
         weekdayShort: ['س', 'ا', 'ا', 'ث', 'ا', 'خ', 'ج'],
@@ -101,10 +85,10 @@ Calendar.prototype = {
     };
 
     // change dow to Persian style!
-    dow += 1;
-    if (dow > 6) {
-      dow = 0;
-    }
+    // dow++;
+    // if (dow > 6) {
+    //   dow = 0;
+    // }
 
     let find = ['%Y', '%y', '%MM', '%mm', '%M', '%m', '%D', '%d', '%WW', '%ww'];
     let replace = [
@@ -123,12 +107,6 @@ Calendar.prototype = {
   },
 
   _buildHeader: function () {
-    // this._rtl = (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL);//v
-    if (this._rtl) {
-      this._colPosition = 0;
-    } else {
-      this._colPosition = 6;
-    }
 
     this.actorRight.destroy_all_children();
 
@@ -196,19 +174,6 @@ Calendar.prototype = {
     icon.set_icon_size(16);
     this._topBox.add(leftButton);
 
-    //v
-    // // Add weekday labels...
-    // for (let i = 0; i < 7; i++) {
-    //   let label = new St.Label({
-    //     style_class: 'pcalendar-day-heading pcalendar-rtl',
-    //     text: this.weekdayAbbr[i]
-    //   });
-    //   {
-    //     let [left, top, width, height] = _rotate(Math.abs(this._colPosition - i), 1, 1, 1);
-    //     this.actorRight.layout_manager.attach(label, left, top, width, height);
-    //   }
-    // }
-
     // All the children after this are days, and get removed when we update the calendar
     this._firstDayIndex = this.actorRight.get_children().length;//v
   },
@@ -229,62 +194,52 @@ Calendar.prototype = {
   },
 
   _onPrevMonthButtonClicked: function () {
-    let newDate = this._selectedDate;
-    let oldMonth = newDate.month;
-    if (oldMonth === 1) {
-      newDate.month = 12;
-      newDate.year--;
-    } else {
-      newDate.month--;
-    }
-
-    this.setDate(newDate);
+    this._selectedDateObj.change([0, -1], 'persian');
+    this._update();
   },
 
   _onNextMonthButtonClicked: function () {
-    let newDate = this._selectedDate;
-    let oldMonth = newDate.month;
-    if (oldMonth === 12) {
-      newDate.month = 1;
-      newDate.year++;
-    } else {
-      newDate.month++;
-    }
-
-    this.setDate(newDate);
+    this._selectedDateObj.change([0, +1], 'persian');
+    this._update();
   },
 
   _onPrevYearButtonClicked: function () {
-    let newDate = this._selectedDate;
-    newDate.year--;
-
-    this.setDate(newDate);
+    this._selectedDateObj.change([-1], 'persian');
+    this._update();
   },
 
   _onNextYearButtonClicked: function () {
-    let newDate = this._selectedDate;
-    newDate.year++;
-
-    this.setDate(newDate);
+    this._selectedDateObj.change([+1], 'persian');
+    this._update();
   },
 
   _update: function () {
-    // this.actorRight.destroy_all_children();//v
+    let weekStart = parseInt(Schema.get_string('week-start'));
+    let dateDisplay = {
+      persian: Schema.get_boolean('persian-display'),
+      islamic: Schema.get_boolean('islamic-display'),
+      gregorian: Schema.get_boolean('gregorian-display')
+    };
     // Remove everything but the topBox and the weekday labels
     let children = this.actorRight.get_children();
+
     for (let i = this._firstDayIndex; i < children.length; i++) {
       children[i].destroy();
     }
-    let colPosition = (this._rtl) ? 0 : 6;//v
+
     // Add weekday labels...
     const weekdayAbbr = ['شنبه', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'جمعه'];
-    for (let i = 0; i < 7; i++) {
+    for (let i = weekStart; i < (weekStart + 7); i++) {
       let label = new St.Label({
         style_class: 'pcalendar-day-heading pcalendar-rtl',
-        text: weekdayAbbr[i]
+        text: weekdayAbbr[i % 7]
       });
       {
-        let [left, top, width, height] = _rotate(Math.abs(colPosition - i), 1, 1, 1);
+        let [left, top, width, height] = _rotate(
+          Math.abs(_colPosition(this._rtl) - ((7 + i - weekStart) % 7)),
+          // this._colPosition(this._rtl) - ((7 + (i % 7) - weekStart) % 7),
+          1, 1, 1
+        );
         this.actorRight.layout_manager.attach(label, left, top, width, height);
       }
     }
@@ -292,97 +247,57 @@ Calendar.prototype = {
 
     this.actorLeft.destroy_all_children();
     let selectedDateStyleClass = '';
-    let now = new Date();
-    now = PersianDate.PersianDate.gregorianToPersian(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    // this._selectedDateObj = new Tarikh.TarikhObject();
+    let nowObj = new Tarikh.TarikhObject();
 
-    // find gregorian date
-    let g_selectedDate = PersianDate.PersianDate.persianToGregorian(
-      this._selectedDate.year,
-      this._selectedDate.month,
-      this._selectedDate.day
-    );
-    g_selectedDate = new Date(g_selectedDate.year, g_selectedDate.month - 1, g_selectedDate.day);
 
-    let h_selectedDate = HijriDate.HijriDate.toHijri(
-      g_selectedDate.getFullYear(),
-      g_selectedDate.getMonth() + 1,
-      g_selectedDate.getDate()
-    );
-
-    // if (this._selectedDate.year === now.year) {
-    //   this._monthLabel.text = PersianDate.PersianDate.p_month_names[this._selectedDate.month - 1];
-    // } else {
-    this._monthLabel.text = '« ' + PersianDate.PersianDate.p_month_names[this._selectedDate.month - 1] + ' ' +
-      str.format(this._selectedDate.year) +
+    this._monthLabel.text = '« ' + PersianDate.PersianDate.p_month_names[this._selectedDateObj.persianMonth - 1] + ' ' +
+      str.numbersFormat(this._selectedDateObj.persianYear) +
       ' »\n' +
-      str.format(
+      str.numbersFormat(
         this.format(
           '%MM %Y',
-          h_selectedDate.day,
-          h_selectedDate.month,
-          h_selectedDate.year,
-          g_selectedDate.getDay(),
-          'hijri'
+          this._selectedDateObj.islamicDay,
+          this._selectedDateObj.islamicMonth,
+          this._selectedDateObj.islamicYear,
+          this._selectedDateObj.dayOfWeek,
+          'islamic'
         )
       ) +
       ' | ' +
       this.format(
         '%MM %Y',
-        g_selectedDate.getDate(),
-        g_selectedDate.getMonth() + 1,
-        g_selectedDate.getFullYear(),
-        g_selectedDate.getDay(),
+        this._selectedDateObj.gregorianDay,
+        this._selectedDateObj.gregorianMonth,
+        this._selectedDateObj.gregorianYear,
+        this._selectedDateObj.dayOfWeek,
         'gregorian'
       );
-    // }
-    //v
+
 
 
     // Start at the beginning of the week before the start of the month
-    let iter = this._selectedDate;
-    iter = PersianDate.PersianDate.persianToGregorian(iter.year, iter.month, 1);
-    iter = new Date(iter.year, iter.month - 1, iter.day);
-    let daysToWeekStart = (7 + iter.getDay() - this._weekStart) % 7;
-    iter.setDate(iter.getDate() - daysToWeekStart);
+    let iterObj = new Tarikh.TarikhObject();
+    iterObj.julianDay = this._selectedDateObj.julianDay;
+    iterObj.persianDay = 1;
+    iterObj.dayOfWeek = weekStart;
+
 
     let row = 2;
 
     let ev = new Events.Events();
     let events;
 
-    // let p_iter = PersianDate.PersianDate.gregorianToPersian(
-    //   iter.getFullYear(),
-    //   iter.getMonth() + 1,
-    //   iter.getDate()
-    // );
-    // // find hijri date of today
-    // let h_iter = HijriDate.HijriDate.toHijri(
-    //   iter.getFullYear(),
-    //   iter.getMonth() + 1,
-    //   iter.getDate()
-    // );
     /* eslint no-constant-condition: ["error", { "checkLoops": false }] */
     while (true) {
-      let p_iter = PersianDate.PersianDate.gregorianToPersian(
-        iter.getFullYear(),
-        iter.getMonth() + 1,
-        iter.getDate()
-      );
-      // find hijri date of today
-      let h_iter = HijriDate.HijriDate.toHijri(
-        iter.getFullYear(),
-        iter.getMonth() + 1,
-        iter.getDate()
-      );
-
       // find events and holidays
-      events = ev.getEvents(iter);
+      events = ev.getEvents(iterObj.all);
       let eventStatus = {
         persian: {
           hasEvent: false,
           isHoliday: false
         },
-        hijri: {
+        islamic: {
           hasEvent: false,
           isHoliday: false
         },
@@ -396,17 +311,26 @@ Calendar.prototype = {
         if (evObj.holiday) eventStatus[evObj.type].isHoliday = true;
       }
 
-      let alpha = (p_iter.month !== this._selectedDate.month) ? '-alpha' : '';
+      let alpha = (iterObj.persianMonth !== this._selectedDateObj.persianMonth) ? '-alpha' : '';
 
-      let shamsiLabel = new St.Label({ text: str.format(p_iter.day), style_class: 'pcalendar-pdate-day-txt' });
+      let shamsiLabel = new St.Label({
+        text: ((dateDisplay.persian) ? str.numbersFormat(iterObj.persianDay) : ' '),
+        style_class: 'pcalendar-pdate-day-txt'
+      });
       if (eventStatus.persian.hasEvent) shamsiLabel.style_class += ' pcalendar-underline';
       shamsiLabel.style_class += ((eventStatus.persian.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-pdate-color') + alpha;
 
-      let ghamariLabel = new St.Label({ text: str.format(h_iter.day), style_class: 'pcalendar-hdate-day-txt' });
-      if (eventStatus.hijri.hasEvent) ghamariLabel.style_class += ' pcalendar-underline';
-      ghamariLabel.style_class += ((eventStatus.hijri.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-hdate-color') + alpha;
+      let ghamariLabel = new St.Label({
+        text: ((dateDisplay.islamic) ? str.numbersFormat(iterObj.islamicDay) : ' '),
+        style_class: 'pcalendar-hdate-day-txt'
+      });
+      if (eventStatus.islamic.hasEvent) ghamariLabel.style_class += ' pcalendar-underline';
+      ghamariLabel.style_class += ((eventStatus.islamic.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-hdate-color') + alpha;
 
-      let miladiLabel = new St.Label({ text: iter.getDate().toString(), style_class: 'pcalendar-gdate-day-txt' });
+      let miladiLabel = new St.Label({
+        text: ((dateDisplay.gregorian) ? iterObj.gregorianDay.toString() : ' '),
+        style_class: 'pcalendar-gdate-day-txt'
+      });
       if (eventStatus.gregorian.hasEvent) miladiLabel.style_class += ' pcalendar-underline';
       miladiLabel.style_class += ((eventStatus.gregorian.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-gdate-color') + alpha;
 
@@ -421,52 +345,31 @@ Calendar.prototype = {
 
 
       let dayButton = new St.Button({ child: datesOfDay });
+      let iterObj_julianDay = iterObj.julianDay;
       dayButton.connect('clicked', Lang.bind(this, function () {
-        this.setDate(p_iter);
+        this._selectedDateObj.julianDay = iterObj_julianDay;
+        this._update();
       }));
 
 
       let styleClass = 'pcalendar-day-button';
 
-      // if (events[1] && _sameDay(this._selectedDate, p_iter)) {
-      //   styleClass += ' calendar-nonwork-day111 pcalendar-nonwork-day pcalendar-bg-orange';
-      // } else if (events[1]) {
-      //   styleClass += ' calendar-nonwork-day111 pcalendar-nonwork-day pcalendar-bg-red';
-      // } else {
-      //   styleClass += ' calendar-work-day111 pcalendar-work-day ';
-      // }
-
-      // if (row === 2) {
-      //   styleClass = ' calendar-day-top111 ' + styleClass;
-      // }
-      // if (iter.getDay() === this._weekStart - 1) {
-      //   styleClass = ' calendar-day-left111 ' + styleClass;
-      // }
-
       {
         let bgColorStyle = '';
-        if (events[1] && _sameDay(now, p_iter)) {// Holiday + Today
+        if (events[1] && iterObj.julianDay === nowObj.julianDay) {// Holiday + Today
           bgColorStyle = ' pcalendar-bg-orange ';
-        } else if (_sameDay(now, p_iter)) {// Today
+        } else if (iterObj.julianDay === nowObj.julianDay) {// Today
           bgColorStyle = ' pcalendar-bg-green ';
         } else if (events[1]) {// Holiday
           bgColorStyle = ' pcalendar-bg-red ';
         }
         styleClass += bgColorStyle;
-        if (_sameDay(this._selectedDate, p_iter)) selectedDateStyleClass = (bgColorStyle === '') ? ' pcalendar-bg-grey ' : bgColorStyle;
+        if (iterObj.julianDay === this._selectedDateObj.julianDay) selectedDateStyleClass = (bgColorStyle === '') ? ' pcalendar-bg-grey ' : bgColorStyle;
       }
-      // if (events[0][0] !== undefined) {
-      //   styleClass += ' pcalendar-day-with-events ';
-      // }
 
-      if (p_iter.month !== this._selectedDate.month) {
-        // styleClass += ' calendar-other-month-day111 ';
-        // if (events[1]) {
+      if (iterObj.persianMonth !== this._selectedDateObj.persianMonth) {
         styleClass += ' pcalendar-other-month-day';
-        // } else {
-        //   styleClass += 'pcalendar-other-month-nonwork-day ';
-        // }
-      } else if (_sameDay(this._selectedDate, p_iter)) {
+      } else if (this._selectedDateObj.julianDay === iterObj.julianDay) {
         styleClass += ' pcalendar-active-day';
       } else {
         styleClass += ' pcalendar-notactive-day';
@@ -483,7 +386,7 @@ Calendar.prototype = {
       // button.add_style_pseudo_class(styleClass);
       {
         let [left, top, width, height] = _rotate(
-          Math.abs(this._colPosition - (7 + iter.getDay() - this._weekStart) % 7),
+          Math.abs(_colPosition(this._rtl) - ((7 + iterObj.dayOfWeek - weekStart) % 7)),
           row,
           1,
           1
@@ -492,17 +395,12 @@ Calendar.prototype = {
       }
 
 
-      iter.setDate(iter.getDate() + 1);
+      iterObj.julianDay++;//add 1 Day
 
 
-      if (iter.getDay() === this._weekStart) {
+      if (iterObj.dayOfWeek === weekStart) {
         // We stop on the first "first day of the week" after the month we are displaying
-        let tmp_p_iter = PersianDate.PersianDate.gregorianToPersian(
-          iter.getFullYear(),
-          iter.getMonth() + 1,
-          iter.getDate()
-        );
-        if (tmp_p_iter.month > this._selectedDate.month || tmp_p_iter.year > this._selectedDate.year) {
+        if (iterObj.persianMonth > this._selectedDateObj.persianMonth || iterObj.persianYear > this._selectedDateObj.persianYear) {
           break;
         }
         row++;
@@ -520,15 +418,15 @@ Calendar.prototype = {
     this.actorLeft.layout_manager.attach(_datesBox, 0, 0, 1, 1);
 
     // add persian date
-    if (Schema.get_boolean('persian-display')) {
+    if (dateDisplay.persian) {
       let dateLabel = new St.Label({
-        text: str.format(
+        text: str.numbersFormat(
           this.format(
             '%WW\n' + Schema.get_string('persian-display-format'),
-            this._selectedDate.day,
-            this._selectedDate.month,
-            this._selectedDate.year,
-            g_selectedDate.getDay(),
+            this._selectedDateObj.persianDay,
+            this._selectedDateObj.persianMonth,
+            this._selectedDateObj.persianYear,
+            this._selectedDateObj.dayOfWeek,
             'persian'
           )
         ) + ' هجری شمسی',
@@ -543,17 +441,17 @@ Calendar.prototype = {
       // }));
     }
 
-    // add hijri date
-    if (Schema.get_boolean('hijri-display')) {
+    // add islamic date
+    if (dateDisplay.islamic) {
       let dateLabel = new St.Label({
-        text: str.format(
+        text: str.numbersFormat(
           this.format(
-            Schema.get_string('hijri-display-format'),
-            h_selectedDate.day,
-            h_selectedDate.month,
-            h_selectedDate.year,
-            g_selectedDate.getDay(),
-            'hijri'
+            Schema.get_string('islamic-display-format'),
+            this._selectedDateObj.islamicDay,
+            this._selectedDateObj.islamicMonth,
+            this._selectedDateObj.islamicYear,
+            this._selectedDateObj.dayOfWeek,
+            'islamic'
           )
         ) + ' هجری قمری',
         // expand: true, x_fill: true, y_fill: true,
@@ -568,14 +466,14 @@ Calendar.prototype = {
     }
 
     // add gregorian date
-    if (Schema.get_boolean('gregorian-display')) {
+    if (dateDisplay.gregorian) {
       let dateLabel = new St.Label({
         text: this.format(
           Schema.get_string('gregorian-display-format'),
-          g_selectedDate.getDate(),
-          g_selectedDate.getMonth() + 1,
-          g_selectedDate.getFullYear(),
-          g_selectedDate.getDay(),
+          this._selectedDateObj.gregorianDay,
+          this._selectedDateObj.gregorianMonth,
+          this._selectedDateObj.gregorianYear,
+          this._selectedDateObj.dayOfWeek,
           'gregorian'
         ) + ' میلادی',
         // expand: true, x_fill: true, y_fill: true,
@@ -589,15 +487,14 @@ Calendar.prototype = {
       // }));
     }
 
-
     // add event box for selected date
-    events = ev.getEvents(g_selectedDate);
+    events = ev.getEvents(this._selectedDateObj.all);
     let evTopPosition = 0;
     for (let evObj of events[0]) {
       let _eventsBox = new St.BoxLayout();
       this.actorLeft.layout_manager.attach(_eventsBox, 0, ++evTopPosition, 1, 1);
       let evLabel = new St.Label({
-        text: str.format(evObj.symbol + ' ' + evObj.event),
+        text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
         // expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE,

@@ -4,7 +4,7 @@ function iranLunar() {
 
 iranLunar.prototype = {
   name: 'مناسبت‌های مذهبی ایران',
-  type: 'hijri',
+  type: 'islamic',
   /* [month][day] = [title, isHoliday] */
   events: [[], [], [], [], [], [], [], [], [], [], [], [], []],
 
