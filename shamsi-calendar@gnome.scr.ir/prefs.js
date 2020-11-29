@@ -3,8 +3,8 @@ const Gio = imports.gi.Gio;
 const Gdk = imports.gi.Gdk;
 const Lang = imports.lang;
 
-const Gettext = imports.gettext.domain('shamsi-calendar');
-const _ = Gettext.gettext;
+// const Gettext = imports.gettext.domain('shamsi-calendar');
+// const _ = Gettext.gettext;
 
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let convenience = extension.imports.convenience;
@@ -234,8 +234,9 @@ const App = new Lang.Class({
 
     // TAB and DATES FORMAT
     let tabs = {
-      events: "مناسبت‌ها",
-      prayTimes: "اوقات شرعی"
+      dateConvert: "تبدیل تاریخ",
+      prayTimes: "اوقات شرعی",
+      events: "مناسبت‌ها"
     };
     this.el['default-tab'] = new Gtk.ComboBoxText();
     for (let i in tabs) this.el['default-tab'].append(i, tabs[i]);
