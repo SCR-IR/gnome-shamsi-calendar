@@ -10,6 +10,8 @@ const convenience = extension.imports.convenience;
 const PersianDate = extension.imports.PersianDate;
 const Tarikh = extension.imports.Tarikh;
 
+const PrayTimes = extension.imports.PrayTimes.prayTimes;
+
 const str = extension.imports.strFunctions;
 const Events = extension.imports.Events;
 
@@ -33,6 +35,7 @@ function Calendar() {
 Calendar.prototype = {
   _selectedDateObj: new Tarikh.TarikhObject(),
   _rtl: (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL),
+  _selectedTab: Schema.get_string('default-tab'),
   // weekdayAbbr: ['شـ', 'یـ', 'د', 'سـ', 'چـ', 'پـ', 'جـ'],
 
   _init: function () {
@@ -57,6 +60,8 @@ Calendar.prototype = {
     this.actor.layout_manager.attach(this.actorRight, 1, 0, 1, 1);
 
     this.actorRight.connect('scroll-event', Lang.bind(this, this._onScroll));
+
+    PrayTimes.setMethod(Schema.get_string('praytime-calc-method-main'));
 
     this._buildHeader();
   },
@@ -255,7 +260,7 @@ Calendar.prototype = {
       str.numbersFormat(this._selectedDateObj.persianYear) +
       ' »\n' +
       str.numbersFormat(
-        this.format(
+        str.dateStrFormat(
           '%MM %Y',
           this._selectedDateObj.islamicDay,
           this._selectedDateObj.islamicMonth,
@@ -265,7 +270,7 @@ Calendar.prototype = {
         )
       ) +
       ' | ' +
-      this.format(
+      str.dateStrFormat(
         '%MM %Y',
         this._selectedDateObj.gregorianDay,
         this._selectedDateObj.gregorianMonth,
@@ -417,12 +422,39 @@ Calendar.prototype = {
     let _datesBox = new St.BoxLayout({ vertical: true, style_class: 'pcalendar-dates-show ' + selectedDateStyleClass });
     this.actorLeft.layout_manager.attach(_datesBox, 0, 0, 1, 1);
 
+    let rooz = this._selectedDateObj.julianDay - nowObj.julianDay;
+    if (rooz === 0) {
+      rooz = 'امروز';
+    } else if (rooz < 0) {
+      rooz = (-1 * rooz) + ' روز قبل';
+    } else {
+      rooz = rooz + ' روز بعد';
+    }
+    let dateLabel = new St.Label({
+      text: str.numbersFormat(
+        str.dateStrFormat(
+          '%WW',
+          this._selectedDateObj.persianDay,
+          this._selectedDateObj.persianMonth,
+          this._selectedDateObj.persianYear,
+          this._selectedDateObj.dayOfWeek,
+          'persian'
+        ) + '   ( ' + rooz + ' )'
+      ),
+      // expand: true, x_fill: true, y_fill: true,
+      x_align: Clutter.ActorAlign.CENTER,
+      x_expand: true,
+      style_class: 'pcalendar-dates-show-label pcalendar-txt-pdate-color'
+    });
+    _datesBox.add(dateLabel/*, { expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE }*/);
+
+
     // add persian date
     if (dateDisplay.persian) {
       let dateLabel = new St.Label({
         text: str.numbersFormat(
-          this.format(
-            '%WW\n' + Schema.get_string('persian-display-format'),
+          str.dateStrFormat(
+            Schema.get_string('persian-display-format'),
             this._selectedDateObj.persianDay,
             this._selectedDateObj.persianMonth,
             this._selectedDateObj.persianYear,
@@ -445,7 +477,7 @@ Calendar.prototype = {
     if (dateDisplay.islamic) {
       let dateLabel = new St.Label({
         text: str.numbersFormat(
-          this.format(
+          str.dateStrFormat(
             Schema.get_string('islamic-display-format'),
             this._selectedDateObj.islamicDay,
             this._selectedDateObj.islamicMonth,
@@ -468,7 +500,7 @@ Calendar.prototype = {
     // add gregorian date
     if (dateDisplay.gregorian) {
       let dateLabel = new St.Label({
-        text: this.format(
+        text: str.dateStrFormat(
           Schema.get_string('gregorian-display-format'),
           this._selectedDateObj.gregorianDay,
           this._selectedDateObj.gregorianMonth,
@@ -486,24 +518,245 @@ Calendar.prototype = {
       //   St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, this.text)
       // }));
     }
-
-    // add event box for selected date
-    events = ev.getEvents(this._selectedDateObj.all);
     let evTopPosition = 0;
-    for (let evObj of events[0]) {
-      let _eventsBox = new St.BoxLayout();
-      this.actorLeft.layout_manager.attach(_eventsBox, 0, ++evTopPosition, 1, 1);
-      let evLabel = new St.Label({
-        text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
-        x_align: Clutter.ActorAlign.CENTER,
+
+
+
+    let _eventsBox3 = new St.BoxLayout({
+      style: 'background-color: #323236; margin-bottom: 5px;'
+    });
+
+    let tabBtn = new St.Button({
+      label: 'اوقات شرعی',
+      style_class: 'pcalendar-tab' +
+        ((this._selectedTab === 'prayTimes') ? ' pcalendar-selected-tab' : '')
+    });
+    tabBtn.connect('clicked', () => {
+      this._selectedTab = 'prayTimes';
+      this._update();
+    });
+    _eventsBox3.add(tabBtn);
+
+    tabBtn = new St.Button({
+      label: 'مناسبت‌ها',
+      style_class: 'pcalendar-tab' +
+        ((this._selectedTab === 'events') ? ' pcalendar-selected-tab' : '')
+    });
+    tabBtn.connect('clicked', () => {
+      this._selectedTab = 'events';
+      this._update();
+    });
+    _eventsBox3.add(tabBtn);
+
+    _eventsBox3.add(new St.Button({
+      label: '',
+      style_class: 'pcalendar-tab-space',
+      x_expand: true
+    }));
+
+    this.actorLeft.layout_manager.attach(_eventsBox3, 0, ++evTopPosition, 1, 1);
+
+
+
+    if (this._selectedTab === 'events') {
+
+      // add events box for selected date
+      events = ev.getEvents(this._selectedDateObj.all);
+      for (let evObj of events[0]) {
+        let _eventsBox = new St.BoxLayout();
+        this.actorLeft.layout_manager.attach(_eventsBox, 0, ++evTopPosition, 1, 1);
+        let evLabel = new St.Label({
+          text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
+          x_align: Clutter.ActorAlign.CENTER,
+          x_expand: true,
+          // expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE,
+          style_class: 'pcalendar-event-label ' + ((evObj.holiday) ? 'pcalendar-event-label-nonwork' : 'pcalendar-event-label-work')
+        });
+        evLabel.clutter_text.line_wrap = true;
+        evLabel.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
+        evLabel.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+        _eventsBox.add(evLabel/*, { expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE }*/);
+      }
+
+    } else if (this._selectedTab === 'prayTimes') {
+
+      // add praytimes box for selected date
+      let _prayBox_v = new St.BoxLayout({
+        style_class: 'pcalendar-praytimes-container',
+        vertical: true,
         x_expand: true,
-        // expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE,
-        style_class: 'pcalendar-event-label ' + ((evObj.holiday) ? 'pcalendar-event-label-nonwork' : 'pcalendar-event-label-work')
+        x_align: Clutter.ActorAlign.CENTER
       });
-      evLabel.clutter_text.line_wrap = true;
-      evLabel.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
-      evLabel.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
-      _eventsBox.add(evLabel/*, { expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE }*/);
+
+      const azanMethods = [
+        Schema.get_string('praytime-calc-method-ehtiyat'),
+        Schema.get_string('praytime-calc-method-main')
+        // 'Tehran',
+        // 'Jafari',
+        // 'MWL',
+        // 'ISNA',
+        // 'Egypt',
+        // 'Makkah',
+        // 'Karachi'
+      ]
+      let _prayTimes = {};
+      for (let method of azanMethods) {
+        let PT = PrayTimes;
+        PT.setMethod(method);
+        _prayTimes[method] = PT.getTimes(
+          new Date(this._selectedDateObj.timeStamp),
+          [
+            Schema.get_double('praytime-lat'),
+            Schema.get_double('praytime-lng')
+          ]
+        );
+      }
+
+      let i = 0;
+
+
+      let _prayColumnBox = new St.BoxLayout({ x_expand: false });
+
+      {
+        let playAzan = Schema.get_boolean('praytime-play-and-notify');
+        let playAzanBtn = new St.Button({
+          child: new St.Label({
+            text: 'اعلان ' + ((playAzan) ? '☑' : '☐'),
+            x_align: Clutter.ActorAlign.CENTER,
+            x_expand: true,
+            style: 'text-align: center; color: #' + ((playAzan) ? '269' : '666')
+          })
+        });
+        playAzanBtn.connect('clicked', () => {
+          Schema.set_boolean('praytime-play-and-notify', !playAzan);
+          this._update();
+        });
+        let ofogh = new St.Label({
+          text: 'به اُفق ' + Schema.get_string('praytime-city'),
+          x_align: Clutter.ActorAlign.CENTER,
+          x_expand: true,
+          style: 'text-align: right; color: #b50'
+        });
+        let hBox = new St.BoxLayout({ x_expand: false });
+        hBox.add(playAzanBtn);
+        hBox.add(ofogh);
+        _prayBox_v.add(hBox);
+      }
+
+
+      let ehtiyatShow = Schema.get_boolean('praytime-ehtiyat-show');
+      if (ehtiyatShow) _prayColumnBox.add(new St.Label({
+        text: 'احتیاط',
+        style_class: 'pcalendar-praytimes-time pcalendar-txt-grey pcalendar-underline',
+        x_expand: false,
+      }));
+      _prayColumnBox.add(new St.Label({
+        text: 'زمان',
+        style_class: 'pcalendar-praytimes-time pcalendar-txt-grey pcalendar-underline',
+        x_expand: false,
+        style: 'text-align: center'
+      }));
+      _prayColumnBox.add(new St.Label({
+        text: 'اوقات شرعی',
+        style_class: 'pcalendar-praytimes-tname pcalendar-txt-grey pcalendar-underline',
+        x_expand: false,
+      }));
+      _prayBox_v.add(_prayColumnBox);
+
+      _prayColumnBox = new St.BoxLayout({ x_expand: false });
+      for (let tName in _prayTimes[azanMethods[0]]) {
+        // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+        const settings = getPrayTimeSetting(tName);
+        if (
+          settings.ShowTime === 'never' ||
+          (settings.ShowTime === 'ramazan' && this._selectedDateObj.islamicMonth !== 9)
+        ) continue;
+        // settings.SoundUri = Schema.get_string('praytime-' + tName + '-sound-uri');
+
+        let oghat = { method: [], timeStr: [], minutes: [] };
+        for (let i in azanMethods) {
+          oghat.method[i] = parseInt(i);//azanMethods[i]
+          oghat.timeStr[i] = _prayTimes[azanMethods[i]/*oghat.method[i]*/][tName];
+          oghat.minutes[i] = timeStrToMinutes(oghat.timeStr[i]);
+        }
+
+        let ehtiyat = (
+          tName === 'imsak' ||
+          tName === 'sunrise' ||
+          tName === 'sunset' ||
+          tName === 'midnight'
+        ) ? Math.min(...oghat.minutes) : Math.max(...oghat.minutes);
+
+        for (let i in oghat.method) {
+          if (i == 0 && !ehtiyatShow) continue;
+          _prayColumnBox.add(new St.Label({
+            text: str.numbersFormat((oghat.method[i] === 1 || (oghat.minutes[i] === ehtiyat && oghat.minutes[0] !== oghat.minutes[1])) ? oghat.timeStr[i] : ''),
+            style_class: 'pcalendar-praytimes-time ' +
+              ((oghat.minutes[i] === ehtiyat) ? 'pcalendar-txt-green' : 'pcalendar-txt-grey'),
+            x_expand: false,
+          }));
+        }
+
+        _prayColumnBox.add(new St.Label({
+          text: PrayTimes.persianMap[tName],
+          style_class: 'pcalendar-praytimes-tname',
+          x_expand: false,
+        }));
+        if (true || ++i % 2 === 0) {
+          _prayBox_v.add(_prayColumnBox);
+          _prayColumnBox = new St.BoxLayout({ x_expand: false });
+        }
+      }
+
+
+
+      this.actorLeft.layout_manager.attach(_prayBox_v, 0, ++evTopPosition, 1, 1);
+
+      {
+        const persianDate = nowObj.persian;
+        const iranTZO = (
+          persianDate[1] > 6 ||
+          (persianDate[1] === 6 && persianDate[2] === 31) ||
+          (persianDate[1] === 1 && persianDate[2] === 1)
+        ) ? -210 : -270;
+        if ((new Date().getTimezoneOffset()) !== iranTZO) {
+          _prayBox_v.add(new St.Label({
+            text: 'منطقه‌ی زمانی سیستم بررسی شود!',
+            x_align: Clutter.ActorAlign.CENTER,
+            x_expand: true,
+            style: 'text-align: right; color: #a22'
+          }));
+        }
+      }
+
     }
+
   }
+
 };
+
+function getPrayTimeSetting(tName) {
+  // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+  const [
+    ShowTime,
+    TextNotify,
+    PlaySound,
+    CalcMethod,
+    SoundId
+  ] = Schema.get_string('praytime-' + tName + '-setting').split(',');
+  return {
+    ShowTime,
+    TextNotify,
+    PlaySound,
+    CalcMethod,
+    SoundId
+  };
+}
+
+function timeStrToMinutes(timeStr) {
+  let [hour, min] = timeStr.split(':');
+  hour = parseInt(hour);
+  if (hour === 0) hour = 24;
+  return ((hour * 60) + parseInt(min));
+}
+
