@@ -1,0 +1,105 @@
+<schemalist gettext-domain="gnome-shell-extensions-shamsi-calendar">
+  <enum id="org.gnome.shell.extensions.shamsi-calendar.positions">
+    <value nick="left" value="0"/>
+    <value nick="center" value="1"/>
+    <value nick="right" value="2"/>
+  </enum>
+  <schema id="org.gnome.shell.extensions.shamsi-calendar" path="/org/gnome/shell/extensions/shamsi-calendar/">
+    <key name="hijri-display" type="b">
+      <default>true</default>
+      <summary>Display Hijri date below the calendar</summary>
+      <description>Set to true to display Hijri date.</description>
+    </key>
+    <key name="gregorian-display" type="b">
+      <default>true</default>
+      <summary>Display Gregorian date below the calendar</summary>
+      <description>Set to true to display Gregorian date.</description>
+    </key>
+    <key name="persian-display" type="b">
+      <default>true</default>
+      <summary>Display Persian date below the calendar</summary>
+      <description>Set to true to display Persian date.</description>
+    </key>
+    <key name="hijri-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Hijri date format</summary>
+      <description>Hijri date format</description>
+    </key>
+    <key name="persian-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Persian date format</summary>
+      <description>Persian date format</description>
+    </key>
+    <key name="gregorian-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Gregorian date format</summary>
+      <description>Gregorian date format</description>
+    </key>
+    <key name="event-iran-lunar" type="b">
+      <default>true</default>
+      <summary>Display official Iranian lunar events</summary>
+      <description>Display official Iranian lunar events.</description>
+    </key>
+    <key name="event-iran-solar" type="b">
+      <default>true</default>
+      <summary>Display official Iranian solar events</summary>
+      <description>Display official Iranian solar events.</description>
+    </key>
+    <key name="event-persian" type="b">
+      <default>false</default>
+      <summary>Display old Persian events</summary>
+      <description>Display old Persian events.</description>
+    </key>
+    <key name="rotaton-to-vertical" type="b">
+      <default>false</default>
+      <summary>Rotation Table of days to vertical</summary>
+      <description>Rotation Table of days to vertical.</description>
+    </key>
+    <key name="event-world" type="b">
+      <default>true</default>
+      <summary>Display official international events</summary>
+      <description>Display official international events.</description>
+    </key>
+    <key name="widget-format" type="s">
+      <default>'%d'</default>
+      <summary>Widget date format</summary>
+      <description>Widget date format</description>
+    </key>
+    <key name="startup-notification" type="b">
+      <default>true</default>
+      <summary>Startup Notification</summary>
+      <description>Show notification on start up</description>
+    </key>
+    <key name="custom-color" type="b">
+      <default>true</default>
+      <summary>Use custom color</summary>
+      <description>Use custom color.</description>
+    </key>
+    <key name="not-holiday-color" type="s">
+      <default>'#99ccff'</default>
+      <summary>Not-holiday custom color.</summary>
+      <description>Not-holiday custom color.</description>
+    </key>
+    <key name="holiday-color" type="s">
+      <default>'#ff7777'</default>
+      <summary>Holiday custom color</summary>
+      <description>Holiday custom color.</description>
+    </key>
+    <key name="position" enum="org.gnome.shell.extensions.shamsi-calendar.positions">
+      <default>'right'</default>
+      <summary>Where to display calendar (left, center, right)</summary>
+    </key>
+    <!--
+    <key name="custom-font" type="b">
+      <default>false</default>
+      <summary>Use custom font</summary>
+      <description>Use custom font.</description>
+    </key>
+    <key name="font" type="s">
+      <default>''</default>
+      <summary>Custom font</summary>
+      <description>Custom font.</description>
+    </key>
+    -->
+  </schema>
+</schemalist>

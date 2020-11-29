@@ -1,0 +1,4 @@
+*.zip
+.idea
+_build
+_old
