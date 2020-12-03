@@ -656,12 +656,26 @@ const App = new Lang.Class({
           this.el['praytime-' + tName + '-setting_PlaySound'].append(i, list[i]);
         }
         this.el['praytime-' + tName + '-setting_PlaySound'].set_active_id(PlaySound);
+        sensitiveFunc = (playSound, tName_) => {
+          let active = (playSound !== 'never');
+          let els = ['praytime-' + tName_ + '-setting_SoundId', 'praytime-' + tName_ + '-setting_CalcMethod'];
+          els.forEach((el) => this.el[el].set_sensitive(active));
+          //
+          let newSoundId = this.el['praytime-' + tName_ + '-setting_SoundId'].get_active_id().toString();
+          this.el['praytime-' + tName_ + '-sound-uri'].set_sensitive(active && newSoundId === '_custom_');
+        }
+        sensitiveFunc(PlaySound, tName);
         this.el['praytime-' + tName + '-setting_PlaySound'].connect('changed', () => {
-          this.setPrayTimeSetting(tName, 'PlaySound', this.el['praytime-' + tName + '-setting_PlaySound'].get_active_id());
+          let playSound = this.el['praytime-' + tName + '-setting_PlaySound'].get_active_id();
+          this.setPrayTimeSetting(tName, 'PlaySound', playSound);
+          sensitiveFunc(playSound, tName);
         });
 
         //TextNotify
-        this.el['praytime-' + tName + '-setting_TextNotify'] = new Gtk.ComboBoxText();
+        this.el['praytime-' + tName + '-setting_TextNotify'] = new Gtk.ComboBoxText({
+          margin_right: 4,
+          margin_left: 4
+        });
         for (let i in list) {
           this.el['praytime-' + tName + '-setting_TextNotify'].append(i, list[i]);
         }
