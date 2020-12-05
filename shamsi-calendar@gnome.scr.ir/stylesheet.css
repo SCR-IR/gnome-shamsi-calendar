@@ -163,6 +163,9 @@
 .pcalendar-txt-grey {
   color: #cccccc;
 }
+.pcalendar-txt-white {
+  color: #ffffff;
+}
 
 .pcalendar-system-tray {
   min-width: 1.5em;

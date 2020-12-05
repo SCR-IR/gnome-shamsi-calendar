@@ -503,6 +503,11 @@ Calendar.prototype = {
     let _eventsBox3 = new St.BoxLayout({
       style: 'background-color: #323236; margin-bottom: 5px;'
     });
+    _eventsBox3.add(new St.Button({
+      label: '',
+      style_class: 'pcalendar-tab-space',
+      x_expand: true
+    }));
     let tabs = {
       dateConvert: "تبدیل تاریخ",
       prayTimes: "اوقات شرعی",
@@ -520,11 +525,6 @@ Calendar.prototype = {
       });
       _eventsBox3.add(tabBtn);
     }
-    _eventsBox3.add(new St.Button({
-      label: '',
-      style_class: 'pcalendar-tab-space',
-      x_expand: true
-    }));
     this.actorLeft.layout_manager.attach(_eventsBox3, 0, ++evTopPosition, 1, 1);
 
 
@@ -670,7 +670,7 @@ Calendar.prototype = {
 
         _prayColumnBox.add(new St.Label({
           text: PrayTimes.persianMap[tName],
-          style_class: 'pcalendar-praytimes-tname',
+          style_class: 'pcalendar-praytimes-tname pcalendar-txt-white',
           x_expand: false,
         }));
         if (true || ++i % 2 === 0) {
