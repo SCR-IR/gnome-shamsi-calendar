@@ -326,7 +326,6 @@ const ShamsiCalendar = new Lang.Class({
       if (Schema.get_boolean('custom-color')) {
         _mainLable.set_style('color: ' + Schema.get_string(_labelSchemaName()));
       }
-      // that._calendar._update();
     }
     if (this._prayerTimeout) {
       MainLoop.source_remove(this._prayerTimeout);
@@ -578,12 +577,16 @@ const ShamsiCalendar = new Lang.Class({
   */
 });
 
-function notify(msg, details) {
-  let source = new MessageTray.SystemNotificationSource();
-  messageTray.add(source);
+function notify(msg, details, icon = 'x-office-calendar') {
+  let source = new MessageTray.Source('تقویم', icon);
+  Main.messageTray.add(source);
   let notification = new MessageTray.Notification(source, msg, details);
   notification.setTransient(true);
-  source.notify(notification);
+  if (typeof (source.showNotification) === "function") {
+    source.showNotification(notification);// new method
+  } else {
+    source.notify(notification);// old method
+  }
 }
 
 function init(metadata) {
@@ -760,7 +763,6 @@ function checkPrayTime() {
     _prayTimeIs = tName;
     player.setVolume(Schema.get_double('praytime-play-valume'));
     player.setUri(settings.SoundUri);
-    // player.onEnd = () => that._calendar._update();
     player.play();
     if (Schema.get_boolean('custom-color')) {
       _mainLable.set_style('color: ' + Schema.get_string('pray-time-color'));
