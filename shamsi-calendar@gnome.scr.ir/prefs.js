@@ -1201,8 +1201,8 @@ const App = new Lang.Class({
 
     resetBtn = new Gtk.Button({ label: '\nبازنشانی همه‌ی تنظیمات بالا به‌صورت یکجا\n' });
     resetBtn.connect('clicked', () => {
-      this._resetPrayTimesAdvanceSettings();
       this._resetConfig();
+      this._resetPrayTimesAdvanceSettings();
     });
     this.vbox6.add(resetBtn);
 
