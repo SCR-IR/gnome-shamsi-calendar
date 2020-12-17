@@ -670,7 +670,7 @@ function timeStrToMinutes(timeStr) {
 
 function checkPrayTime() {
   let now = new Date();
-  if (now.getSeconds() >= 3 || !Schema.get_boolean('praytime-play-and-notify')) return;
+  if (now.getSeconds() > 3 || !Schema.get_boolean('praytime-play-and-notify')) return;
 
 
 
@@ -717,6 +717,7 @@ function checkPrayTime() {
     // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
     if (timeStr !== nowHM) continue;//now is not pray time
     if (_prayTimeIs === tName) continue;//do not repeat sound in pray time
+    _prayTimeIs = tName;
     let islamic = Tarikh.gregorian_to_islamic(now.getFullYear(), now.getMonth() + 1, now.getDate());
     if (
       settings.TextNotify === 'always' ||
@@ -760,7 +761,6 @@ function checkPrayTime() {
       };
       settings.SoundUri = soundsUri + sounds[settings.SoundId][1];
     }
-    _prayTimeIs = tName;
     player.setVolume(Schema.get_double('praytime-play-valume'));
     player.setUri(settings.SoundUri);
     player.play();
@@ -772,3 +772,4 @@ function checkPrayTime() {
   }
 
 }
+
