@@ -9,8 +9,8 @@ const MessageTray = imports.ui.messageTray;
 const Clutter = imports.gi.Clutter;
 const Shell = imports.gi.Shell;
 
-const Gettext = imports.gettext.domain('shamsi-calendar');
-const _ = Gettext.gettext;
+// const Gettext = imports.gettext.domain('shamsi-calendar');
+// const _ = Gettext.gettext;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const extension = ExtensionUtils.getCurrentExtension();
@@ -141,12 +141,12 @@ const ShamsiCalendar = new Lang.Class({
 
     this._todayJD = '';
 
-    let vbox = new St.BoxLayout({ vertical: true, style_class: '-pcalendar pcalendar-font' });
+    let vbox = new St.BoxLayout({ vertical: true, style_class: 'pcalendar-font' });
     let calendar = new PopupMenu.PopupBaseMenuItem({
       activate: false,
       hover: false,
       can_focus: false,
-      style_class: '-pcalendar pcalendar-font'
+      style_class: 'pcalendar-font'
     });
     calendar.actor.add_child(vbox);
 
@@ -157,34 +157,41 @@ const ShamsiCalendar = new Lang.Class({
 
     this._calendar.actor.add_style_class_name('pcalendar pcalendar-font');
 
-    this._generateConverterPart();
+    //// this._generateConverterPart();
 
     // action buttons
-    let actionButtons = new PopupMenu.PopupBaseMenuItem({
-      reactive: false,
-      can_focus: false,
+    // let actionButtons = new PopupMenu.PopupBaseMenuItem({
+    //   reactive: false,
+    //   can_focus: false,
+    //   style_class: 'pcalendar pcalendar-font pcalendar-bottom-menu'
+    // });
+    // this.menu.addMenuItem(actionButtons);
+    let actionButtons = new St.BoxLayout({
+      vertical: false,
+      // reactive: false,
+      // can_focus: false,
       style_class: 'pcalendar pcalendar-font pcalendar-bottom-menu'
     });
-    this.menu.addMenuItem(actionButtons);
+    vbox.add_actor(actionButtons);////
 
 
 
     // Add preferences button
     let icon = new St.Icon({
       icon_name: 'emblem-system-symbolic',
-      style_class: 'popup-menu-icon calendar-popup-menu-icon pcalendar-preferences-button-icon'
+      icon_size: 25,
+      style: 'color: #3af'
+      // style_class: 'pcalendar-preferences-button-icon'
     });
-
     let preferencesIcon = new St.Button({
       child: icon,
       reactive: true,
       can_focus: true,
-      style_class: 'system-menu-action pcalendar-preferences-button'
+      style_class: 'pcalendar-preferences-button'
     });
     preferencesIcon.connect('clicked', openExtensionSetting);
-
-    actionButtons.actor.add(preferencesIcon);
-
+    actionButtons.add(preferencesIcon);
+    // actionButtons.actor.add(preferencesIcon);
 
 
 
@@ -192,7 +199,9 @@ const ShamsiCalendar = new Lang.Class({
 
     let icon3 = new St.Icon({
       icon_name: 'view-refresh-symbolic',
-      style_class: 'popup-menu-icon calendar-popup-menu-icon pcalendar-preferences-button-icon'
+      icon_size: 25,
+      style: 'color: #1ea'
+      // style_class: 'pcalendar-preferences-button-icon'
     });
     let todayIcon = new St.Button({
       child: icon3,
@@ -200,13 +209,14 @@ const ShamsiCalendar = new Lang.Class({
       can_focus: true,
       // x_expand: true,
       // expand: true, x_fill: false,
-      style_class: 'system-menu-action pcalendar-preferences-button'
+      style_class: 'pcalendar-preferences-button'
     });
     todayIcon.connect('clicked', function () {
       that._calendar._selectedDateObj.setNow();
       that._calendar._update();
     });
-    actionButtons.actor.add(todayIcon/*, { expand: true, x_fill: false }*/);
+    actionButtons.add(todayIcon);
+    // actionButtons.actor.add(todayIcon);
 
 
 
@@ -215,7 +225,9 @@ const ShamsiCalendar = new Lang.Class({
     // Add Nowrooz button
     icon = new St.Icon({
       icon_name: 'emblem-favorite-symbolic',
-      style_class: 'popup-menu-icon calendar-popup-menu-icon pcalendar-preferences-button-icon'
+      icon_size: 25,
+      style: 'color: #c66'
+      // style_class: 'pcalendar-preferences-button-icon'
     });
 
     let nowroozIcon = new St.Button({
@@ -224,7 +236,7 @@ const ShamsiCalendar = new Lang.Class({
       can_focus: true,
       // x_expand: true,
       // expand: true, x_fill: false,
-      style_class: 'system-menu-action pcalendar-preferences-button'
+      style_class: 'pcalendar-preferences-button'
     });
     nowroozIcon.connect('clicked', function () {
       /* calculate exact hour/minute/second of the next new year.
@@ -247,7 +259,8 @@ const ShamsiCalendar = new Lang.Class({
 
       notify(str.numbersFormat(nowrooz) + (day_delta < 7 ? ' * ' : ''));
     });
-    actionButtons.actor.add(nowroozIcon/*, { expand: true, x_fill: false }*/);
+    actionButtons.add(nowroozIcon);
+    // actionButtons.actor.add(nowroozIcon);
 
     this.menu.connect('open-state-changed', Lang.bind(that, function (menu, isOpen) {
       if (isOpen) {
@@ -313,7 +326,6 @@ const ShamsiCalendar = new Lang.Class({
       if (Schema.get_boolean('custom-color')) {
         _mainLable.set_style('color: ' + Schema.get_string(_labelSchemaName()));
       }
-      // that._calendar._update();
     }
     if (this._prayerTimeout) {
       MainLoop.source_remove(this._prayerTimeout);
@@ -322,254 +334,259 @@ const ShamsiCalendar = new Lang.Class({
     this._prayerTimeout = MainLoop.timeout_add(60000 - (new Date().getSeconds() * 1000), Lang.bind(this, this._prayerTimeLoop));
     checkPrayTime();
   },
-
-  _generateConverterPart: function () {
-    // Add date conversion button
-    let converterMenu = new PopupMenu.PopupSubMenuMenuItem('تبدیل تاریخ');
-    converterMenu.actor.set_text_direction(Clutter.TextDirection.RTL);
-    converterMenu.actor.add_style_class_name('pcalendar pcalendar-font pcalendar-converter-menu');
-
-    this.menu.addMenuItem(converterMenu);
-    this.converterVbox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-font', vertical: true, x_expand: true });
-    let converterSubMenu = new PopupMenu.PopupBaseMenuItem({
-      reactive: false,
-      can_focus: false
-    });
-    converterSubMenu.actor.add_child(this.converterVbox);
-    converterMenu.menu.addMenuItem(converterSubMenu);
-
-    let middleBox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-converter-box', x_expand: true });
-
-    this._activeConverter = ConverterTypes.fromPersian;
-
-    let fromPersian = new St.Button({
-      reactive: true,
-      can_focus: true,
-      track_hover: true,
-      x_expand: true,
-      label: 'از هـ.شمسی',
-      accessible_name: 'fromPersian',
-      style_class: 'popup-menu-item button pcalendar-button fromPersian active'
-    });
-    fromPersian.connect('clicked', Lang.bind(this, this._toggleConverter));
-    fromPersian.TypeID = ConverterTypes.fromPersian;
-
-    let fromGregorian = new St.Button({
-      reactive: true,
-      can_focus: true,
-      track_hover: true,
-      x_expand: true,
-      label: 'از میلادی',
-      accessible_name: 'fromGregorian',
-      style_class: 'popup-menu-item button pcalendar-button fromGregorian'
-    });
-    fromGregorian.connect('clicked', Lang.bind(this, this._toggleConverter));
-    fromGregorian.TypeID = ConverterTypes.fromGregorian;
-
-    let fromIslamic = new St.Button({
-      reactive: true,
-      can_focus: true,
-      track_hover: true,
-      x_expand: true,
-      label: 'از هـ.قمری',
-      accessible_name: 'fromIslamic',
-      style_class: 'popup-menu-item button pcalendar-button fromIslamic'
-    });
-    fromIslamic.connect('clicked', Lang.bind(this, this._toggleConverter));
-    fromIslamic.TypeID = ConverterTypes.fromIslamic;
-
-    middleBox.add(fromIslamic);
-    middleBox.add(fromGregorian);
-    middleBox.add(fromPersian);
-
-    this.converterVbox.add(middleBox);
-
-    let converterHbox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-converter-box' });
-
-    this.converterYear = new St.Entry({
-      name: 'year',
-      hint_text: 'سال',
-      can_focus: true,
-      x_expand: true,
-      style_class: 'pcalendar-converter-entry'
-    });
-    this.converterYear.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
-    converterHbox.add(this.converterYear/*, { expand: true }*/);
-
-    this.converterMonth = new St.Entry({
-      name: 'month',
-      hint_text: 'ماه',
-      can_focus: true,
-      x_expand: true,
-      style_class: 'pcalendar-converter-entry'
-    });
-    converterHbox.add(this.converterMonth/*, { expand: true }*/);
-    this.converterMonth.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
-
-    this.converterDay = new St.Entry({
-      name: 'day',
-      hint_text: 'روز',
-      can_focus: true,
-      x_expand: true,
-      style_class: 'pcalendar-converter-entry'
-    });
-    converterHbox.add(this.converterDay/*, { expand: true }*/);
-    this.converterDay.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
-
-    this.converterVbox.add(converterHbox);
-
-    this.convertedDatesVbox = new St.BoxLayout({ vertical: true });
-    this.converterVbox.add(this.convertedDatesVbox);
-  },
-
-  _onModifyConverter: function () {
-    // erase old date
-    let convertedDatesChildren = this.convertedDatesVbox.get_children();
-    for (let i = 0; i < convertedDatesChildren.length; i++) {
-      convertedDatesChildren[i].destroy();
-    }
-
-    let year = this.converterYear.get_text();
-    let month = this.converterMonth.get_text();
-    let day = this.converterDay.get_text();
-
-    // check if data is numerical and not empty
-    if (!day || !month || !year) return;
-
-    [year, month, day] = [parseInt(year), parseInt(month), parseInt(day)];
-
-    let cDateObj = new Tarikh.TarikhObject();
-    let checkInputDate = false;
-
-    switch (this._activeConverter) {
-      case ConverterTypes.fromGregorian:
-        checkInputDate = Tarikh.check_gregorian(year, month, day, false);
-        if (checkInputDate) cDateObj.gregorian = [year, month, day];
-        break;
-      case ConverterTypes.fromPersian:
-        checkInputDate = Tarikh.check_persian(year, month, day, false);
-        if (checkInputDate) cDateObj.persian = [year, month, day];
-        break;
-      case ConverterTypes.fromIslamic:
-        checkInputDate = Tarikh.check_islamic(year, month, day, false);
-        if (checkInputDate) cDateObj.islamic = [year, month, day];
-        break;
-      default:
+  /*
+    _generateConverterPart: function () {
+      // Add date conversion button
+      let converterMenu = new PopupMenu.PopupSubMenuMenuItem('تبدیل تاریخ');
+      converterMenu.actor.set_text_direction(Clutter.TextDirection.RTL);
+      converterMenu.actor.add_style_class_name('pcalendar pcalendar-font pcalendar-converter-menu');
+  
+      this.menu.addMenuItem(converterMenu);
+      this.converterVbox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-font', vertical: true, x_expand: true });
+      let converterSubMenu = new PopupMenu.PopupBaseMenuItem({
+        reactive: false,
+        can_focus: false
+      });
+      converterSubMenu.actor.add_child(this.converterVbox);
+      converterMenu.menu.addMenuItem(converterSubMenu);
+  
+      let middleBox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-converter-box', x_expand: true });
+  
+      this._activeConverter = ConverterTypes.fromPersian;
+  
+      let fromPersian = new St.Button({
+        reactive: true,
+        can_focus: true,
+        track_hover: true,
+        x_expand: true,
+        label: 'از هـ.شمسی',
+        accessible_name: 'fromPersian',
+        style_class: 'popup-menu-item button pcalendar-button fromPersian active'
+      });
+      fromPersian.connect('clicked', Lang.bind(this, this._toggleConverter));
+      fromPersian.TypeID = ConverterTypes.fromPersian;
+  
+      let fromGregorian = new St.Button({
+        reactive: true,
+        can_focus: true,
+        track_hover: true,
+        x_expand: true,
+        label: 'از میلادی',
+        accessible_name: 'fromGregorian',
+        style_class: 'popup-menu-item button pcalendar-button fromGregorian'
+      });
+      fromGregorian.connect('clicked', Lang.bind(this, this._toggleConverter));
+      fromGregorian.TypeID = ConverterTypes.fromGregorian;
+  
+      let fromIslamic = new St.Button({
+        reactive: true,
+        can_focus: true,
+        track_hover: true,
+        x_expand: true,
+        label: 'از هـ.قمری',
+        accessible_name: 'fromIslamic',
+        style_class: 'popup-menu-item button pcalendar-button fromIslamic'
+      });
+      fromIslamic.connect('clicked', Lang.bind(this, this._toggleConverter));
+      fromIslamic.TypeID = ConverterTypes.fromIslamic;
+  
+      middleBox.add(fromIslamic);
+      middleBox.add(fromGregorian);
+      middleBox.add(fromPersian);
+  
+      this.converterVbox.add(middleBox);
+  
+      let converterHbox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-converter-box' });
+  
+      this.converterYear = new St.Entry({
+        name: 'year',
+        hint_text: 'سال',
+        can_focus: true,
+        x_expand: true,
+        style_class: 'pcalendar-converter-entry'
+      });
+      this.converterYear.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
+      converterHbox.add(this.converterYear);
+  
+      this.converterMonth = new St.Entry({
+        name: 'month',
+        hint_text: 'ماه',
+        can_focus: true,
+        x_expand: true,
+        style_class: 'pcalendar-converter-entry'
+      });
+      converterHbox.add(this.converterMonth);
+      this.converterMonth.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
+  
+      this.converterDay = new St.Entry({
+        name: 'day',
+        hint_text: 'روز',
+        can_focus: true,
+        x_expand: true,
+        style_class: 'pcalendar-converter-entry'
+      });
+      converterHbox.add(this.converterDay);
+      this.converterDay.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
+  
+      this.converterVbox.add(converterHbox);
+  
+      this.convertedDatesVbox = new St.BoxLayout({ vertical: true });
+      this.converterVbox.add(this.convertedDatesVbox);
+    },
+  
+    _onModifyConverter: function () {
+      // erase old date
+      let convertedDatesChildren = this.convertedDatesVbox.get_children();
+      for (let i = 0; i < convertedDatesChildren.length; i++) {
+        convertedDatesChildren[i].destroy();
+      }
+  
+      let year = this.converterYear.get_text();
+      let month = this.converterMonth.get_text();
+      let day = this.converterDay.get_text();
+  
+      // check if data is numerical and not empty
+      if (!day || !month || !year) return;
+  
+      [year, month, day] = [parseInt(year), parseInt(month), parseInt(day)];
+  
+      let cDateObj = new Tarikh.TarikhObject();
+      let checkInputDate = false;
+  
+      switch (this._activeConverter) {
+        case ConverterTypes.fromGregorian:
+          checkInputDate = Tarikh.check_gregorian(year, month, day, false);
+          if (checkInputDate) cDateObj.gregorian = [year, month, day];
+          break;
+        case ConverterTypes.fromPersian:
+          checkInputDate = Tarikh.check_persian(year, month, day, false);
+          if (checkInputDate) cDateObj.persian = [year, month, day];
+          break;
+        case ConverterTypes.fromIslamic:
+          checkInputDate = Tarikh.check_islamic(year, month, day, false);
+          if (checkInputDate) cDateObj.islamic = [year, month, day];
+          break;
+        default:
+          return;
+      }
+  
+      if (!checkInputDate) {
+        let button = new St.Button({
+          label: 'تاریـخ وارد‌شده، صحیح نیست!\nاین تاریخ در تقویم وجود ندارد.',
+          x_expand: true,
+          style_class: 'pcalendar-day pcalendar-date-label'
+        });
+        this.convertedDatesVbox.add(button);
         return;
+      }
+  
+      // add persian date
+      if (this._activeConverter !== ConverterTypes.fromPersian) {
+        let button = new St.Button({
+          label: str.numbersFormat(
+            str.dateStrFormat(
+              Schema.get_string('persian-display-format'),
+              cDateObj.persianDay,
+              cDateObj.persianMonth,
+              cDateObj.persianYear,
+              cDateObj.dayOfWeek,
+              'persian'
+            )
+          ) + ' هجری شمسی',
+          // x_align: Clutter.ActorAlign.CENTER,
+          x_expand: true,
+          // x_fill: true,
+          style_class: 'pcalendar-day pcalendar-date-label'
+        });
+        this.convertedDatesVbox.add(button);
+        button.connect('clicked', Lang.bind(button, function () {
+          St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
+        }));
+      }
+  
+      // add islamic date
+      if (this._activeConverter !== ConverterTypes.fromIslamic) {
+        let button = new St.Button({
+          label: str.numbersFormat(
+            str.dateStrFormat(
+              Schema.get_string('islamic-display-format'),
+              cDateObj.islamicDay,
+              cDateObj.islamicMonth,
+              cDateObj.islamicYear,
+              cDateObj.dayOfWeek,
+              'islamic'
+            )
+          ) + ' هجری قمری',
+          // x_align: Clutter.ActorAlign.CENTER,
+          x_expand: true,
+          // x_fill: true,
+          style_class: 'pcalendar-day pcalendar-date-label'
+        });
+        this.convertedDatesVbox.add(button);
+        button.connect('clicked', Lang.bind(button, function () {
+          St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
+        }));
+      }
+  
+      // add gregorian date
+      if (this._activeConverter !== ConverterTypes.fromGregorian) {
+        let button = new St.Button({
+          label: str.numbersFormat(
+            str.dateStrFormat(
+              Schema.get_string('gregorian-display-format'),
+              cDateObj.gregorianDay,
+              cDateObj.gregorianMonth,
+              cDateObj.gregorianYear,
+              cDateObj.dayOfWeek,
+              'gregorian'
+            )
+          ) + ' میلادی',
+          // x_align: Clutter.ActorAlign.CENTER,
+          x_expand: true,
+          // x_fill: true,
+          style_class: 'pcalendar-day pcalendar-date-label'
+        });
+        this.convertedDatesVbox.add(button);
+        button.connect('clicked', Lang.bind(button, function () {
+          St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
+        }));
+      }
+  
+    },
+  
+    _toggleConverter: function (button) {
+      // skip because it is already active
+      if (this._activeConverter === button.TypeID) {
+        return;
+      }
+  
+      // first remove active classes then highlight the clicked button
+      let tabBox = button.get_parent();
+      let tabBoxChildren = tabBox.get_children();
+  
+      for (let i = 0; i < tabBoxChildren.length; i++) {
+        let tabButton = tabBoxChildren[i];
+        tabButton.remove_style_class_name('active');
+      }
+  
+      button.add_style_class_name('active');
+      this._activeConverter = button.TypeID;
+  
+      this._onModifyConverter()
     }
-
-    if (!checkInputDate) {
-      let button = new St.Button({
-        label: 'تاریـخ وارد‌شده، صحیح نیست!\nاین تاریخ در تقویم وجود ندارد.',
-        x_expand: true,
-        style_class: 'pcalendar-day pcalendar-date-label'
-      });
-      this.convertedDatesVbox.add(button);
-      return;
-    }
-
-    // add persian date
-    if (this._activeConverter !== ConverterTypes.fromPersian) {
-      let button = new St.Button({
-        label: str.numbersFormat(
-          str.dateStrFormat(
-            Schema.get_string('persian-display-format'),
-            cDateObj.persianDay,
-            cDateObj.persianMonth,
-            cDateObj.persianYear,
-            cDateObj.dayOfWeek,
-            'persian'
-          )
-        ) + ' هجری شمسی',
-        // x_align: Clutter.ActorAlign.CENTER,
-        x_expand: true,
-        // x_fill: true,
-        style_class: 'pcalendar-day pcalendar-date-label'
-      });
-      this.convertedDatesVbox.add(button/*, { expand: true, x_fill: true, x_align: St.Align.MIDDLE }*/);
-      button.connect('clicked', Lang.bind(button, function () {
-        St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
-      }));
-    }
-
-    // add islamic date
-    if (this._activeConverter !== ConverterTypes.fromIslamic) {
-      let button = new St.Button({
-        label: str.numbersFormat(
-          str.dateStrFormat(
-            Schema.get_string('islamic-display-format'),
-            cDateObj.islamicDay,
-            cDateObj.islamicMonth,
-            cDateObj.islamicYear,
-            cDateObj.dayOfWeek,
-            'islamic'
-          )
-        ) + ' هجری قمری',
-        // x_align: Clutter.ActorAlign.CENTER,
-        x_expand: true,
-        // x_fill: true,
-        style_class: 'pcalendar-day pcalendar-date-label'
-      });
-      this.convertedDatesVbox.add(button/*, { expand: true, x_fill: true, x_align: St.Align.MIDDLE }*/);
-      button.connect('clicked', Lang.bind(button, function () {
-        St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
-      }));
-    }
-
-    // add gregorian date
-    if (this._activeConverter !== ConverterTypes.fromGregorian) {
-      let button = new St.Button({
-        label: str.numbersFormat(
-          str.dateStrFormat(
-            Schema.get_string('gregorian-display-format'),
-            cDateObj.gregorianDay,
-            cDateObj.gregorianMonth,
-            cDateObj.gregorianYear,
-            cDateObj.dayOfWeek,
-            'gregorian'
-          )
-        ) + ' میلادی',
-        // x_align: Clutter.ActorAlign.CENTER,
-        x_expand: true,
-        // x_fill: true,
-        style_class: 'pcalendar-day pcalendar-date-label'
-      });
-      this.convertedDatesVbox.add(button/*, { expand: true, x_fill: true, x_align: St.Align.MIDDLE }*/);
-      button.connect('clicked', Lang.bind(button, function () {
-        St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
-      }));
-    }
-
-  },
-
-  _toggleConverter: function (button) {
-    // skip because it is already active
-    if (this._activeConverter === button.TypeID) {
-      return;
-    }
-
-    // first remove active classes then highlight the clicked button
-    let tabBox = button.get_parent();
-    let tabBoxChildren = tabBox.get_children();
-
-    for (let i = 0; i < tabBoxChildren.length; i++) {
-      let tabButton = tabBoxChildren[i];
-      tabButton.remove_style_class_name('active');
-    }
-
-    button.add_style_class_name('active');
-    this._activeConverter = button.TypeID;
-
-    this._onModifyConverter()
-  }
+  */
 });
 
-function notify(msg, details) {
-  let source = new MessageTray.SystemNotificationSource();
-  messageTray.add(source);
+function notify(msg, details, icon = 'x-office-calendar') {
+  let source = new MessageTray.Source('تقویم', icon);
+  Main.messageTray.add(source);
   let notification = new MessageTray.Notification(source, msg, details);
   notification.setTransient(true);
-  source.notify(notification);
+  if (typeof (source.showNotification) === "function") {
+    source.showNotification(notification);// new method
+  } else {
+    source.notify(notification);// old method
+  }
 }
 
 function init(metadata) {
@@ -653,7 +670,7 @@ function timeStrToMinutes(timeStr) {
 
 function checkPrayTime() {
   let now = new Date();
-  if (now.getSeconds() >= 3 || !Schema.get_boolean('praytime-play-and-notify')) return;
+  if (now.getSeconds() !== 0 || !Schema.get_boolean('praytime-play-and-notify')) return;
 
 
 
@@ -746,7 +763,6 @@ function checkPrayTime() {
     _prayTimeIs = tName;
     player.setVolume(Schema.get_double('praytime-play-valume'));
     player.setUri(settings.SoundUri);
-    // player.onEnd = () => that._calendar._update();
     player.play();
     if (Schema.get_boolean('custom-color')) {
       _mainLable.set_style('color: ' + Schema.get_string('pray-time-color'));
@@ -756,3 +772,4 @@ function checkPrayTime() {
   }
 
 }
+

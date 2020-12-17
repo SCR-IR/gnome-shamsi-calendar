@@ -3,8 +3,8 @@ const Gio = imports.gi.Gio;
 const Gdk = imports.gi.Gdk;
 const Lang = imports.lang;
 
-const Gettext = imports.gettext.domain('shamsi-calendar');
-const _ = Gettext.gettext;
+// const Gettext = imports.gettext.domain('shamsi-calendar');
+// const _ = Gettext.gettext;
 
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let convenience = extension.imports.convenience;
@@ -234,8 +234,9 @@ const App = new Lang.Class({
 
     // TAB and DATES FORMAT
     let tabs = {
-      events: "مناسبت‌ها",
-      prayTimes: "اوقات شرعی"
+      dateConvert: "تبدیل تاریخ",
+      prayTimes: "اوقات شرعی",
+      events: "مناسبت‌ها"
     };
     this.el['default-tab'] = new Gtk.ComboBoxText();
     for (let i in tabs) this.el['default-tab'].append(i, tabs[i]);
@@ -655,12 +656,26 @@ const App = new Lang.Class({
           this.el['praytime-' + tName + '-setting_PlaySound'].append(i, list[i]);
         }
         this.el['praytime-' + tName + '-setting_PlaySound'].set_active_id(PlaySound);
+        sensitiveFunc = (playSound, tName_) => {
+          let active = (playSound !== 'never');
+          let els = ['praytime-' + tName_ + '-setting_SoundId', 'praytime-' + tName_ + '-setting_CalcMethod'];
+          els.forEach((el) => this.el[el].set_sensitive(active));
+          //
+          let newSoundId = this.el['praytime-' + tName_ + '-setting_SoundId'].get_active_id().toString();
+          this.el['praytime-' + tName_ + '-sound-uri'].set_sensitive(active && newSoundId === '_custom_');
+        }
+        sensitiveFunc(PlaySound, tName);
         this.el['praytime-' + tName + '-setting_PlaySound'].connect('changed', () => {
-          this.setPrayTimeSetting(tName, 'PlaySound', this.el['praytime-' + tName + '-setting_PlaySound'].get_active_id());
+          let playSound = this.el['praytime-' + tName + '-setting_PlaySound'].get_active_id();
+          this.setPrayTimeSetting(tName, 'PlaySound', playSound);
+          sensitiveFunc(playSound, tName);
         });
 
         //TextNotify
-        this.el['praytime-' + tName + '-setting_TextNotify'] = new Gtk.ComboBoxText();
+        this.el['praytime-' + tName + '-setting_TextNotify'] = new Gtk.ComboBoxText({
+          margin_right: 4,
+          margin_left: 4
+        });
         for (let i in list) {
           this.el['praytime-' + tName + '-setting_TextNotify'].append(i, list[i]);
         }

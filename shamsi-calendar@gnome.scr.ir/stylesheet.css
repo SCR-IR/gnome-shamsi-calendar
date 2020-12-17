@@ -6,15 +6,49 @@
   font-family: Vazir, sans-serif;
 }
 
-.pcalendar-converter-menu {
+.pcalendar-actor-right {
+  margin: 1em 1em 0.5em 0;
+}
+.pcalendar-actor-left {
+  text-align: center;
+  border: #999 1pt solid;
+  border-radius: 1.4em;
+  /* padding: .6em; */
+  margin: 1em 1em 0.5em 1em;
+  /* width: 313px; */
+}
+
+.pcalendar-top-div {
+  border-radius: 0.6em 0.6em 0 0;
+  /* margin-right: 1.8em;
+  margin-left: 1.8em;
+  margin-top: 0.5em; */
+}
+.pcalendar-bottom-menu {
+  border-radius: 0 0 0.6 0.6;
+  border-top: 3px #282828 solid;
+  padding: 0.5em 1em;
+  /* margin-right: 1.8em;
+  margin-left: 1.8em;
+  margin-top: 0.5em; */
+}
+/* .pcalendar-converter-menu {
   margin-right: 1.8em;
   margin-left: 1.8em;
   color: #eee;
+} */
+
+/* .pcalendar-preferences-button-icon {
+  color: #bb4242;
+} */
+.pcalendar-preferences-button {
+  margin-right: 0.5em;
+  padding: 0.5em;
+  background-color: rgba(128, 128, 128, 0.11);
+  border-radius: 0.3em;
 }
-.pcalendar-bottom-menu {
-  margin-right: 1.8em;
-  margin-left: 1.8em;
-  margin-top: 0.5em;
+.pcalendar-preferences-button:hover {
+  background-color: rgba(128, 128, 128, 0.313);
 }
 
 .pcalendar-top-button {
@@ -54,24 +88,12 @@
   text-align: center;
 }
 
-.pcalendar-actor-right {
-  margin: 1em;
-}
-.pcalendar-actor-left {
-  text-align: center;
-  border: #999 1pt solid;
-  border-radius: 1.4em;
-  /* padding: .6em; */
-  margin: 1em;
-  /* width: 313px; */
-}
-
 .pcalendar-dates-show-label {
   font-size: 1em;
   direction: rtl;
 }
 .pcalendar-dates-show {
-  border-radius: 1.4em;
+  border-radius: 1.4em 1.4em 0 0;
   margin-bottom: 1px;
   text-align: center;
   min-width: 22em;
@@ -141,6 +163,9 @@
 .pcalendar-txt-grey {
   color: #cccccc;
 }
+.pcalendar-txt-white {
+  color: #ffffff;
+}
 
 .pcalendar-system-tray {
   min-width: 1.5em;
@@ -154,24 +179,6 @@
 
 .pcalendar-date-label:hover {
   background-color: rgba(128, 128, 128, 0.1);
-}
-
-.pcalendar-preferences-button-icon {
-  color: #fff;
-  font-size: 2em;
-  font-weight: bold;
-  min-width: 2em;
-  min-height: 1em;
-}
-
-.pcalendar-preferences-button {
-  padding: 3px;
-  background-color: rgba(128, 128, 128, 0.11);
-  border-radius: 0.3em;
-}
-
-.pcalendar-preferences-button:hover {
-  background-color: rgba(128, 128, 128, 0.313);
 }
 
 .pcalendar-rtl {
@@ -285,9 +292,9 @@
   background-color: rgba(168, 168, 168, 0.357);
 }
 
-.pcalendar-praytimes-container {
-  /* background-color: rgb(168, 48, 132); */
-}
+/* .pcalendar-praytimes-container {
+  background-color: rgb(168, 48, 132);
+} */
 .pcalendar-praytimes-tname {
   /* background-color: rgb(168, 92, 48); */
   padding: 0 5px;

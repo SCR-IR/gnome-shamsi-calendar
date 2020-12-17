@@ -12,6 +12,8 @@
 > * Clone the repository (Download) , دریافت مخزن
 > * Go to the cloned directory , رفتن به پوشه‌ی آن
 > 
+> * ```chmod +x 1-install.sh 2-install.sh```
+>
 > * 1- run: ```./1-install.sh``` :اجرای
 > 
 > * 2- Restart gnome-shell , اجرای مجدّد گنوم:\
