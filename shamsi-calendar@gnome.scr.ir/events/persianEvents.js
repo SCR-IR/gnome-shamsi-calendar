@@ -1,8 +1,8 @@
-function iranSolar() {
+function evList() {
   this._init();
 }
 
-iranSolar.prototype = {
+evList.prototype = {
   name: 'مناسبت‌های رسمی ایران',
   type: 'persian',
   /* [month][day] = [title, isHoliday] */

@@ -369,21 +369,21 @@ const App = new Lang.Class({
       use_markup: true
     }));
 
-    this.el['event-iran-solar'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: هجری‌شمسی' });
-    this.vbox3.add(this.el['event-iran-solar']);
-    Schema.bind('event-iran-solar', this.el['event-iran-solar'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.el['show-persian-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: هجری‌شمسی' });
+    this.vbox3.add(this.el['show-persian-events']);
+    Schema.bind('show-persian-events', this.el['show-persian-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
-    this.el['event-iran-lunar'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: هجری‌قمری' });
-    this.vbox3.add(this.el['event-iran-lunar']);
-    Schema.bind('event-iran-lunar', this.el['event-iran-lunar'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.el['show-islamic-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: هجری‌قمری' });
+    this.vbox3.add(this.el['show-islamic-events']);
+    Schema.bind('show-islamic-events', this.el['show-islamic-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
-    this.el['event-world'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: میلادی (جهانی)' });
-    this.vbox3.add(this.el['event-world']);
-    Schema.bind('event-world', this.el['event-world'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.el['show-gregorian-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: میلادی (جهانی)' });
+    this.vbox3.add(this.el['show-gregorian-events']);
+    Schema.bind('show-gregorian-events', this.el['show-gregorian-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
-    this.el['event-persian'] = new Gtk.CheckButton({ label: 'مناسبت‌های غیر رسمی ایران باستان' });
-    this.vbox3.add(this.el['event-persian']);
-    Schema.bind('event-persian', this.el['event-persian'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.el['show-old-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های غیر رسمی ایران باستان' });
+    this.vbox3.add(this.el['show-old-events']);
+    Schema.bind('show-old-events', this.el['show-old-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.vbox3.add(new Gtk.Label({ label: '\n\n\n' }));
 
@@ -1207,7 +1207,7 @@ const App = new Lang.Class({
     this.vbox6.add(resetBtn);
 
     this.vbox7.add(new Gtk.Label({
-      label: 'افزونه‌ی تقویم هجری شمسی، قمری و میلادی برای میز‌کار گنوم لینوکس\n\nتوسعه‌دهنده:\n<a href="https://jdf.scr.ir/">https://jdf.scr.ir</a>\n\nحمایت مالی:\n<a href="https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar">https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar</a>\n\nنصب:\n<a href="https://extensions.gnome.org/extension/3618/">https://extensions.gnome.org/extension/3618</a>\n\nکد منبع:\n<a href="https://github.com/scr-ir/gnome-shamsi-calendar/">https://github.com/scr-ir/gnome-shamsi-calendar</a>',
+      label: 'افزونه‌ی تقویم هجری شمسی، قمری و میلادی برای میز‌کار گنوم لینوکس\n\nتوسعه‌دهنده:\n<a href="https://jdf.scr.ir/gnome_shamsi_calendar">https://jdf.scr.ir/gnome_shamsi_calendar</a>\n\nحمایت مالی:\n<a href="https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar">https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar</a>\n\nنصب:\n<a href="https://extensions.gnome.org/extension/3618/">https://extensions.gnome.org/extension/3618</a>\n\nکد منبع:\n<a href="https://github.com/scr-ir/gnome-shamsi-calendar/">https://github.com/scr-ir/gnome-shamsi-calendar</a>',
       use_markup: true
     }));
 
@@ -1252,10 +1252,10 @@ const App = new Lang.Class({
         'gregorian-display': 'CheckButton'
       },
       vbox3: {
-        'event-iran-solar': 'CheckButton',
-        'event-iran-lunar': 'CheckButton',
-        'event-world': 'CheckButton',
-        'event-persian': 'CheckButton'
+        'show-persian-events': 'CheckButton',
+        'show-islamic-events': 'CheckButton',
+        'show-gregorian-events': 'CheckButton',
+        'show-old-events': 'CheckButton'
       },
       vbox4: {
         'week-start': 'ComboBoxText',

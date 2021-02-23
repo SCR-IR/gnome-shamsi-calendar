@@ -1,16 +1,18 @@
 // copyright پژوهش‌های ایرانی at http://ghiasabadi.com/
 // jdf.scr.ir : Only edit structure to new events structure (without change events text)
-function persian(pdate) {
-  this._init(pdate);
+
+function evList(Tarikh) {
+  this.Tarikh = Tarikh;
+  this._init();
 }
 
-persian.prototype = {
+evList.prototype = {
   name: 'مناسبت‌های باستانی',
   type: 'persian',
   /* [month][day] = [title, isHoliday] */
   events: [[], [], [], [], [], [], [], [], [], [], [], [], []],
 
-  _init: function (pdate) {
+  _init: function () {
 
     this.events[1][1] = [[
       ['جشن نوروز']
@@ -250,13 +252,12 @@ persian.prototype = {
       ['فروردگان']
     ], false];
 
-    this.addSpecificEvents(pdate);
+    this.addSpecificEvents();
   },
 
-  addSpecificEvents: function (pdate) {
-    let date = new Date();
-    date = pdate.gregorianToPersian(date.getFullYear(), date.getMonth() + 1, date.getDate());
-    let year = date.year;
+  addSpecificEvents: function () {
+    let date = this.Tarikh.timeStamp_to_persian(Date.now());
+    let year = date[0];
 
     let first_saturday_of_year,
       first_wednesday_of_year,
@@ -267,16 +268,15 @@ persian.prototype = {
     // and
     // find first wednesday of the year
     for (let i = 1; i <= 7; i++) {
-      let p_ts = pdate.persianToGregorian(year, 1, i);
-      p_ts = new Date(p_ts.year, p_ts.month - 1, p_ts.day, 5);
-      /* do not remove this 5 :D */
+      let p_ts = this.Tarikh.persian_to_gregorian(year, 1, i);
+      p_ts = new Date(p_ts[0], p_ts[1] - 1, p_ts[2], 5);/* :do not remove this 5 */
       if (p_ts.getDay() === 3) {
-        let dummy_date = pdate.gregorianToPersian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
-        first_wednesday_of_year = dummy_date.day;
+        let dummy_date = this.Tarikh.gregorian_to_persian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
+        first_wednesday_of_year = dummy_date[2];
       }
       if (p_ts.getDay() === 6) {
-        let dummy_date = pdate.gregorianToPersian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
-        first_saturday_of_year = dummy_date.day;
+        let dummy_date = this.Tarikh.gregorian_to_persian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
+        first_saturday_of_year = dummy_date[2];
       }
     }
 
@@ -290,12 +290,12 @@ persian.prototype = {
     }
 
     for (let i = 0; i < 6; i++) {
-      let p_ts = pdate.persianToGregorian(year, 12, 29 + leap - i);
+      let p_ts = this.Tarikh.persian_to_gregorian(year, 12, 29 + leap - i);
 
-      p_ts = new Date(p_ts.year, p_ts.month - 1, p_ts.day);
+      p_ts = new Date(p_ts[0], p_ts[1] - 1, p_ts[2]);
       if (p_ts.getDay() === 3) {
-        let dummy_date = pdate.gregorianToPersian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
-        last_wednesday_of_year = dummy_date.day;
+        let dummy_date = this.Tarikh.gregorian_to_persian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
+        last_wednesday_of_year = dummy_date[2];
         break;
       }
     }
@@ -316,11 +316,7 @@ persian.prototype = {
     ], false];
 
     this.events[12][last_wednesday_of_year - 1] = [[
-      ['چهارشنبه سوری، جشن شب چهارشنبه آخر']
-    ], false];
-
-    this.events[12][last_wednesday_of_year] = [[
-      ['چهارشنبه آخر']
+      ['شب چهارشنبه سوری : احتیاط کنیم!']
     ], false];
 
   }

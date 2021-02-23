@@ -2,12 +2,12 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const extension = ExtensionUtils.getCurrentExtension();
 const convenience = extension.imports.convenience;
 
-const PersianDate = extension.imports.PersianDate;
+const islamicEvents = extension.imports.events.islamicEvents;
+const persianEvents = extension.imports.events.persianEvents;
+const gregorianEvents = extension.imports.events.gregorianEvents;
+const oldPersianEvents = extension.imports.events.oldPersianEvents;
 
-const persian = extension.imports.events.persian;
-const world = extension.imports.events.world;
-const iranSolar = extension.imports.events.iranSolar;
-const iranLunar = extension.imports.events.iranLunar;
+const Tarikh = extension.imports.Tarikh;
 
 const Schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
 
@@ -19,17 +19,17 @@ Events.prototype = {
 
   _init: function () {
     this._eventsList = [];
-    if (Schema.get_boolean('event-iran-lunar')) {
-      this._eventsList.push(new iranLunar.iranLunar());
+    if (Schema.get_boolean('show-islamic-events')) {
+      this._eventsList.push(new islamicEvents.evList());
     }
-    if (Schema.get_boolean('event-iran-solar')) {
-      this._eventsList.push(new iranSolar.iranSolar());
+    if (Schema.get_boolean('show-persian-events')) {
+      this._eventsList.push(new persianEvents.evList());
     }
-    if (Schema.get_boolean('event-world')) {
-      this._eventsList.push(new world.world());
+    if (Schema.get_boolean('show-gregorian-events')) {
+      this._eventsList.push(new gregorianEvents.evList());
     }
-    if (Schema.get_boolean('event-persian')) {
-      this._eventsList.push(new persian.persian(PersianDate.PersianDate));
+    if (Schema.get_boolean('show-old-events')) {
+      this._eventsList.push(new oldPersianEvents.evList(Tarikh));
     }
   },
 

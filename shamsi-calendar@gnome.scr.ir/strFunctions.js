@@ -37,12 +37,6 @@ function dateStrFormat(format, day, month, year, dow, calendar) {
     }
   };
 
-  // change dow to Persian style!
-  // dow++;
-  // if (dow > 6) {
-  //   dow = 0;
-  // }
-
   let find = ['%Y', '%y', '%MM', '%mm', '%M', '%m', '%D', '%d', '%WW', '%ww'];
   let replaceArr = [
     year,

@@ -6,7 +6,7 @@
   </enum>
   <schema id="org.gnome.shell.extensions.shamsi-calendar" path="/org/gnome/shell/extensions/shamsi-calendar/">
     <key name="v" type="i">
-      <default>8</default>
+      <default>11</default>
     </key>
     <key name="default-tab" type="s">
       <default>'events'</default>
@@ -42,22 +42,22 @@
       <summary>Gregorian date format</summary>
       <description>Gregorian date format</description>
     </key>
-    <key name="event-iran-solar" type="b">
+    <key name="show-persian-events" type="b">
       <default>true</default>
       <summary>Display official Iranian solar events</summary>
       <description>Display official Iranian solar events.</description>
     </key>
-    <key name="event-iran-lunar" type="b">
+    <key name="show-islamic-events" type="b">
       <default>true</default>
       <summary>Display official Iranian lunar events</summary>
       <description>Display official Iranian lunar events.</description>
     </key>
-    <key name="event-world" type="b">
+    <key name="show-gregorian-events" type="b">
       <default>true</default>
       <summary>Display official international events</summary>
       <description>Display official international events.</description>
     </key>
-    <key name="event-persian" type="b">
+    <key name="show-old-events" type="b">
       <default>false</default>
       <summary>Display old Persian events</summary>
       <description>Display old Persian events.</description>

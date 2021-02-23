@@ -7,7 +7,6 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const extension = ExtensionUtils.getCurrentExtension();
 const convenience = extension.imports.convenience;
 
-const PersianDate = extension.imports.PersianDate;
 const Tarikh = extension.imports.Tarikh;
 
 const PrayTimes = extension.imports.PrayTimes.prayTimes;
@@ -37,7 +36,6 @@ Calendar.prototype = {
   _selectedDateObj: new Tarikh.TarikhObject(),
   _rtl: (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL),
   _selectedTab: Schema.get_string('default-tab'),
-  // weekdayAbbr: ['شـ', 'یـ', 'د', 'سـ', 'چـ', 'پـ', 'جـ'],
 
   _init: function () {
 
@@ -65,45 +63,6 @@ Calendar.prototype = {
     PrayTimes.setMethod(Schema.get_string('praytime-calc-method-main'));
 
     this._buildHeader();
-  },
-
-  // Sets the calendar to show a specific date
-  format: function (format, day, month, year, dow, calendar) {
-    let phrases = {
-      gregorian: {
-        monthShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        monthLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        weekdayShort: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-        weekdayLong: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      },
-      persian: {
-        monthShort: ['فرو', 'ارد', 'خرد', 'تیر', 'مرد', 'شهر', 'مهر', 'آبا', 'آذر', 'دی', 'بهم', 'اسف'],
-        monthLong: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
-        weekdayShort: ['شـ', 'یـ', 'د', 'سـ', 'چـ', 'پـ', 'جـ'],
-        weekdayLong: ['شنبه', 'یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'],
-      },
-      islamic: {
-        monthShort: ['محر', 'صفر', 'رب۱', 'رب۲', 'جم۱', 'جم۲', 'رجب', 'شعب', 'رمض', 'شوا', 'ذیق', 'ذیح'],
-        monthLong: ['محرم', 'صفر', 'ربیع‌الاول', 'ربیع‌الثانی', 'جمادی‌الاول', 'جمادی‌الثانی', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذیقعده', 'ذیحجه'],
-        weekdayShort: ['س', 'ا', 'ا', 'ث', 'ا', 'خ', 'ج'],
-        weekdayLong: ['‫السبت', '‫الأحد', '‫الاثنين', '‫الثلاثاء', '‫الأربعاء', '‫الخميس', '‫الجمعة'],
-      }
-    };
-
-    let find = ['%Y', '%y', '%MM', '%mm', '%M', '%m', '%D', '%d', '%WW', '%ww'];
-    let replace = [
-      year,
-      (year + '').slice(-2),
-      phrases[calendar].monthLong[month - 1],
-      phrases[calendar].monthShort[month - 1],
-      ('0' + (month)).slice(-2),
-      month,
-      ('0' + day).slice(-2),
-      day,
-      phrases[calendar].weekdayLong[dow],
-      phrases[calendar].weekdayShort[dow],
-    ];
-    return str.replace(find, replace, format);
   },
 
   _buildHeader: function () {
@@ -174,7 +133,7 @@ Calendar.prototype = {
     this._topBox.add(leftButton);
 
     // All the children after this are days, and get removed when we update the calendar
-    this._firstDayIndex = this.actorRight.get_children().length;//v
+    this._firstDayIndex = this.actorRight.get_children().length;
   },
 
   _onScroll: function (actor, event) {
@@ -246,7 +205,7 @@ Calendar.prototype = {
     let nowObj = new Tarikh.TarikhObject();
 
 
-    this._monthLabel.text = '« ' + PersianDate.PersianDate.p_month_names[this._selectedDateObj.persianMonth - 1] + ' ' +
+    this._monthLabel.text = '« ' + Tarikh.mName.shamsi[this._selectedDateObj.persianMonth] + ' ' +
       str.numbersFormat(this._selectedDateObj.persianYear) +
       ' »\n' +
       str.numbersFormat(
@@ -283,7 +242,6 @@ Calendar.prototype = {
     let ev = new Events.Events();
     let events;
 
-    /* eslint no-constant-condition: ["error", { "checkLoops": false }] */
     while (true) {
       // find events and holidays
       events = ev.getEvents(iterObj.all);
@@ -378,7 +336,6 @@ Calendar.prototype = {
 
 
 
-      // button.add_style_pseudo_class(styleClass);
       {
         let [left, top, width, height] = _rotate(
           Math.abs(_colPosition(this._rtl) - ((7 + iterObj.dayOfWeek - weekStart) % 7)),
@@ -431,12 +388,11 @@ Calendar.prototype = {
           'persian'
         ) + '   ( ' + rooz + ' )'
       ),
-      // expand: true, x_fill: true, y_fill: true,
       x_align: Clutter.ActorAlign.CENTER,
       x_expand: true,
       style_class: 'pcalendar-dates-show-label pcalendar-txt-pdate-color'
     });
-    _datesBox.add(dateLabel/*, { expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE }*/);
+    _datesBox.add(dateLabel);
 
 
     // add persian date
@@ -540,13 +496,12 @@ Calendar.prototype = {
           text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
           x_align: Clutter.ActorAlign.CENTER,
           x_expand: true,
-          // expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE,
           style_class: 'pcalendar-event-label ' + ((evObj.holiday) ? 'pcalendar-event-label-nonwork' : 'pcalendar-event-label-work')
         });
         evLabel.clutter_text.line_wrap = true;
         evLabel.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
         evLabel.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
-        _eventsBox.add(evLabel/*, { expand: true, x_fill: true, y_fill: true, x_align: St.Align.MIDDLE }*/);
+        _eventsBox.add(evLabel);
       }
 
     } else if (this._selectedTab === 'prayTimes') {
@@ -559,16 +514,10 @@ Calendar.prototype = {
         x_align: Clutter.ActorAlign.CENTER
       });
 
+      /* 'Tehran','Jafari','MWL','ISNA','Egypt','Makkah','Karachi' */
       const azanMethods = [
         Schema.get_string('praytime-calc-method-ehtiyat'),
         Schema.get_string('praytime-calc-method-main')
-        // 'Tehran',
-        // 'Jafari',
-        // 'MWL',
-        // 'ISNA',
-        // 'Egypt',
-        // 'Makkah',
-        // 'Karachi'
       ]
       let _prayTimes = {};
       for (let method of azanMethods) {
@@ -746,7 +695,6 @@ Calendar.prototype = {
           let month = converterMonth.get_text();
           let day = converterDay.get_text();
 
-          // check if data is numerical and not empty
           if (!day || !month || !year) return;
 
           [year, month, day] = [parseInt(year), parseInt(month), parseInt(day)];
@@ -892,18 +840,6 @@ Calendar.prototype = {
         fromPersian.connect('clicked', _toggleConverter);
         fromPersian.TypeID = ConverterTypes.fromPersian;
 
-        let fromGregorian = new St.Button({
-          reactive: true,
-          can_focus: true,
-          track_hover: true,
-          x_expand: true,
-          label: 'از میلادی',
-          accessible_name: 'fromGregorian',
-          style_class: 'popup-menu-item button pcalendar-button fromGregorian'
-        });
-        fromGregorian.connect('clicked', _toggleConverter);
-        fromGregorian.TypeID = ConverterTypes.fromGregorian;
-
         let fromIslamic = new St.Button({
           reactive: true,
           can_focus: true,
@@ -916,19 +852,31 @@ Calendar.prototype = {
         fromIslamic.connect('clicked', _toggleConverter);
         fromIslamic.TypeID = ConverterTypes.fromIslamic;
 
-        middleBox.add(fromIslamic);
-        middleBox.add(fromGregorian);
-        middleBox.add(fromPersian);
+        let fromGregorian = new St.Button({
+          reactive: true,
+          can_focus: true,
+          track_hover: true,
+          x_expand: true,
+          label: 'از میلادی',
+          accessible_name: 'fromGregorian',
+          style_class: 'popup-menu-item button pcalendar-button fromGregorian'
+        });
+        fromGregorian.connect('clicked', _toggleConverter);
+        fromGregorian.TypeID = ConverterTypes.fromGregorian;
+
+        middleBox.add(fromGregorian);// Left
+        middleBox.add(fromIslamic);// Center
+        middleBox.add(fromPersian);// Right
 
         converterVbox.add(middleBox);
 
         let converterHbox = new St.BoxLayout({ style_class: 'pcalendar-converter-box' });
 
-        converterHbox.add(converterYear/*, { expand: true }*/);
+        converterHbox.add(converterYear);
 
-        converterHbox.add(converterMonth/*, { expand: true }*/);
+        converterHbox.add(converterMonth);
 
-        converterHbox.add(converterDay/*, { expand: true }*/);
+        converterHbox.add(converterDay);
 
         converterVbox.add(converterHbox);
 

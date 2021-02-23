@@ -1,8 +1,8 @@
-function world() {
+function evList() {
   this._init();
 }
 
-world.prototype = {
+evList.prototype = {
   name: 'مناسبت‌های جهانی',
   type: 'gregorian',
   /* [month][day] = [title, isHoliday] */

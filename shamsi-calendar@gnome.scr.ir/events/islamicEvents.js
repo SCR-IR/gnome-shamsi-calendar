@@ -1,8 +1,8 @@
-function iranLunar() {
+function evList() {
   this._init();
 }
 
-iranLunar.prototype = {
+evList.prototype = {
   name: 'مناسبت‌های مذهبی ایران',
   type: 'islamic',
   /* [month][day] = [title, isHoliday] */

@@ -16,7 +16,6 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const extension = ExtensionUtils.getCurrentExtension();
 const convenience = extension.imports.convenience;
 
-const PersianDate = extension.imports.PersianDate;
 const Tarikh = extension.imports.Tarikh;
 const Calendar = extension.imports.calendar;
 const PrayTimes = extension.imports.PrayTimes.prayTimes;
@@ -272,7 +271,7 @@ const ShamsiCalendar = new Lang.Class({
     this._prayerTimeLoop();
   },
 
-  _updateDate: function (skip_notification, force) {
+  _updateDate: function (skip_notification = false, force = false) {
     let _dateObj = new Tarikh.TarikhObject();
 
     // if today is "today" just return, don't change anything!
@@ -302,7 +301,7 @@ const ShamsiCalendar = new Lang.Class({
       )
     );
 
-    if (!skip_notification) {
+    if (skip_notification) {
       let notifyTxt = "";
       for (let evObj of events[0]) {
         notifyTxt += str.numbersFormat(evObj.symbol + ' ' + evObj.event + ((evObj.holiday) ? ' (تعطیل)' : '') + '\n');
@@ -310,7 +309,7 @@ const ShamsiCalendar = new Lang.Class({
       notify(
         str.numbersFormat(
           _dateObj.persianDay + ' ' +
-          PersianDate.PersianDate.p_month_names[_dateObj.persianMonth - 1] +
+          Tarikh.mName.shamsi[_dateObj.persianMonth] +
           ' ' + _dateObj.persianYear
         ),
         notifyTxt
@@ -321,17 +320,14 @@ const ShamsiCalendar = new Lang.Class({
   },
 
   _prayerTimeLoop: function () {
-    if (_prayTimeIs !== '' && !player.isPlaying()) {
-      _prayTimeIs = '';
-      if (Schema.get_boolean('custom-color')) {
-        _mainLable.set_style('color: ' + Schema.get_string(_labelSchemaName()));
-      }
-    }
-    if (this._prayerTimeout) {
-      MainLoop.source_remove(this._prayerTimeout);
-      this._prayerTimeout = null;
-    }
-    this._prayerTimeout = MainLoop.timeout_add(60000 - (new Date().getSeconds() * 1000), Lang.bind(this, this._prayerTimeLoop));
+    // if (this._prayerTimeout) {موقت غیرفعال شده، آزمایشی
+    //   MainLoop.source_remove(this._prayerTimeout);
+    //   this._prayerTimeout = null;
+    // }
+    this._prayerTimeout = MainLoop.timeout_add(
+      60000 - (new Date().getSeconds() * 1000),
+      Lang.bind(this, this._prayerTimeLoop)
+    );
     checkPrayTime();
   },
   /*
@@ -577,7 +573,7 @@ const ShamsiCalendar = new Lang.Class({
   */
 });
 
-function notify(msg, details, icon = 'x-office-calendar') {
+function notify(msg, details = '', icon = 'x-office-calendar') {
   let source = new MessageTray.Source('تقویم', icon);
   Main.messageTray.add(source);
   let notification = new MessageTray.Notification(source, msg, details);
@@ -593,6 +589,11 @@ function init(metadata) {
 }
 
 function enable() {
+  //if (_indicator !== undefined) disable();//آزمایشی
+
+  _prayTimeIs = '';///
+  if (player.isPlaying()) player.pause();///
+
   _indicator = new ShamsiCalendar();
 
   let positions = ['left', 'center', 'right'];
@@ -604,8 +605,12 @@ function enable() {
     indexes[Schema.get_enum('position')],
     positions[Schema.get_enum('position')]
   );
-  _indicator._updateDate(!Schema.get_boolean('startup-notification'));
-  _timer = MainLoop.timeout_add(5000, Lang.bind(_indicator, _indicator._updateDate));
+  _indicator._updateDate(Schema.get_boolean('startup-notification'), true);
+  _timer = MainLoop.timeout_add(
+    5000,
+    Lang.bind(_indicator, _indicator._updateDate)
+  );
+
 
   // install fonts
   let path = extension.dir.get_path();
@@ -625,6 +630,7 @@ function disable() {
   Schema.disconnect(_indicator.schema_widget_format_signal);
   Schema.disconnect(_indicator.schema_position_signal);
   _indicator.destroy();
+  ///_indicator = undefined;///آزمایشی
   MainLoop.source_remove(_timer);
 }
 
@@ -672,11 +678,6 @@ function checkPrayTime() {
   let now = new Date();
   if (now.getSeconds() !== 0 || !Schema.get_boolean('praytime-play-and-notify')) return;
 
-
-
-
-
-
   let _prayTimes = {};
   {
     let coords = [Schema.get_double('praytime-lat'), Schema.get_double('praytime-lng')];
@@ -695,6 +696,7 @@ function checkPrayTime() {
     nowHM = "" + H + ':' + M;
   }
 
+  let _prayTimeIs_nextValue = '';
   for (let tName in PrayTimes.persianMap) {
     const settings = getPrayTimeSetting(tName);
     let timeStr;
@@ -714,10 +716,24 @@ function checkPrayTime() {
       timeStr = (timeMinutes === methodsTime[0]) ? _prayTimes['main'][tName] : _prayTimes['ehtiyat'][tName];
     }
 
-    // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
-    if (timeStr !== nowHM) continue;//now is not pray time
-    if (_prayTimeIs === tName) continue;//do not repeat sound in pray time
+
+
+    if (timeStr !== nowHM) {// now: is_not pray_time
+      continue;// Exit
+    }
+
+    _prayTimeIs_nextValue = tName;// now: is pray_time
+
+    if (_prayTimeIs === tName) {// now: is pray_time, But play_or_show is run
+      continue;// Exit: do not repeat sound_or_notify in pray_time
+    }
+
+    // now: is pray_time and play_or_show is not run
+
+
+
     let islamic = Tarikh.gregorian_to_islamic(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
     if (
       settings.TextNotify === 'always' ||
       (settings.ShowTime === 'ramazan' && islamic[1] === 9)
@@ -760,7 +776,7 @@ function checkPrayTime() {
       };
       settings.SoundUri = soundsUri + sounds[settings.SoundId][1];
     }
-    _prayTimeIs = tName;
+
     player.setVolume(Schema.get_double('praytime-play-valume'));
     player.setUri(settings.SoundUri);
     player.play();
@@ -770,6 +786,15 @@ function checkPrayTime() {
 
     break;
   }
+
+  _prayTimeIs = _prayTimeIs_nextValue;
+
+  if (_prayTimeIs === '' && !player.isPlaying()) {
+    if (Schema.get_boolean('custom-color')) {
+      _mainLable.set_style('color: ' + Schema.get_string(_labelSchemaName()));
+    }
+  }
+
 
 }
 
