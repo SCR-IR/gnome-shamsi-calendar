@@ -5,6 +5,7 @@
  * 
  * @author : JDF.SCR.IR
  * @website : https://jdf.scr.ir
+ * @github : https://github.com/SCR-IR/tarikh-npm
  * @license : GNU/LGPL
  * @version : 2.0.0 alpha نسخه‌ی آزمایشی غیررسمی
  * 

@@ -156,19 +156,8 @@ const ShamsiCalendar = new Lang.Class({
 
     this._calendar.actor.add_style_class_name('pcalendar pcalendar-font');
 
-    //// this._generateConverterPart();
-
-    // action buttons
-    // let actionButtons = new PopupMenu.PopupBaseMenuItem({
-    //   reactive: false,
-    //   can_focus: false,
-    //   style_class: 'pcalendar pcalendar-font pcalendar-bottom-menu'
-    // });
-    // this.menu.addMenuItem(actionButtons);
     let actionButtons = new St.BoxLayout({
       vertical: false,
-      // reactive: false,
-      // can_focus: false,
       style_class: 'pcalendar pcalendar-font pcalendar-bottom-menu'
     });
     vbox.add_actor(actionButtons);////
@@ -180,7 +169,6 @@ const ShamsiCalendar = new Lang.Class({
       icon_name: 'emblem-system-symbolic',
       icon_size: 25,
       style: 'color: #3af'
-      // style_class: 'pcalendar-preferences-button-icon'
     });
     let preferencesIcon = new St.Button({
       child: icon,
@@ -190,7 +178,6 @@ const ShamsiCalendar = new Lang.Class({
     });
     preferencesIcon.connect('clicked', openExtensionSetting);
     actionButtons.add(preferencesIcon);
-    // actionButtons.actor.add(preferencesIcon);
 
 
 
@@ -200,14 +187,11 @@ const ShamsiCalendar = new Lang.Class({
       icon_name: 'view-refresh-symbolic',
       icon_size: 25,
       style: 'color: #1ea'
-      // style_class: 'pcalendar-preferences-button-icon'
     });
     let todayIcon = new St.Button({
       child: icon3,
       reactive: true,
       can_focus: true,
-      // x_expand: true,
-      // expand: true, x_fill: false,
       style_class: 'pcalendar-preferences-button'
     });
     todayIcon.connect('clicked', function () {
@@ -215,7 +199,6 @@ const ShamsiCalendar = new Lang.Class({
       that._calendar._update();
     });
     actionButtons.add(todayIcon);
-    // actionButtons.actor.add(todayIcon);
 
 
 
@@ -226,15 +209,12 @@ const ShamsiCalendar = new Lang.Class({
       icon_name: 'emblem-favorite-symbolic',
       icon_size: 25,
       style: 'color: #c66'
-      // style_class: 'pcalendar-preferences-button-icon'
     });
 
     let nowroozIcon = new St.Button({
       child: icon,
       reactive: true,
       can_focus: true,
-      // x_expand: true,
-      // expand: true, x_fill: false,
       style_class: 'pcalendar-preferences-button'
     });
     nowroozIcon.connect('clicked', function () {
@@ -320,257 +300,13 @@ const ShamsiCalendar = new Lang.Class({
   },
 
   _prayerTimeLoop: function () {
-    // if (this._prayerTimeout) {موقت غیرفعال شده، آزمایشی
-    //   MainLoop.source_remove(this._prayerTimeout);
-    //   this._prayerTimeout = null;
-    // }
     this._prayerTimeout = MainLoop.timeout_add(
       60000 - (new Date().getSeconds() * 1000),
       Lang.bind(this, this._prayerTimeLoop)
     );
     checkPrayTime();
-  },
-  /*
-    _generateConverterPart: function () {
-      // Add date conversion button
-      let converterMenu = new PopupMenu.PopupSubMenuMenuItem('تبدیل تاریخ');
-      converterMenu.actor.set_text_direction(Clutter.TextDirection.RTL);
-      converterMenu.actor.add_style_class_name('pcalendar pcalendar-font pcalendar-converter-menu');
-  
-      this.menu.addMenuItem(converterMenu);
-      this.converterVbox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-font', vertical: true, x_expand: true });
-      let converterSubMenu = new PopupMenu.PopupBaseMenuItem({
-        reactive: false,
-        can_focus: false
-      });
-      converterSubMenu.actor.add_child(this.converterVbox);
-      converterMenu.menu.addMenuItem(converterSubMenu);
-  
-      let middleBox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-converter-box', x_expand: true });
-  
-      this._activeConverter = ConverterTypes.fromPersian;
-  
-      let fromPersian = new St.Button({
-        reactive: true,
-        can_focus: true,
-        track_hover: true,
-        x_expand: true,
-        label: 'از هـ.شمسی',
-        accessible_name: 'fromPersian',
-        style_class: 'popup-menu-item button pcalendar-button fromPersian active'
-      });
-      fromPersian.connect('clicked', Lang.bind(this, this._toggleConverter));
-      fromPersian.TypeID = ConverterTypes.fromPersian;
-  
-      let fromGregorian = new St.Button({
-        reactive: true,
-        can_focus: true,
-        track_hover: true,
-        x_expand: true,
-        label: 'از میلادی',
-        accessible_name: 'fromGregorian',
-        style_class: 'popup-menu-item button pcalendar-button fromGregorian'
-      });
-      fromGregorian.connect('clicked', Lang.bind(this, this._toggleConverter));
-      fromGregorian.TypeID = ConverterTypes.fromGregorian;
-  
-      let fromIslamic = new St.Button({
-        reactive: true,
-        can_focus: true,
-        track_hover: true,
-        x_expand: true,
-        label: 'از هـ.قمری',
-        accessible_name: 'fromIslamic',
-        style_class: 'popup-menu-item button pcalendar-button fromIslamic'
-      });
-      fromIslamic.connect('clicked', Lang.bind(this, this._toggleConverter));
-      fromIslamic.TypeID = ConverterTypes.fromIslamic;
-  
-      middleBox.add(fromIslamic);
-      middleBox.add(fromGregorian);
-      middleBox.add(fromPersian);
-  
-      this.converterVbox.add(middleBox);
-  
-      let converterHbox = new St.BoxLayout({ style_class: 'pcalendar pcalendar-converter-box' });
-  
-      this.converterYear = new St.Entry({
-        name: 'year',
-        hint_text: 'سال',
-        can_focus: true,
-        x_expand: true,
-        style_class: 'pcalendar-converter-entry'
-      });
-      this.converterYear.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
-      converterHbox.add(this.converterYear);
-  
-      this.converterMonth = new St.Entry({
-        name: 'month',
-        hint_text: 'ماه',
-        can_focus: true,
-        x_expand: true,
-        style_class: 'pcalendar-converter-entry'
-      });
-      converterHbox.add(this.converterMonth);
-      this.converterMonth.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
-  
-      this.converterDay = new St.Entry({
-        name: 'day',
-        hint_text: 'روز',
-        can_focus: true,
-        x_expand: true,
-        style_class: 'pcalendar-converter-entry'
-      });
-      converterHbox.add(this.converterDay);
-      this.converterDay.clutter_text.connect('text-changed', Lang.bind(this, this._onModifyConverter));
-  
-      this.converterVbox.add(converterHbox);
-  
-      this.convertedDatesVbox = new St.BoxLayout({ vertical: true });
-      this.converterVbox.add(this.convertedDatesVbox);
-    },
-  
-    _onModifyConverter: function () {
-      // erase old date
-      let convertedDatesChildren = this.convertedDatesVbox.get_children();
-      for (let i = 0; i < convertedDatesChildren.length; i++) {
-        convertedDatesChildren[i].destroy();
-      }
-  
-      let year = this.converterYear.get_text();
-      let month = this.converterMonth.get_text();
-      let day = this.converterDay.get_text();
-  
-      // check if data is numerical and not empty
-      if (!day || !month || !year) return;
-  
-      [year, month, day] = [parseInt(year), parseInt(month), parseInt(day)];
-  
-      let cDateObj = new Tarikh.TarikhObject();
-      let checkInputDate = false;
-  
-      switch (this._activeConverter) {
-        case ConverterTypes.fromGregorian:
-          checkInputDate = Tarikh.check_gregorian(year, month, day, false);
-          if (checkInputDate) cDateObj.gregorian = [year, month, day];
-          break;
-        case ConverterTypes.fromPersian:
-          checkInputDate = Tarikh.check_persian(year, month, day, false);
-          if (checkInputDate) cDateObj.persian = [year, month, day];
-          break;
-        case ConverterTypes.fromIslamic:
-          checkInputDate = Tarikh.check_islamic(year, month, day, false);
-          if (checkInputDate) cDateObj.islamic = [year, month, day];
-          break;
-        default:
-          return;
-      }
-  
-      if (!checkInputDate) {
-        let button = new St.Button({
-          label: 'تاریـخ وارد‌شده، صحیح نیست!\nاین تاریخ در تقویم وجود ندارد.',
-          x_expand: true,
-          style_class: 'pcalendar-day pcalendar-date-label'
-        });
-        this.convertedDatesVbox.add(button);
-        return;
-      }
-  
-      // add persian date
-      if (this._activeConverter !== ConverterTypes.fromPersian) {
-        let button = new St.Button({
-          label: str.numbersFormat(
-            str.dateStrFormat(
-              Schema.get_string('persian-display-format'),
-              cDateObj.persianDay,
-              cDateObj.persianMonth,
-              cDateObj.persianYear,
-              cDateObj.dayOfWeek,
-              'persian'
-            )
-          ) + ' هجری شمسی',
-          // x_align: Clutter.ActorAlign.CENTER,
-          x_expand: true,
-          // x_fill: true,
-          style_class: 'pcalendar-day pcalendar-date-label'
-        });
-        this.convertedDatesVbox.add(button);
-        button.connect('clicked', Lang.bind(button, function () {
-          St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
-        }));
-      }
-  
-      // add islamic date
-      if (this._activeConverter !== ConverterTypes.fromIslamic) {
-        let button = new St.Button({
-          label: str.numbersFormat(
-            str.dateStrFormat(
-              Schema.get_string('islamic-display-format'),
-              cDateObj.islamicDay,
-              cDateObj.islamicMonth,
-              cDateObj.islamicYear,
-              cDateObj.dayOfWeek,
-              'islamic'
-            )
-          ) + ' هجری قمری',
-          // x_align: Clutter.ActorAlign.CENTER,
-          x_expand: true,
-          // x_fill: true,
-          style_class: 'pcalendar-day pcalendar-date-label'
-        });
-        this.convertedDatesVbox.add(button);
-        button.connect('clicked', Lang.bind(button, function () {
-          St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
-        }));
-      }
-  
-      // add gregorian date
-      if (this._activeConverter !== ConverterTypes.fromGregorian) {
-        let button = new St.Button({
-          label: str.numbersFormat(
-            str.dateStrFormat(
-              Schema.get_string('gregorian-display-format'),
-              cDateObj.gregorianDay,
-              cDateObj.gregorianMonth,
-              cDateObj.gregorianYear,
-              cDateObj.dayOfWeek,
-              'gregorian'
-            )
-          ) + ' میلادی',
-          // x_align: Clutter.ActorAlign.CENTER,
-          x_expand: true,
-          // x_fill: true,
-          style_class: 'pcalendar-day pcalendar-date-label'
-        });
-        this.convertedDatesVbox.add(button);
-        button.connect('clicked', Lang.bind(button, function () {
-          St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, _mainLable)
-        }));
-      }
-  
-    },
-  
-    _toggleConverter: function (button) {
-      // skip because it is already active
-      if (this._activeConverter === button.TypeID) {
-        return;
-      }
-  
-      // first remove active classes then highlight the clicked button
-      let tabBox = button.get_parent();
-      let tabBoxChildren = tabBox.get_children();
-  
-      for (let i = 0; i < tabBoxChildren.length; i++) {
-        let tabButton = tabBoxChildren[i];
-        tabButton.remove_style_class_name('active');
-      }
-  
-      button.add_style_class_name('active');
-      this._activeConverter = button.TypeID;
-  
-      this._onModifyConverter()
-    }
-  */
+  }
+
 });
 
 function notify(msg, details = '', icon = 'x-office-calendar') {
@@ -589,8 +325,6 @@ function init(metadata) {
 }
 
 function enable() {
-  //if (_indicator !== undefined) disable();//آزمایشی
-
   _prayTimeIs = '';///
   if (player.isPlaying()) player.pause();///
 
@@ -630,7 +364,6 @@ function disable() {
   Schema.disconnect(_indicator.schema_widget_format_signal);
   Schema.disconnect(_indicator.schema_position_signal);
   _indicator.destroy();
-  ///_indicator = undefined;///آزمایشی
   MainLoop.source_remove(_timer);
 }
 
@@ -797,4 +530,3 @@ function checkPrayTime() {
 
 
 }
-

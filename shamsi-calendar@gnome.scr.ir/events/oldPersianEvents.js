@@ -1,3 +1,4 @@
+
 // copyright پژوهش‌های ایرانی at http://ghiasabadi.com/
 // jdf.scr.ir : Only edit structure to new events structure (without change events text)
 
