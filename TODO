@@ -1,5 +1,5 @@
 // FEATURES
-
+add Full Support for Gnome40+Gtk4 (prefs_Gtk4.js) and fix bugs
 
 // BUGS
-
+prefs_Gtk4.js : Gtk.FileChooserButton is undefined (wait for stable_Gnome4)
