@@ -325,8 +325,8 @@ function init(metadata) {
 }
 
 function enable() {
-  _prayTimeIs = '';///
-  if (player.isPlaying()) player.pause();///
+  _prayTimeIs = '';
+  if (player.isPlaying()) player.pause();
 
   _indicator = new ShamsiCalendar();
 
@@ -358,6 +358,9 @@ function enable() {
 }
 
 function disable() {
+  _prayTimeIs = '';
+  if (player.isPlaying()) player.pause();
+
   Schema.disconnect(_indicator.schema_not_holiday_color_change_signal);
   Schema.disconnect(_indicator.schema_holiday_color_change_signal);
   Schema.disconnect(_indicator.schema_custom_color_signal);
