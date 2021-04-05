@@ -56,7 +56,7 @@ const App = new Lang.Class({
       ['vbox6', 'بازنشانی'],
       ['vbox7', 'درباره'],
     ].forEach((v) => {
-      this[v[0]] = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 6, halign: Gtk.Align.CENTER,margin_top:14 ,margin_bottom:14 ,margin_start:14 , margin_end:14 });
+      this[v[0]] = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 6, halign: Gtk.Align.CENTER, margin_top: 14, margin_bottom: 14, margin_start: 14, margin_end: 14 });
       this.main_hbox.append_page(
         this[v[0]],
         new Gtk.Label({ label: v[1] })
@@ -542,7 +542,7 @@ const App = new Lang.Class({
 
       dialog.add_button('بازنشانی تنظیمات این بخش', 1);
 
-      let hBoxSetting = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0, margin_top:14 ,margin_bottom:14 ,margin_start:14 , margin_end:14 });
+      let hBoxSetting = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0, margin_top: 14, margin_bottom: 14, margin_start: 14, margin_end: 14 });
       hBoxSetting.border_width = 14;
       let vBoxSoundUri = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxSoundUri.append(new Gtk.Label({ label: 'فایل' }));
@@ -777,9 +777,8 @@ const App = new Lang.Class({
     this.el['praytime-city'] = new Gtk.Entry({ max_length: 22, width_chars: 22 });
 
     this.el['praytime-lat'] = new Gtk.Entry({ max_length: 7, width_chars: 7 });
-    label = new Gtk.Label({ label: '    عرض جغرافیایی: ' });
     hbox.append(this.el['praytime-lat']);
-    hbox.append(label);
+    hbox.append(new Gtk.Label({ label: '    عرض جغرافیایی: ' }));
     this.el['praytime-lat'].set_text(Schema.get_double('praytime-lat').toString());
     this.el['praytime-lat'].connect('changed', () => {
       if (isNaN(parseFloat(this.el['praytime-lat'].text))) return false;
@@ -789,9 +788,8 @@ const App = new Lang.Class({
     });
 
     this.el['praytime-lng'] = new Gtk.Entry({ max_length: 7, width_chars: 7 });
-    label = new Gtk.Label({ label: '      طول جغرافیایی: ' });
     hbox.append(this.el['praytime-lng']);
-    hbox.append(label);
+    hbox.append(new Gtk.Label({ label: '      طول جغرافیایی: ' }));
     this.el['praytime-lng'].set_text(Schema.get_double('praytime-lng').toString());
     this.el['praytime-lng'].connect('changed', () => {
       if (isNaN(parseFloat(this.el['praytime-lng'].text))) return false;
@@ -895,7 +893,7 @@ const App = new Lang.Class({
 
 
       let box = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL, spacing: 10, halign: Gtk.Align.CENTER, margin_top:14 ,margin_bottom:14 ,margin_start:14 , margin_end:14
+        orientation: Gtk.Orientation.VERTICAL, spacing: 10, halign: Gtk.Align.CENTER, margin_top: 14, margin_bottom: 14, margin_start: 14, margin_end: 14
       });
 
       let boxH = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
@@ -1120,7 +1118,7 @@ const App = new Lang.Class({
       });
 
       let box = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL, spacing: 10, halign: Gtk.Align.CENTER, margin_top:14 ,margin_bottom:14 ,margin_start:14 , margin_end:14
+        orientation: Gtk.Orientation.VERTICAL, spacing: 10, halign: Gtk.Align.CENTER, margin_top: 14, margin_bottom: 14, margin_start: 14, margin_end: 14
       });
 
       let boxH = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
@@ -1237,7 +1235,7 @@ const App = new Lang.Class({
 
 
 
-this.vbox6.set_spacing(1);
+    this.vbox6.set_spacing(1);
 
     // Reset Settings
     this.vbox6.append(new Gtk.Label({
@@ -1293,12 +1291,13 @@ this.vbox6.set_spacing(1);
     for (let tName in PrayTimes.persianMap) {
       Schema.reset('praytime-' + tName + '-setting');
       Schema.reset('praytime-' + tName + '-sound-uri');
+      if (this.el['praytime-imsak-setting_ShowTime'] === undefined) continue;
       const settings = this.getPrayTimeSetting(tName);
       // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
       ['ShowTime', 'TextNotify', 'PlaySound', 'CalcMethod', 'SoundId'].forEach((indexId) => {
         this.el['praytime-' + tName + '-setting_' + indexId].set_active_id(settings[indexId]);
       });
-      let SoundUri = Schema.get_string('praytime-' + tName + '-sound-uri')
+      let SoundUri = Schema.get_string('praytime-' + tName + '-sound-uri');
       if (this.el['praytime-' + tName + '-setting_SoundId'].get_active_id().toString() === '_custom_') {
         if (SoundUri === '' || SoundUri === 'Music') {
           this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], '');

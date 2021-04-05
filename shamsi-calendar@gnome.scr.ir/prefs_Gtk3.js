@@ -738,9 +738,8 @@ const App = new Lang.Class({
     this.el['praytime-city'] = new Gtk.Entry({ max_length: 22, width_chars: 22 });
 
     this.el['praytime-lat'] = new Gtk.Entry({ max_length: 7, width_chars: 7 });
-    label = new Gtk.Label({ label: '    عرض جغرافیایی: ' });
     hbox.add(this.el['praytime-lat']);
-    hbox.add(label);
+    hbox.add(new Gtk.Label({ label: '    عرض جغرافیایی: ' }));
     this.el['praytime-lat'].set_text(Schema.get_double('praytime-lat').toString());
     this.el['praytime-lat'].connect('changed', () => {
       if (isNaN(parseFloat(this.el['praytime-lat'].text))) return false;
@@ -750,9 +749,8 @@ const App = new Lang.Class({
     });
 
     this.el['praytime-lng'] = new Gtk.Entry({ max_length: 7, width_chars: 7 });
-    label = new Gtk.Label({ label: '      طول جغرافیایی: ' });
     hbox.add(this.el['praytime-lng']);
-    hbox.add(label);
+    hbox.add(new Gtk.Label({ label: '      طول جغرافیایی: ' }));
     this.el['praytime-lng'].set_text(Schema.get_double('praytime-lng').toString());
     this.el['praytime-lng'].connect('changed', () => {
       if (isNaN(parseFloat(this.el['praytime-lng'].text))) return false;
@@ -1220,6 +1218,7 @@ const App = new Lang.Class({
     for (let tName in PrayTimes.persianMap) {
       Schema.reset('praytime-' + tName + '-setting');
       Schema.reset('praytime-' + tName + '-sound-uri');
+      if (this.el['praytime-imsak-setting_ShowTime'] === undefined) continue;
       const settings = this.getPrayTimeSetting(tName);
       // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
       ['ShowTime', 'TextNotify', 'PlaySound', 'CalcMethod', 'SoundId'].forEach((indexId) => {
