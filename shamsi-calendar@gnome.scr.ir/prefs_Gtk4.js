@@ -46,27 +46,255 @@ const App = new Lang.Class({
     ];
 
 
-  
+
     [
-        ['vbox1','نوار وضعیت'],
-        ['vbox2','نمایش'],
-        ['vbox3','مناسبت‌ها'],
-        ['vbox4','هفته'],
-        ['vbox5','اوقات شرعی'],
-        ['vbox6','بازنشانی'],
-        ['vbox7','درباره'],
-    ].forEach((v)=>{
-        this[v[0]] = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 6});
-        this[v[0]].set_margin_top(14);
-        this[v[0]].set_margin_bottom(14);
-        this[v[0]].set_margin_start(14);
-        this[v[0]].set_margin_end(14);
-        this[v[0]].set_halign(Gtk.Align.CENTER);
-        this.main_hbox.append_page(
-            this[v[0]],
-            new Gtk.Label({ label: v[1] })
-        );
+      ['vbox1', 'نوار وضعیت'],
+      ['vbox2', 'نمایش'],
+      ['vbox3', 'مناسبت‌ها'],
+      ['vbox4', 'هفته'],
+      ['vbox5', 'اوقات شرعی'],
+      ['vbox6', 'بازنشانی'],
+      ['vbox7', 'درباره'],
+    ].forEach((v) => {
+      this[v[0]] = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 6 });
+      this[v[0]].set_margin_top(14);
+      this[v[0]].set_margin_bottom(14);
+      this[v[0]].set_margin_start(14);
+      this[v[0]].set_margin_end(14);
+      this[v[0]].set_halign(Gtk.Align.CENTER);
+      this.main_hbox.append_page(
+        this[v[0]],
+        new Gtk.Label({ label: v[1] })
+      );
     });
+
+
+
+
+
+
+/*
+    let btnTest = new Gtk.Button({ label: 'آزمایش صداها' });
+    btnTest.connect('clicked', () => {
+
+
+
+      const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/sounds/';
+      const sounds = {
+        "azan_01": [
+          'اذان ۱ ،مرحوم مؤذن‌زاده',
+          'azan_01.mp3'
+        ],
+        "doa_01": [
+          'ذکر قبل اذان ۱',
+          'doa_01.mp3'
+        ],
+        "salawat_01": [
+          'صلوات ۱',
+          'salawat_01.mp3'
+        ],
+        "alert_01": [
+          'هشدار صوتی ساده ۱',
+          'alert_01.mp3'
+        ],
+        "_custom_": [
+          'انتخاب فایل سفارشی ←',
+          '_custom_'
+        ],
+      };
+
+
+
+      let dialog = new Gtk.Dialog({
+        title: 'آزمایش صداها',
+        transient_for: this.vbox1.get_root(),
+        use_header_bar: true,
+        modal: true
+      });
+
+
+      let selectedSound = '';
+      let selectedSoundUri = '';
+      let selectedSoundFileName = '';
+
+
+      let btnFCh = new Gtk.Button({ label: ' ... ', sensitive: false });
+
+      btnFCh.connect('clicked', () => {
+
+        this.el['play-sound-file-test'] = new Gtk.FileChooserNative({
+          title: 'انتخاب یک فایل صوتی',
+          transient_for: btnFCh.get_root(),
+          modal: true,
+          action: Gtk.FileChooserAction.OPEN,
+          select_multiple: false
+        });
+        {
+          let audioFilter = new Gtk.FileFilter;
+          audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
+          this.el['play-sound-file-test'].set_filter(audioFilter);
+        }
+
+        this.el['play-sound-file-test'].connect('response', (native, response) => {
+          if (response !== Gtk.ResponseType.ACCEPT) {
+            return;
+          }
+          let fileURI = native.get_file().get_path();
+          selectedSoundUri = fileURI;//btnFCh.set_label(fileURI);
+          fileURI = fileURI.slice(0, fileURI.lastIndexOf('.'));
+          fileURI = fileURI.slice(fileURI.lastIndexOf('/') + 1);
+          if (fileURI.length > 8) fileURI = fileURI.slice(0, 8) + '...';
+          this.btnIconLabel(btnFCh, fileURI);
+          selectedSoundFileName = fileURI;
+        });
+        this.el['play-sound-file-test'].show();
+      });
+
+
+
+      this.el['play-sound-test'] = new Gtk.ComboBoxText();
+      for (let i in sounds) {
+        if (selectedSound === '') {
+          selectedSound = i;
+          selectedSoundUri = soundsUri + sounds[selectedSound][1];
+        }
+        this.el['play-sound-test'].append(
+          i,
+          sounds[i][0]
+        );
+      }
+      this.el['play-sound-test'].set_active(selectedSound);
+      this.el['play-sound-test'].connect('changed', () => {
+        selectedSound = this.el['play-sound-test'].get_active_id();
+        if (selectedSound === '_custom_') {
+          //selectedSoundUri = '';
+          btnFCh.set_sensitive(true);
+          if (selectedSoundUri === '') {
+            this.btnIconLabel(btnFCh, '');
+          } else {
+            this.btnIconLabel(btnFCh, selectedSoundFileName);
+          }
+        } else {
+          selectedSoundUri = soundsUri + sounds[selectedSound][1];
+          btnFCh.set_sensitive(false);
+          btnFCh.set_label(' ... ');
+        }
+        if (player.isPlaying()) {
+          player.pause();
+          playPauseBtn.label = 'پخش';
+        }
+      });
+
+      let box = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 10,
+        //border_width: 22
+      });
+
+      let boxH = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
+      //boxH.append(this.el['play-sound-file-test']);
+      boxH.append(btnFCh);
+      boxH.append(this.el['play-sound-test']);
+      boxH.append(new Gtk.Label({ label: 'عنوان صدا: ' }));
+      box.append(boxH);
+
+
+
+      let valume = 0;
+      let testValume = new Gtk.Scale;
+      testValume.set_size_request(293, 14);
+      testValume.set_range(0.0, 1.0);
+      testValume.set_value(Schema.get_double('praytime-play-valume'));
+      const DEFAULT_ICONS_SIZES = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+      for (let i in DEFAULT_ICONS_SIZES) {
+        testValume.add_mark(DEFAULT_ICONS_SIZES[i], Gtk.PositionType.TOP, '');
+      }
+      this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
+      if (this._rtl) {
+        testValume.set_value_pos(Gtk.PositionType.LEFT);
+        testValume.set_flippable(false);
+        testValume.set_inverted(true);
+      }
+      testValume.connect('change-value', (scroll, value) => {
+        valume = value;
+      });
+      boxH = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
+      boxH.append(testValume);
+      boxH.append(new Gtk.Label({ label: 'شدّت صدا:' }));
+      box.append(boxH);
+
+
+
+      let playPauseBtn = new Gtk.Button({ label: 'پخش', margin_top: 14 });
+      playPauseBtn.connect('clicked', () => {
+        if (player.isPlaying()) {
+          player.pause();
+          testValume.set_sensitive(true);
+          playPauseBtn.label = 'پخش';
+        } else if (selectedSoundUri !== '') {
+          player.setVolume(valume);
+          player.setUri(selectedSoundUri);
+          player.play();
+          player.onEnd = () => {
+            testValume.set_sensitive(true);
+            playPauseBtn.label = 'پخش';
+          }
+          testValume.set_sensitive(false);
+          playPauseBtn.label = 'توقّف';
+        }
+      });
+      box.append(playPauseBtn);
+
+      box.append(new Gtk.Label({
+        label: '<span size="medium" color="#f99">\nاین صفحه فقط برای شنیدن و آزمایش صداهاست.\nتغییر موارد بالا، هرگز در تنظیمات ذخیره نمی‌شود.</span>',
+        use_markup: true
+      }));
+
+      dialog.get_content_area().append(box);
+
+      dialog.connect('response', (dialog, id) => {
+        if (id != 1) {
+          if (player.isPlaying()) player.pause();
+          //dialog.get_content_area().remove(box);
+          //dialog.destroy();
+        }
+        return;
+      });
+
+      dialog.present();
+    });
+
+
+    this.vbox1.append(btnTest);
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -145,7 +373,7 @@ const App = new Lang.Class({
     this.el['widget-format'].set_active(Schema.get_string('widget-format'));
     Schema.bind('widget-format', this.el['widget-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 6});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 6 });
     hbox.append(this.el['widget-format']);
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(new Gtk.Label({ label: ' قالب: ' }));
@@ -157,7 +385,7 @@ const App = new Lang.Class({
 
     this.vbox1.append(new Gtk.Label({ label: '' }));
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 6});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 6 });
     hbox.append(colorsGrid);
     hbox.append(this.el['custom-color']);
     this.vbox1.append(hbox);
@@ -216,7 +444,7 @@ const App = new Lang.Class({
     for (let i in tabs) this.el['default-tab'].append(i, tabs[i]);
     this.el['default-tab'].set_active(Schema.get_string('default-tab'));
     Schema.bind('default-tab', this.el['default-tab'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['default-tab']);
     hbox.append(new Gtk.Label({ label: 'زبانه‌ی فعّال پیشفرض: ' }));
@@ -249,7 +477,7 @@ const App = new Lang.Class({
     }
     sensitiveFunc();
     Schema.connect('changed::persian-display', sensitiveFunc);
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['persian-display-format']);
     hbox.append(new Gtk.Label({ label: 'قالب: ' }));
@@ -283,7 +511,7 @@ const App = new Lang.Class({
     }
     sensitiveFunc();
     Schema.connect('changed::islamic-display', sensitiveFunc);
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['islamic-display-format']);
     hbox.append(new Gtk.Label({ label: 'قالب: ' }));
@@ -317,7 +545,7 @@ const App = new Lang.Class({
     }
     sensitiveFunc();
     Schema.connect('changed::gregorian-display', sensitiveFunc);
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['gregorian-display-format']);
     hbox.append(new Gtk.Label({ label: 'قالب: ' }));
@@ -381,7 +609,7 @@ const App = new Lang.Class({
     this.el['week-start'].append('6', 'جمعه');
     this.el['week-start'].set_active(Schema.get_string('week-start'));
     Schema.bind('week-start', this.el['week-start'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['week-start']);
@@ -395,7 +623,7 @@ const App = new Lang.Class({
       label: '\n\n\nروزهای تعطیل در هفته:',
       use_markup: true
     }));
-    tmp = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     tmp.border_width = 1;
     this.vbox4.append(tmp);
 
@@ -420,7 +648,7 @@ const App = new Lang.Class({
     this.el['none-work-6'] = new Gtk.CheckButton({ label: 'جمعه' });
     Schema.bind('none-work-6', this.el['none-work-6'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['none-work-6']);
     hbox.append(this.el['none-work-5']);
@@ -441,7 +669,7 @@ const App = new Lang.Class({
     this.el['rotaton-to-vertical'] = new Gtk.CheckButton({ label: 'عمودی‌شدن جدول تقویم' });
     Schema.bind('rotaton-to-vertical', this.el['rotaton-to-vertical'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['reverse-direction']);
     hbox.append(new Gtk.Label({ label: '' }));
@@ -458,12 +686,12 @@ const App = new Lang.Class({
 
     //PrayTimes
     this.vbox5.append(new Gtk.Label({ label: 'تذکّر: حتماً نتایج نرم‌افزار را با اذان محلّی شهرتان مطابقت دهید و همیشه جوانب احتیاط را رعایت فرمایید!' }));
-    tmp = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     tmp.border_width = 1;
     this.vbox5.append(tmp);
 
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 3});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3 });
     hbox.border_width = 3;
 
     const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/sounds/';
@@ -539,28 +767,28 @@ const App = new Lang.Class({
 
       let dialog = new Gtk.Dialog({
         title: 'تنظیمات پیشرفته‌ی اوقات شرعی',
-        transient_for: this.vbox5.get_toplevel(),
+        transient_for: this.vbox5.get_root(),
         use_header_bar: true,
         modal: true
       });
 
       dialog.add_button('بازنشانی تنظیمات این بخش', 1);
 
-      let hBoxSetting = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+      let hBoxSetting = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
       hBoxSetting.border_width = 14;
-      let vBoxSoundUri = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 0});
+      let vBoxSoundUri = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxSoundUri.append(new Gtk.Label({ label: 'فایل' }));
-      let vBoxSoundId = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 0});
+      let vBoxSoundId = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxSoundId.append(new Gtk.Label({ label: 'صدای اذان' }));
-      let vBoxCalcMethod = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 0});
+      let vBoxCalcMethod = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxCalcMethod.append(new Gtk.Label({ label: 'طبق روش' }));
-      let vBoxPlaySound = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 0});
+      let vBoxPlaySound = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxPlaySound.append(new Gtk.Label({ label: 'پخش صدا' }));
-      let vBoxTextNotify = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 0});
+      let vBoxTextNotify = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxTextNotify.append(new Gtk.Label({ label: 'اعلان متنی' }));
-      let vBoxShowTime = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 0});
+      let vBoxShowTime = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxShowTime.append(new Gtk.Label({ label: 'نمایش' }));
-      let vBoxTitle = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 0});
+      let vBoxTitle = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxTitle.append(new Gtk.Label({ label: '' }));
       hBoxSetting.append(vBoxSoundUri);
       hBoxSetting.append(vBoxSoundId);
@@ -584,18 +812,47 @@ const App = new Lang.Class({
         let label = new Gtk.Label({ label: title + ': ', margin_bottom: 11 });
 
         // SoundUri
-        this.el['praytime-' + tName + '-sound-uri'] = new Gtk.FileChooserButton();
-        this.el['praytime-' + tName + '-sound-uri'].set_sensitive(SoundId === '_custom_');
-        this.el['praytime-' + tName + '-sound-uri'].set_title('انتخاب یک فایل صوتی');
-        this.el['praytime-' + tName + '-sound-uri'].set_filename(SoundUri);
-        {
-          let audioFilter = new Gtk.FileFilter;
-          audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
-          this.el['praytime-' + tName + '-sound-uri'].set_filter(audioFilter);
-        }
-        this.el['praytime-' + tName + '-sound-uri'].connect('file-set', (f) => {
-          Schema.set_string('praytime-' + tName + '-sound-uri', f.get_filename());
+        this.el['praytime-' + tName + '-sound-uri'] = new Gtk.Button({ label: ' ... ', sensitive: (SoundId === '_custom_') });
+
+        this.el['praytime-' + tName + '-sound-uri'].connect('clicked', () => {
+          let fChNative = new Gtk.FileChooserNative({
+            title: 'انتخاب یک فایل صوتی',
+            transient_for: this.el['praytime-' + tName + '-sound-uri'].get_root(),
+            modal: true,
+            action: Gtk.FileChooserAction.OPEN,
+            select_multiple: false
+          });
+          {
+            let audioFilter = new Gtk.FileFilter;
+            audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
+            fChNative.set_filter(audioFilter);
+          }
+          fChNative.connect('response', (native, response) => {
+            if (response !== Gtk.ResponseType.ACCEPT) {
+              return;
+            }
+            let fileURI = native.get_file().get_path();
+            Schema.set_string('praytime-' + tName + '-sound-uri', fileURI);
+            fileURI = fileURI.slice(0, fileURI.lastIndexOf('.'));
+            fileURI = fileURI.slice(fileURI.lastIndexOf('/') + 1);
+            if (fileURI.length > 8) fileURI = fileURI.slice(0, 8) + '...';
+            this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], fileURI);
+          });
+          fChNative.show();
         });
+
+
+        //this.el['praytime-' + tName + '-sound-uri'].set_sensitive(SoundId === '_custom_');
+        //this.el['praytime-' + tName + '-sound-uri'].set_title('انتخاب یک فایل صوتی');
+        //this.el['praytime-' + tName + '-sound-uri'].set_filename(SoundUri);
+        //{
+        //  let audioFilter = new Gtk.FileFilter;
+        //  audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
+        //  this.el['praytime-' + tName + '-sound-uri'].set_filter(audioFilter);
+        //}
+        //this.el['praytime-' + tName + '-sound-uri'].connect('file-set', (f) => {
+        //  Schema.set_string('praytime-' + tName + '-sound-uri', f.get_filename());
+        //});
 
         // SoundId
         this.el['praytime-' + tName + '-setting_SoundId'] = new Gtk.ComboBoxText();
@@ -606,8 +863,38 @@ const App = new Lang.Class({
         this.el['praytime-' + tName + '-setting_SoundId'].connect('changed', () => {
           let newSoundId = this.el['praytime-' + tName + '-setting_SoundId'].get_active_id().toString();
           this.setPrayTimeSetting(tName, 'SoundId', newSoundId);
-          this.el['praytime-' + tName + '-sound-uri'].set_sensitive(newSoundId === '_custom_');
+          //this.el['praytime-' + tName + '-sound-uri'].set_sensitive(newSoundId === '_custom_');
+
+          if (newSoundId === '_custom_') {
+            //selectedSoundUri = '';
+            this.el['praytime-' + tName + '-sound-uri'].set_sensitive(true);
+            if (SoundUri === '' || SoundUri === 'Music') {
+              this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], '');
+            } else {
+              fileName = SoundUri.slice(0, SoundUri.lastIndexOf('.'));
+              fileName = fileName.slice(fileName.lastIndexOf('/') + 1);
+              if (fileName.length > 8) fileName = fileName.slice(0, 8) + '...';
+              this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], fileName);
+            }
+          } else {
+            selectedSoundUri = soundsUri + sounds[newSoundId][1];
+            this.el['praytime-' + tName + '-sound-uri'].set_sensitive(false);
+            this.el['praytime-' + tName + '-sound-uri'].set_label(' ... ');
+          }
         });
+
+        if (this.el['praytime-' + tName + '-setting_SoundId'].get_active_id().toString() === '_custom_') {
+          if (SoundUri === '' || SoundUri === 'Music') {
+            this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], '');
+          } else {
+            fileName = SoundUri.slice(0, SoundUri.lastIndexOf('.'));
+            fileName = fileName.slice(fileName.lastIndexOf('/') + 1);
+            if (fileName.length > 8) fileName = fileName.slice(0, 8) + '...';
+            this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], fileName);
+          }
+        } else {
+          this.el['praytime-' + tName + '-sound-uri'].set_label(' ... ');
+        }
 
         // CalcMethod
         let list = {
@@ -653,8 +940,8 @@ const App = new Lang.Class({
 
         //TextNotify
         this.el['praytime-' + tName + '-setting_TextNotify'] = new Gtk.ComboBoxText({
-          margin_right: 4,
-          margin_left: 4
+          //margin_right: 4,
+          //margin_left: 4
         });
         for (let i in list) {
           this.el['praytime-' + tName + '-setting_TextNotify'].append(i, list[i]);
@@ -684,7 +971,7 @@ const App = new Lang.Class({
 
       }
 
-      dialog.get_content_area().add(hBoxSetting);
+      dialog.get_content_area().append(hBoxSetting);
 
       dialog.connect('response', (dialog, id) => {
         if (id == 1) {
@@ -696,7 +983,7 @@ const App = new Lang.Class({
         return;
       });
 
-      dialog.show_all();
+      dialog.present();
     });
     hbox.append(prayTimeSetting);
 
@@ -704,7 +991,7 @@ const App = new Lang.Class({
 
 
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 3});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3 });
     hbox.border_width = 3;
     hbox.append(this.el['praytime-calc-method-ehtiyat']);
     hbox.append(new Gtk.Label({ label: 'احتیاط بین روش اصلی و روش: ' }));
@@ -712,12 +999,12 @@ const App = new Lang.Class({
     this.vbox5.append(hbox);
 
 
-    tmp = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     tmp.border_width = 3;
     this.vbox5.append(tmp);
 
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 3});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3 });
     hbox.border_width = 3;
     this.el['praytime-city'] = new Gtk.Entry({ max_length: 22, width_chars: 22 });
 
@@ -768,7 +1055,7 @@ const App = new Lang.Class({
 
       let dialog = new Gtk.Dialog({
         title: 'انتخاب شهر از فهرست',
-        transient_for: this.vbox5.get_toplevel(),
+        transient_for: this.vbox5.get_root(),
         use_header_bar: true,
         modal: true
       });
@@ -841,7 +1128,7 @@ const App = new Lang.Class({
       let box = new Gtk.Box({
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 10,
-        border_width: 22
+        //border_width: 22
       });
 
       let boxH = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
@@ -859,7 +1146,7 @@ const App = new Lang.Class({
         use_markup: true
       }));
 
-      dialog.get_content_area().add(box);
+      dialog.get_content_area().append(box);
 
       stateAndCitySubmit.connect('clicked', () => {
         chaneLocation(_cityData);
@@ -885,13 +1172,13 @@ const App = new Lang.Class({
         return;
       });
 
-      dialog.show_all();
+      dialog.present();
     });
 
     hbox.append(selectCity);
     this.vbox5.append(hbox);
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 3});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3 });
     hbox.border_width = 3;
 
     // let tzs = [
@@ -972,11 +1259,11 @@ const App = new Lang.Class({
 
     this.vbox5.append(hbox);
 
-    tmp = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     tmp.border_width = 3;
     this.vbox5.append(tmp);
 
-    hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 3});
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3 });
     hbox.border_width = 3;
 
 
@@ -986,7 +1273,7 @@ const App = new Lang.Class({
 
       let dialog = new Gtk.Dialog({
         title: 'آزمایش صداها',
-        transient_for: this.vbox5.get_toplevel(),
+        transient_for: this.vbox1.get_root(),
         use_header_bar: true,
         modal: true
       });
@@ -994,18 +1281,43 @@ const App = new Lang.Class({
 
       let selectedSound = '';
       let selectedSoundUri = '';
+      let selectedSoundFileName = '';
 
-      this.el['play-sound-file-test'] = new Gtk.FileChooserButton();
-      this.el['play-sound-file-test'].set_sensitive(false);
-      this.el['play-sound-file-test'].set_title('انتخاب یک فایل صوتی');
-      {
-        let audioFilter = new Gtk.FileFilter;
-        audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
-        this.el['play-sound-file-test'].set_filter(audioFilter);
-      }
-      this.el['play-sound-file-test'].connect('file-set', (f) => {
-        selectedSoundUri = f.get_filename();
+
+      let btnFCh = new Gtk.Button({ label: ' ... ', sensitive: false });
+
+
+      btnFCh.connect('clicked', () => {
+
+        this.el['play-sound-file-test'] = new Gtk.FileChooserNative({
+          title: 'انتخاب یک فایل صوتی',
+          transient_for: btnFCh.get_root(),
+          modal: true,
+          action: Gtk.FileChooserAction.OPEN,
+          select_multiple: false
+        });
+        {
+          let audioFilter = new Gtk.FileFilter;
+          audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
+          this.el['play-sound-file-test'].set_filter(audioFilter);
+        }
+
+        this.el['play-sound-file-test'].connect('response', (native, response) => {
+          if (response !== Gtk.ResponseType.ACCEPT) {
+            return;
+          }
+          let fileURI = native.get_file().get_path();
+          selectedSoundUri = fileURI;//btnFCh.set_label(fileURI);
+          fileURI = fileURI.slice(0, fileURI.lastIndexOf('.'));
+          fileURI = fileURI.slice(fileURI.lastIndexOf('/') + 1);
+          if (fileURI.length > 8) fileURI = fileURI.slice(0, 8) + '...';
+          this.btnIconLabel(btnFCh, fileURI);
+          selectedSoundFileName = fileURI;
+        });
+        this.el['play-sound-file-test'].show();
       });
+
+
 
       this.el['play-sound-test'] = new Gtk.ComboBoxText();
       for (let i in sounds) {
@@ -1022,11 +1334,17 @@ const App = new Lang.Class({
       this.el['play-sound-test'].connect('changed', () => {
         selectedSound = this.el['play-sound-test'].get_active_id();
         if (selectedSound === '_custom_') {
-          selectedSoundUri = '';
-          this.el['play-sound-file-test'].set_sensitive(true);
+          //selectedSoundUri = '';
+          btnFCh.set_sensitive(true);
+          if (selectedSoundUri === '') {
+            this.btnIconLabel(btnFCh, '');
+          } else {
+            this.btnIconLabel(btnFCh, selectedSoundFileName);
+          }
         } else {
           selectedSoundUri = soundsUri + sounds[selectedSound][1];
-          this.el['play-sound-file-test'].set_sensitive(false);
+          btnFCh.set_sensitive(false);
+          btnFCh.set_label(' ... ');
         }
         if (player.isPlaying()) {
           player.pause();
@@ -1037,10 +1355,12 @@ const App = new Lang.Class({
       let box = new Gtk.Box({
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 10,
-        border_width: 22
+        //border_width: 22
       });
+
       let boxH = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
-      boxH.append(this.el['play-sound-file-test']);
+      //boxH.append(this.el['play-sound-file-test']);
+      boxH.append(btnFCh);
       boxH.append(this.el['play-sound-test']);
       boxH.append(new Gtk.Label({ label: 'عنوان صدا: ' }));
       box.append(boxH);
@@ -1062,13 +1382,14 @@ const App = new Lang.Class({
         testValume.set_flippable(false);
         testValume.set_inverted(true);
       }
-      testValume.connect('format-value', (scale, value) => {
+      testValume.connect('change-value', (scroll, value) => {
         valume = value;
       });
       boxH = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
       boxH.append(testValume);
       boxH.append(new Gtk.Label({ label: 'شدّت صدا:' }));
       box.append(boxH);
+
 
 
       let playPauseBtn = new Gtk.Button({ label: 'پخش', margin_top: 14 });
@@ -1096,18 +1417,18 @@ const App = new Lang.Class({
         use_markup: true
       }));
 
-      dialog.get_content_area().add(box);
+      dialog.get_content_area().append(box);
 
       dialog.connect('response', (dialog, id) => {
         if (id != 1) {
           if (player.isPlaying()) player.pause();
-          dialog.get_content_area().remove(box);
-          dialog.destroy();
+          //dialog.get_content_area().remove(box);
+          //dialog.destroy();
         }
         return;
       });
 
-      dialog.show_all();
+      dialog.present();
     });
 
 
@@ -1159,7 +1480,7 @@ const App = new Lang.Class({
       label: 'با انجام عمل بازنشانی، تنظیمات این افزونه به حالت پیشفرض اوّلیه باز خواهد گردید.',
       use_markup: true
     }));
-    tmp = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     tmp.border_width = 1;
     this.vbox6.append(tmp);
 
@@ -1187,7 +1508,7 @@ const App = new Lang.Class({
     resetBtn.connect('clicked', () => this._resetPrayTimesAdvanceSettings());
     this.vbox6.append(resetBtn);
 
-    tmp = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     tmp.border_width = 1;
     this.vbox6.append(tmp);
 
@@ -1217,9 +1538,23 @@ const App = new Lang.Class({
       ['ShowTime', 'TextNotify', 'PlaySound', 'CalcMethod', 'SoundId'].forEach((indexId) => {
         this.el['praytime-' + tName + '-setting_' + indexId].set_active_id(settings[indexId]);
       });
-      this.el['praytime-' + tName + '-sound-uri'].set_filename(
-        Schema.get_string('praytime-' + tName + '-sound-uri')
-      );
+      
+      let SoundUri = Schema.get_string('praytime-' + tName + '-sound-uri')
+      if (this.el['praytime-' + tName + '-setting_SoundId'].get_active_id().toString() === '_custom_') {
+        if (SoundUri === '' || SoundUri === 'Music') {
+          this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], '');
+        } else {
+          fileName = SoundUri.slice(0, SoundUri.lastIndexOf('.'));
+          fileName = fileName.slice(fileName.lastIndexOf('/') + 1);
+          if (fileName.length > 8) fileName = fileName.slice(0, 8) + '...';
+          this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], fileName);
+        }
+      } else {
+        this.el['praytime-' + tName + '-sound-uri'].set_label(' ... ');
+      }
+      //this.el['praytime-' + tName + '-sound-uri'].set_filename(
+      //  Schema.get_string('praytime-' + tName + '-sound-uri')
+      //);
     }
   },
 
@@ -1335,10 +1670,17 @@ const App = new Lang.Class({
     };
   },
 
+  btnIconLabel: function (btn, label = '') {
+    let boxH = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL });
+    boxH.append(new Gtk.Image({ icon_name: (label === '') ? 'folder' : 'audio-x-generic' }));
+    boxH.append(new Gtk.Label({ label: ' ' + ((label === '') ? 'انتخاب' : label) + ' ' }));
+    btn.set_child(boxH);
+  },
+
   createTextEntry: function (value, labelText, commentText) {
     let label = new Gtk.Label({ label: labelText });
     let format = new Gtk.Entry();
-    let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 0});
+    let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(label);
     hbox.append(format);
     let comment = null;
@@ -1366,7 +1708,7 @@ const App = new Lang.Class({
   getColorByHexadecimal: function (hex) {
     let color = new Gdk.RGBA();
     color.parse(hex);
-    if(!color)color.parse('#cc0000');
+    if (!color) color.parse('#cc0000');
     return color;
   },
 
