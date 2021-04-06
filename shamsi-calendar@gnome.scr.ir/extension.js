@@ -25,11 +25,6 @@ const Events = extension.imports.Events;
 const str = extension.imports.strFunctions;
 
 const Schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
-const ConverterTypes = {
-  fromPersian: 0,
-  fromGregorian: 1,
-  fromIslamic: 2
-};
 
 let _mainLable, _indicator, _timer, messageTray;
 let _prayTimeIs = '';
@@ -160,7 +155,7 @@ const ShamsiCalendar = new Lang.Class({
       vertical: false,
       style_class: 'pcalendar pcalendar-font pcalendar-bottom-menu'
     });
-    vbox.add_actor(actionButtons);////
+    vbox.add_actor(actionButtons);
 
 
 

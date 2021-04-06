@@ -69,7 +69,7 @@ Calendar.prototype = {
 
     this.actorRight.destroy_all_children();
 
-    // Top line of the calendar '<| year month |>'
+    // Top line of the calendar '« year month »'
     this._topBox = new St.BoxLayout();
     this.actorRight.layout_manager.attach(this._topBox, 0, 0, 7, 1);
 
@@ -322,7 +322,7 @@ Calendar.prototype = {
 
       if (iterObj.persianMonth !== this._selectedDateObj.persianMonth) {
         styleClass += ' pcalendar-other-month-day';
-      } else if (this._selectedDateObj.julianDay === iterObj.julianDay) {
+      } else if (iterObj.julianDay === this._selectedDateObj.julianDay) {
         styleClass += ' pcalendar-active-day';
       } else {
         styleClass += ' pcalendar-notactive-day';
@@ -595,8 +595,8 @@ Calendar.prototype = {
 
         let oghat = { method: [], timeStr: [], minutes: [] };
         for (let i in azanMethods) {
-          oghat.method[i] = parseInt(i);//azanMethods[i]
-          oghat.timeStr[i] = _prayTimes[azanMethods[i]/*oghat.method[i]*/][tName];
+          oghat.method[i] = parseInt(i);
+          oghat.timeStr[i] = _prayTimes[azanMethods[i]][tName];
           oghat.minutes[i] = timeStrToMinutes(oghat.timeStr[i]);
         }
 
@@ -617,9 +617,17 @@ Calendar.prototype = {
           }));
         }
 
+        let isNow;
+        {
+          let date = new Date();
+          isNow = (
+            nowObj.julianDay === this._selectedDateObj.julianDay &&
+            timeStrToMinutes(date.getHours() + ':' + date.getMinutes()) === ehtiyat
+          );
+        }
         _prayColumnBox.add(new St.Label({
-          text: PrayTimes.persianMap[tName],
-          style_class: 'pcalendar-praytimes-tname pcalendar-txt-white',
+          text: ((isNow) ? '✓ ' : '') + PrayTimes.persianMap[tName],
+          style_class: 'pcalendar-praytimes-tname ' + ((isNow) ? 'pcalendar-txt-green' : 'pcalendar-txt-white'),
           x_expand: false,
         }));
         if (true || ++i % 2 === 0) {
@@ -926,4 +934,3 @@ function timeStrToMinutes(timeStr) {
   if (hour === 0) hour = 24;
   return ((hour * 60) + parseInt(min));
 }
-
