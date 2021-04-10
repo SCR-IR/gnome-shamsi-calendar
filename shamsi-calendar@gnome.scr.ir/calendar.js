@@ -558,7 +558,7 @@ Calendar.prototype = {
           style: 'text-align: right; color: #b50'
         });
         let hBox = new St.BoxLayout({ x_expand: false });
-        hBox.add(playAzanBtn);
+        if (player !== null) hBox.add(playAzanBtn);
         hBox.add(ofogh);
         _prayBox_v.add(hBox);
       }
@@ -617,17 +617,23 @@ Calendar.prototype = {
           }));
         }
 
-        let isNow;
-        {
+        let prayTimeStyle = 'pcalendar-txt-white', prayTimeSymbol = ' ';
+        if (nowObj.julianDay === this._selectedDateObj.julianDay) {
           let date = new Date();
-          isNow = (
-            nowObj.julianDay === this._selectedDateObj.julianDay &&
-            timeStrToMinutes(date.getHours() + ':' + date.getMinutes()) === ehtiyat
-          );
+          let nowToMinutes = timeStrToMinutes(date.getHours() + ':' + date.getMinutes());
+          if (nowToMinutes >= ehtiyat) {
+            prayTimeSymbol = '✓';
+            if (nowToMinutes === ehtiyat) prayTimeStyle = 'pcalendar-txt-green';
+          }
         }
         _prayColumnBox.add(new St.Label({
-          text: ((isNow) ? '✓ ' : '') + PrayTimes.persianMap[tName],
-          style_class: 'pcalendar-praytimes-tname ' + ((isNow) ? 'pcalendar-txt-green' : 'pcalendar-txt-white'),
+          text: PrayTimes.persianMap[tName],
+          style_class: 'pcalendar-praytimes-tname ' + prayTimeStyle,
+          x_expand: false,
+        }));
+        _prayColumnBox.add(new St.Label({
+          text: prayTimeSymbol,
+          style_class: 'pcalendar-praytimes-symbol ' + prayTimeStyle,
           x_expand: false,
         }));
         if (true || ++i % 2 === 0) {
@@ -649,7 +655,7 @@ Calendar.prototype = {
         ) ? -210 : -270;
         if ((new Date().getTimezoneOffset()) !== iranTZO) {
           _prayBox_v.add(new St.Label({
-            text: 'منطقه‌ی زمانی سیستم بررسی شود!',
+            text: 'منطقه‌زمانی سیستم، ایران نیست!',
             x_align: Clutter.ActorAlign.CENTER,
             x_expand: true,
             style: 'text-align: right; color: #a22'
@@ -692,6 +698,29 @@ Calendar.prototype = {
           style_class: 'pcalendar-converter-entry'
         });
 
+        const enNum = (faNum_) => {
+          let faNum = "" + faNum_;
+          let fa = {
+            '۰': '0',
+            '۱': '1',
+            '۲': '2',
+            '۳': '3',
+            '۴': '4',
+            '۵': '5',
+            '۶': '6',
+            '۷': '7',
+            '۸': '8',
+            '۹': '9'
+          };
+
+          let out = "";
+          for (let i in faNum) {
+            out += (fa[faNum[i]] !== undefined) ? fa[faNum[i]] : faNum[i];
+          }
+
+          return out;
+        }
+
         const _onModifyConverter = () => {
           // erase old date
           let convertedDatesChildren = convertedDatesVbox.get_children();
@@ -705,7 +734,7 @@ Calendar.prototype = {
 
           if (!day || !month || !year) return;
 
-          [year, month, day] = [parseInt(year), parseInt(month), parseInt(day)];
+          [year, month, day] = [parseInt(enNum(year)), parseInt(enNum(month)), parseInt(enNum(day))];
 
           let cDateObj = new Tarikh.TarikhObject();
           let checkInputDate = false;
@@ -897,7 +926,7 @@ Calendar.prototype = {
 
     }
 
-    if (player.isPlaying()) {
+    if (player !== null && player.isPlaying()) {
       let btn = new St.Button({ label: 'توقف پخش صدا', style_class: 'pcalendar-praytimes-azan' });
       btn.connect('clicked', Lang.bind(btn, () => {
         player.pause();

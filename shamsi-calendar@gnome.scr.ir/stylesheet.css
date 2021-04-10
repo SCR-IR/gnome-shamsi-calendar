@@ -272,6 +272,10 @@
   background-color: rgba(168, 168, 168, 0.357);
 }
 
+.pcalendar-praytimes-symbol {
+  padding: 0 3px;
+  text-align: center;
+}
 .pcalendar-praytimes-tname {
   padding: 0 5px;
   text-align: right;

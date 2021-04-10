@@ -192,6 +192,9 @@ const ShamsiCalendar = new Lang.Class({
     todayIcon.connect('clicked', function () {
       that._calendar._selectedDateObj.setNow();
       that._calendar._update();
+      // const Gst = imports.gi.Gst;
+      // const GstAudio = imports.gi.GstAudio;
+      // print(typeof(Gst)+' :GA-'+typeof(GstAudio))
     });
     actionButtons.add(todayIcon);
 
@@ -321,7 +324,7 @@ function init(metadata) {
 
 function enable() {
   _prayTimeIs = '';
-  if (player.isPlaying()) player.pause();
+  if (player !== null && player.isPlaying()) player.pause();
 
   _indicator = new ShamsiCalendar();
 
@@ -354,7 +357,7 @@ function enable() {
 
 function disable() {
   _prayTimeIs = '';
-  if (player.isPlaying()) player.pause();
+  if (player !== null && player.isPlaying()) player.pause();
 
   Schema.disconnect(_indicator.schema_not_holiday_color_change_signal);
   Schema.disconnect(_indicator.schema_holiday_color_change_signal);
@@ -482,35 +485,14 @@ function checkPrayTime() {
     if (settings.SoundId === '_custom_') {
       settings.SoundUri = Schema.get_string('praytime-' + tName + '-sound-uri');
     } else {
-      const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/sounds/';
-      const sounds = {
-        "azan_01": [
-          'اذان ۱ ،مرحوم مؤذن‌زاده',
-          'azan_01.mp3'
-        ],
-        "doa_01": [
-          'ذکر قبل اذان ۱',
-          'doa_01.mp3'
-        ],
-        "salawat_01": [
-          'صلوات ۱',
-          'salawat_01.mp3'
-        ],
-        "alert_01": [
-          'هشدار صوتی ساده ۱',
-          'alert_01.mp3'
-        ],
-        // "_custom_": [
-        //   'انتخاب فایل سفارشی ←',
-        //   '_custom_'
-        // ],
-      };
-      settings.SoundUri = soundsUri + sounds[settings.SoundId][1];
+      settings.SoundUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/' + extension.imports.sound.soundsDir + '/' + extension.imports.sound.sounds[settings.SoundId][1];
     }
 
-    player.setVolume(Schema.get_double('praytime-play-valume'));
-    player.setUri(settings.SoundUri);
-    player.play();
+    if (player !== null) {
+      player.setVolume(Schema.get_double('praytime-play-valume'));
+      player.setUri(settings.SoundUri);
+      player.play();
+    }
     if (Schema.get_boolean('custom-color')) {
       _mainLable.set_style('color: ' + Schema.get_string('pray-time-color'));
     }
@@ -520,7 +502,7 @@ function checkPrayTime() {
 
   _prayTimeIs = _prayTimeIs_nextValue;
 
-  if (_prayTimeIs === '' && !player.isPlaying()) {
+  if (_prayTimeIs === '' && (player !== null && !player.isPlaying())) {
     if (Schema.get_boolean('custom-color')) {
       _mainLable.set_style('color: ' + Schema.get_string(_labelSchemaName()));
     }

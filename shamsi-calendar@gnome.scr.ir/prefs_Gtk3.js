@@ -18,7 +18,7 @@ const player = extension.imports.sound.player;
 function init() {
 }
 
-const App = new Lang.Class({
+var App = new Lang.Class({
   Name: 'ShamsiCalendar.App',
   el: {},
   _init: function () {
@@ -487,24 +487,9 @@ const App = new Lang.Class({
 
     hbox = new Gtk.HBox({ spacing: 3, border_width: 3 });
 
-    const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/sounds/';
+    const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/' + extension.imports.sound.soundsDir + '/';
     const sounds = {
-      "azan_01": [
-        'اذان ۱ ،مرحوم مؤذن‌زاده',
-        'azan_01.mp3'
-      ],
-      "doa_01": [
-        'ذکر قبل اذان ۱',
-        'doa_01.mp3'
-      ],
-      "salawat_01": [
-        'صلوات ۱',
-        'salawat_01.mp3'
-      ],
-      "alert_01": [
-        'هشدار صوتی ساده ۱',
-        'alert_01.mp3'
-      ],
+      ...extension.imports.sound.sounds,
       "_custom_": [
         'انتخاب فایل سفارشی ←',
         '_custom_'
@@ -562,7 +547,8 @@ const App = new Lang.Class({
         title: 'تنظیمات پیشرفته‌ی اوقات شرعی',
         transient_for: this.vbox5.get_toplevel(),
         use_header_bar: true,
-        modal: true
+        modal: true,
+        default_width: 50
       });
 
       dialog.add_button('بازنشانی تنظیمات این بخش', 1);
@@ -784,7 +770,8 @@ const App = new Lang.Class({
         title: 'انتخاب شهر از فهرست',
         transient_for: this.vbox5.get_toplevel(),
         use_header_bar: true,
-        modal: true
+        modal: true,
+        default_width: 50
       });
 
       dialog.add_button('بازنشانی', 1);//Reset Button
@@ -998,7 +985,8 @@ const App = new Lang.Class({
         title: 'آزمایش صداها',
         transient_for: this.vbox5.get_toplevel(),
         use_header_bar: true,
-        modal: true
+        modal: true,
+        default_width: 50
       });
 
 
@@ -1038,7 +1026,7 @@ const App = new Lang.Class({
           selectedSoundUri = soundsUri + sounds[selectedSound][1];
           this.el['play-sound-file-test'].set_sensitive(false);
         }
-        if (player.isPlaying()) {
+        if (player !== null && player.isPlaying()) {
           player.pause();
           playPauseBtn.label = 'پخش';
         }
@@ -1083,6 +1071,7 @@ const App = new Lang.Class({
 
       let playPauseBtn = new Gtk.Button({ label: 'پخش', margin_top: 14 });
       playPauseBtn.connect('clicked', () => {
+        if (player === null) return;
         if (player.isPlaying()) {
           player.pause();
           testValume.set_sensitive(true);
@@ -1102,7 +1091,7 @@ const App = new Lang.Class({
       box.add(playPauseBtn);
 
       box.add(new Gtk.Label({
-        label: '<span size="medium" color="#f99">\nاین صفحه فقط برای شنیدن و آزمایش صداهاست.\nتغییر موارد بالا، هرگز در تنظیمات ذخیره نمی‌شود.</span>',
+        label: '<span size="medium" color="#999">\nاین صفحه فقط برای شنیدن و آزمایش صداهاست.\nتغییر موارد بالا، هرگز در تنظیمات ذخیره نمی‌شود.</span>',
         use_markup: true
       }));
 
@@ -1110,7 +1099,7 @@ const App = new Lang.Class({
 
       dialog.connect('response', (dialog, id) => {
         if (id != 1) {
-          if (player.isPlaying()) player.pause();
+          if (player !== null && player.isPlaying()) player.pause();
           dialog.get_content_area().remove(box);
           dialog.destroy();
         }
@@ -1153,10 +1142,17 @@ const App = new Lang.Class({
     // sensitiveFunc();
     // Schema.connect('changed::praytime-play-and-notify', sensitiveFunc);
 
-    hbox.add(playSounds);
-    hbox.add(this.el['praytime-play-valume']);
-    hbox.add(this.el['label_praytime-play-valume']);
-    hbox.add(this.el['praytime-play-and-notify']);
+    if (player !== null) {
+      hbox.add(playSounds);
+      hbox.add(this.el['praytime-play-valume']);
+      hbox.add(this.el['label_praytime-play-valume']);
+      hbox.add(this.el['praytime-play-and-notify']);
+    } else {
+      hbox.add(new Gtk.Label({
+        label: '<span size="medium" color="#f66">برای پخش اذان، باید کتابخانه‌ی gir1.2-gst-plugins-base-1.0 را نصب نمایید:\n</span><span size="large" color="#66f">sudo apt install gir1.2-gst-plugins-base-1.0</span>',
+        use_markup: true
+      }));
+    }
     this.vbox5.add(hbox);
 
 

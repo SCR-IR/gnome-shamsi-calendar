@@ -208,15 +208,15 @@ function PrayTimes(method) {
   return {
 
     persianMap: {
-      imsak: 'امساک(نخوردن)',
-      fajr: 'اذان صبح',
+      imsak: 'اِمساک(نخوردن)',
+      fajr: 'اَذان صبح',
       sunrise: 'طلوع آفتاب',
-      dhuhr: 'اذان ظهر',
+      dhuhr: 'اَذان ظهر',
       asr: 'عصر',
       sunset: 'غروب آفتاب',
-      maghrib: 'اذان مغرب',
+      maghrib: 'اَذان مغرب',
       isha: 'عشاء',
-      midnight: 'نیمه شب شرعی'
+      midnight: 'نیمه‌شب شرعی'
     },
     // set calculation method
     setMethod: function (method) {

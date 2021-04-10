@@ -15,11 +15,11 @@
 
 const COUNTRY = "IR"; //For now, only I.R.Iran is supported.
 
-const julianDayFloat_to_julianDay = (julianDayFloat) => {
+var julianDayFloat_to_julianDay = (julianDayFloat) => {
   return ~~(julianDayFloat + 0.5);
 }
 
-const julianDay_to_julianDayFloat = (julianDay) => {
+var julianDay_to_julianDayFloat = (julianDay) => {
   return (~~julianDay - 0.5);
 }
 
@@ -32,7 +32,7 @@ const julianDay_to_julianDayFloat = (julianDay) => {
  * @param {number} gD - Gregorian Day
  * @return {number} JulianDay
  */
-const gregorian_to_julianDay = (gY, gM, gD) => {
+var gregorian_to_julianDay = (gY, gM, gD) => {
   var gDoM, gY2, julianDay;
   gDoM = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
   gY2 = (gM > 2) ? (gY + 1) : gY;
@@ -40,23 +40,23 @@ const gregorian_to_julianDay = (gY, gM, gD) => {
   /* 1721059 = gregorian_to_julianDay(0, 1, 1) - 1 */
   return julianDay;
 }
-const gregorian_to_julianDayFloat = (gY, gM, gD) => {
+var gregorian_to_julianDayFloat = (gY, gM, gD) => {
   return gregorian_to_julianDay(gY, gM, gD) - 0.5;
 }
 
 
-const persian_to_julianDay = (pY, pM, pD) => {
+var persian_to_julianDay = (pY, pM, pD) => {
   pY += 1595;
   var julianDay = 1365392 + (365 * pY) + ((~~(pY / 33)) * 8) + ~~(((pY % 33) + 3) / 4) + pD + ((pM < 7) ? (pM - 1) * 31 : ((pM - 7) * 30) + 186);
   /* 1365392=1721059-355746+79 */
   return julianDay;
 }
-const persian_to_julianDayFloat = (pY, pM, pD) => {
+var persian_to_julianDayFloat = (pY, pM, pD) => {
   return persian_to_julianDay(pY, pM, pD) - 0.5;
 }
 
 
-const julianDay_to_persian = (julianDay) => {
+var julianDay_to_persian = (julianDay) => {
   var pY, pM, pD, days;
   days = ~~(julianDay - 1365393);
   pY = -1595 + (33 * ~~(days / 12053));
@@ -71,11 +71,11 @@ const julianDay_to_persian = (julianDay) => {
   pD = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
   return [pY, pM, pD];
 }
-const julianDayFloat_to_persian = (julianDayFloat) => {
+var julianDayFloat_to_persian = (julianDayFloat) => {
   return julianDay_to_persian(~~(julianDayFloat + 0.5));
 }
 
-const julianDay_to_gregorian = (julianDay) => {
+var julianDay_to_gregorian = (julianDay) => {
   var gDoM, gY, gM, gD, days;
   days = -~~(1721060 - julianDay);
   gY = 400 * ~~(days / 146097);
@@ -98,7 +98,7 @@ const julianDay_to_gregorian = (julianDay) => {
   }
   return [gY, gM, gD];
 }
-const julianDayFloat_to_gregorian = (julianDayFloat) => {
+var julianDayFloat_to_gregorian = (julianDayFloat) => {
   return julianDay_to_gregorian(~~(julianDayFloat + 0.5));
 }
 
@@ -119,7 +119,7 @@ License: GNU/LGPL _ Open Source & Free :: Version: 2.81 : [2020=1399]
  * 
  * @return {[number, number, number]} [PersianYear: Int, PersianMonth: Int, PersianDay: Int]: Array
  */
-const gregorian_to_persian = (gY, gM, gD) => {
+var gregorian_to_persian = (gY, gM, gD) => {
   var gDoM, pY, pM, pD, gY2, days;
   gDoM = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
   gY2 = (gM > 2) ? (gY + 1) : gY;
@@ -151,7 +151,7 @@ const gregorian_to_persian = (gY, gM, gD) => {
  * 
  * @return {[number, number, number]} [GregorianYear: Int, GregorianMonth: Int, GregorianDay: Int]: Array
  */
-const persian_to_gregorian = (pY, pM, pD) => {
+var persian_to_gregorian = (pY, pM, pD) => {
   var gDoM, gY, gM, gD, days;
   pY += 1595;
   days = -355668 + (365 * pY) + (~~(pY / 33) * 8) + ~~(((pY % 33) + 3) / 4) + pD + ((pM < 7) ? (pM - 1) * 31 : ((pM - 7) * 30) + 186);
@@ -176,12 +176,12 @@ const persian_to_gregorian = (pY, pM, pD) => {
 
 
 // // --Old Function
-// const islamicA0_to_julianDay = (iY, iM, iD) => {
+// var islamicA0_to_julianDay = (iY, iM, iD) => {
 //   return (iD + Math.ceil(29.5 * (iM - 1)) + ((iY - 1) * 354) + Math.floor((3 + (11 * iY)) / 30) + 1948439.5) - 1;
 // }
 
 // // --Old Function
-// const julianDay_to_islamicA0 = (julianDay) => {
+// var julianDay_to_islamicA0 = (julianDay) => {
 //   var iY, iM, iD;
 //   julianDay = Math.floor(julianDay) + 0.5;
 //   iY = Math.floor(((30 * (julianDay - 1948439.5)) + 10646) / 10631);
@@ -191,17 +191,17 @@ const persian_to_gregorian = (pY, pM, pD) => {
 // }
 
 
-const islamicA_to_julianDay = (iy, im, id) => {
+var islamicA_to_julianDay = (iy, im, id) => {
   iy += 990;
   return ~~(id + ~~((29.5 * (im - 1)) + 0.5) + ((iy - 1) * 354) + ~~((3 + (iy * 11)) / 30) + 1597616);//
   //1714556.5=1948439.5 - 1-233882
   //1597615.5=1714556.5-116941
 }
-const islamicA_to_julianDayFloat = (iY, iM, iD) => {
+var islamicA_to_julianDayFloat = (iY, iM, iD) => {
   return islamicA_to_julianDay(iY, iM, iD) - 0.5;
 }
 
-const julianDay_to_islamicA = (julianDay) => {
+var julianDay_to_islamicA = (julianDay) => {
   var iy, im, id, tmp;
   julianDay = ~~(julianDay) + 350822.5;//350823d=990y
   iy = ~~(((30 * (julianDay - 1948439.5)) + 10646) / 10631);
@@ -212,7 +212,7 @@ const julianDay_to_islamicA = (julianDay) => {
   id = 1 + tmp - ~~((29.5 * (im - 1)) + 0.5);
   return [iy, im, id];
 }
-const julianDayFloat_to_islamicA = (julianDayFloat) => {
+var julianDayFloat_to_islamicA = (julianDayFloat) => {
   return julianDay_to_islamicA(~~(julianDayFloat + 0.5));
 }
 
@@ -224,7 +224,7 @@ const julianDayFloat_to_islamicA = (julianDayFloat) => {
  * 
  * @return {[number, number, number]} [IslamicYear: Int, IslamicMonth: Int, IslamicDay: Int]: Array
  */
-const gregorian_to_islamic = (gY, gM, gD) => {
+var gregorian_to_islamic = (gY, gM, gD) => {
   return julianDay_to_islamic(gregorian_to_julianDay(gY, gM, gD));
 }
 
@@ -236,7 +236,7 @@ const gregorian_to_islamic = (gY, gM, gD) => {
  * 
  * @return {[number, number, number]} [IslamicAYear: Int, IslamicAMonth: Int, IslamicADay: Int]: Array
  */
-const gregorian_to_islamicA = (gY, gM, gD) => {
+var gregorian_to_islamicA = (gY, gM, gD) => {
   return julianDay_to_islamicA(gregorian_to_julianDay(gY, gM, gD));
 }
 
@@ -248,7 +248,7 @@ const gregorian_to_islamicA = (gY, gM, gD) => {
  * 
  * @return {[number, number, number]} [GregorianYear: Int, GregorianMonth: Int, GregorianDay: Int]: Array
  */
-const islamic_to_gregorian = (iY, iM, iD) => {
+var islamic_to_gregorian = (iY, iM, iD) => {
   return julianDay_to_gregorian(islamic_to_julianDay(iY, iM, iD));
 }
 
@@ -260,7 +260,7 @@ const islamic_to_gregorian = (iY, iM, iD) => {
  * 
  * @return {[number, number, number]} [GregorianYear: Int, GregorianMonth: Int, GregorianDay: Int]: Array
  */
-const islamicA_to_gregorian = (iY, iM, iD) => {
+var islamicA_to_gregorian = (iY, iM, iD) => {
   return julianDay_to_gregorian(islamicA_to_julianDay(iY, iM, iD));
 }
 
@@ -272,7 +272,7 @@ const islamicA_to_gregorian = (iY, iM, iD) => {
  * 
  * @return {[number, number, number]} [IslamicYear: Int, IslamicMonth: Int, IslamicDay: Int]: Array
  */
-const persian_to_islamic = (pY, pM, pD) => {
+var persian_to_islamic = (pY, pM, pD) => {
   return julianDay_to_islamic(persian_to_julianDay(pY, pM, pD));
 }
 
@@ -284,7 +284,7 @@ const persian_to_islamic = (pY, pM, pD) => {
  * 
  * @return {[number, number, number]} [IslamicAYear: Int, IslamicAMonth: Int, IslamicADay: Int]: Array
  */
-const persian_to_islamicA = (pY, pM, pD) => {
+var persian_to_islamicA = (pY, pM, pD) => {
   return julianDay_to_islamicA(persian_to_julianDay(pY, pM, pD));
 }
 
@@ -296,7 +296,7 @@ const persian_to_islamicA = (pY, pM, pD) => {
  * 
  * @return {[number, number, number]} [PersianYear: Int, PersianMonth: Int, PersianDay: Int]: Array
  */
-const islamic_to_persian = (iY, iM, iD) => {
+var islamic_to_persian = (iY, iM, iD) => {
   return julianDay_to_persian(islamic_to_julianDay(iY, iM, iD));
 }
 
@@ -308,7 +308,7 @@ const islamic_to_persian = (iY, iM, iD) => {
  * 
  * @return {[number, number, number]} [PersianYear: Int, PersianMonth: Int, PersianDay: Int]: Array
  */
-const islamicA_to_persian = (iY, iM, iD) => {
+var islamicA_to_persian = (iY, iM, iD) => {
   return julianDay_to_persian(islamicA_to_julianDay(iY, iM, iD));
 }
 
@@ -316,7 +316,7 @@ const islamicA_to_persian = (iY, iM, iD) => {
 
 // Private
 // https://github.com/ilius/starcal/blob/master/scal3/cal_types/hijri-monthes.json
-const hilalIM = (country = 'IR') => {
+var hilalIM = (country = 'IR') => {
   return {
     "IR": {
       startYear: 1427,/* =iDoM:firstYear */
@@ -352,7 +352,7 @@ const hilalIM = (country = 'IR') => {
 }
 
 
-const julianDay_to_islamic = (julianDay) => {
+var julianDay_to_islamic = (julianDay) => {
   const HILAL = hilalIM(COUNTRY);
   if (julianDay < HILAL.startJD || julianDay > HILAL.endJD) {
     return julianDay_to_islamicA(julianDay);
@@ -372,7 +372,7 @@ const julianDay_to_islamic = (julianDay) => {
     return [+iY, iM, ~~iD];
   }
 }
-const julianDayFloat_to_islamic = (julianDayFloat) => {
+var julianDayFloat_to_islamic = (julianDayFloat) => {
   const HILAL = hilalIM(COUNTRY);
   if (julianDayFloat < (HILAL.startJD - 0.5) || julianDayFloat > (HILAL.endJD - 0.5)) {
     return julianDayFloat_to_islamicA(julianDayFloat);
@@ -393,7 +393,7 @@ const julianDayFloat_to_islamic = (julianDayFloat) => {
   }
 }
 
-const islamic_to_julianDay = (iY, iM, iD) => {
+var islamic_to_julianDay = (iY, iM, iD) => {
   const HILAL = hilalIM(COUNTRY);
   if (iY < HILAL.startYear || iY > HILAL.endYear) {
     return islamicA_to_julianDay(iY, iM, iD);
@@ -410,7 +410,7 @@ const islamic_to_julianDay = (iY, iM, iD) => {
     return julianDay;
   }
 }
-const islamic_to_julianDayFloat = (iY, iM, iD) => {
+var islamic_to_julianDayFloat = (iY, iM, iD) => {
   const HILAL = hilalIM(COUNTRY);
   if (iY < HILAL.startYear || iY > HILAL.endYear) {
     return islamicA_to_julianDayFloat(iY, iM, iD);
@@ -437,7 +437,7 @@ const islamic_to_julianDayFloat = (iY, iM, iD) => {
  * 
  * @return {[number, number, number]} [IslamicAYear: Int, IslamicAMonth: Int, IslamicADay: Int]: Array
  */
-const islamic_to_islamicA = (iY, iM, iD) => {
+var islamic_to_islamicA = (iY, iM, iD) => {
   return julianDay_to_islamicA(islamic_to_julianDay(iY, iM, iD));
 }
 
@@ -449,13 +449,13 @@ const islamic_to_islamicA = (iY, iM, iD) => {
  * 
  * @return {[number, number, number]} [IslamicYear: Int, IslamicMonth: Int, IslamicDay: Int]: Array
  */
-const islamicA_to_islamic = (iY, iM, iD) => {
+var islamicA_to_islamic = (iY, iM, iD) => {
   return julianDay_to_islamic(islamicA_to_julianDay(iY, iM, iD));
 }
 
 
 // Private Function, Only for test "hilalIM(COUNTRY)" object
-const barrasiyeEkhtelafGhamari = () => {
+var barrasiyeEkhtelafGhamari = () => {
   const HILAL = hilalIM(COUNTRY);
   return '\n-----\n' +
     /* خروجی این بخش، قطعاً باید مساوی باشد */
@@ -480,7 +480,7 @@ const barrasiyeEkhtelafGhamari = () => {
 }
 
 
-const roozeJulian_be_hameh = (roozeJulian) => {//موقت + اصلاح شود مثل پایین‌تر
+var roozeJulian_be_hameh = (roozeJulian) => {//موقت + اصلاح شود مثل پایین‌تر
   return {
     shamsi: julianDay_to_persian(roozeJulian),
     ghamari: julianDay_to_islamic(roozeJulian),
@@ -494,7 +494,7 @@ const roozeJulian_be_hameh = (roozeJulian) => {//موقت + اصلاح شود م
   };
 }
 // roozeJulian_be_hameh <<==>> julianDay_to_all
-const julianDay_to_all = (julianDay) => {
+var julianDay_to_all = (julianDay) => {
   let timeStamp = julianDay_to_timeStamp(julianDay);
   let date0 = new Date(timeStamp);
   return {
@@ -511,16 +511,16 @@ const julianDay_to_all = (julianDay) => {
   };
 }
 
-const julianDay_to_dayOfWeek = (julianDay) => {
+var julianDay_to_dayOfWeek = (julianDay) => {
   return ((~~(julianDay + 0.5) + 2) % 7);
 }
 
 
-const mohreZaman_be_hameh = (mohreZaman) => {//موقت + اصلاح شود مثل پایین‌تر
+var mohreZaman_be_hameh = (mohreZaman) => {//موقت + اصلاح شود مثل پایین‌تر
   return roozeJulian_be_hameh(timeStamp_to_julianDay(mohreZaman));
 };
 
-const timeStamp_to_all = (timeStamp) => {
+var timeStamp_to_all = (timeStamp) => {
   let date0 = new Date(timeStamp);
   let [gYear, gMonth, gDay, hour, minute, second, miliSecond] = [
     date0.getFullYear(), date0.getMonth() + 1, date0.getDate(),
@@ -543,45 +543,45 @@ const timeStamp_to_all = (timeStamp) => {
 };
 
 
-const timeStamp_to_persian = (timeStamp) => {
+var timeStamp_to_persian = (timeStamp) => {
   return julianDay_to_persian(timeStamp_to_julianDay(timeStamp));
 }
 
-const timeStamp_to_islamic = (timeStamp) => {
+var timeStamp_to_islamic = (timeStamp) => {
   return julianDay_to_islamic(timeStamp_to_julianDay(timeStamp));
 }
 
-const timeStamp_to_gregorian = (timeStamp) => {
+var timeStamp_to_gregorian = (timeStamp) => {
   return julianDay_to_gregorian(timeStamp_to_julianDay(timeStamp));
 }
 
 
-const persian_to_timeStamp = (year, month, day) => {
+var persian_to_timeStamp = (year, month, day) => {
   return julianDay_to_timeStamp(persian_to_julianDay(year, month, day));
 }
 
-const islamic_to_timeStamp = (year, month, day) => {
+var islamic_to_timeStamp = (year, month, day) => {
   return julianDay_to_timeStamp(islamic_to_julianDay(year, month, day));
 }
 
-const gregorian_to_timeStamp = (year, month, day) => {
+var gregorian_to_timeStamp = (year, month, day) => {
   return julianDay_to_timeStamp(gregorian_to_julianDay(year, month, day));
 }
 
 
-const is_persian_leap = (py) => {
+var is_persian_leap = (py) => {
   return ((((py + 990 + 12) % 33) % 4) === 1) ? true : false;
 }
 
-const is_gregorian_leap = (gY) => {
+var is_gregorian_leap = (gY) => {
   return ((gY % 4 === 0 && gY % 100 !== 0) || (gY % 400 === 0)) ? true : false;
 }
 
-const is_islamicA_leap = (iY) => {
+var is_islamicA_leap = (iY) => {
   return (((((iY + 990 + 3) % 30) % 11) % 3) === 0) ? true : false;
 }
 
-const is_islamic_leap = (iY) => {
+var is_islamic_leap = (iY) => {
   const HILAL = hilalIM(COUNTRY);
   if (HILAL.iDoM[iM] !== undefined) {
     return (HILAL.iDoM[iM][0] === 355) ? true : false;
@@ -590,7 +590,7 @@ const is_islamic_leap = (iY) => {
   }
 }
 
-const mName = {
+var mName = {
   shamsi: ['', 'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
   ghamari: ['', 'محرم', 'صفر', 'ربیع‌الاول', 'ربیع‌الثانی', 'جمادی‌الاولی', 'جمادی‌الثانیه', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذی‌القعده', 'ذی‌الحجه'],
   miladiEn: ['', 'January', 'February', 'March', 'April', 'May', 'Juan', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -602,7 +602,7 @@ const mName = {
 
 
 
-const date_to_days = (
+var date_to_days = (
   daysOfYear/* ~365.2425:Pesrsian&Gregorian | ~354.3667:Islamic */,
   daysOfMonth/* ~30.4369:Pesrsian&Gregorian | ~29.5305:Islamic */,
   year = 0, month = 0, day = 0
@@ -610,7 +610,7 @@ const date_to_days = (
   return ~~((year * daysOfYear) + (month * daysOfMonth) + day);
 }
 
-const days_to_date = (
+var days_to_date = (
   daysOfYear/* ~365.2425:Pesrsian&Gregorian | ~354.3667:Islamic */,
   daysOfMonth/* ~30.4369:Pesrsian&Gregorian | ~29.5305:Islamic */,
   days = 0
@@ -627,15 +627,15 @@ const days_to_date = (
 }
 
 
-const time_to_miliSeconds = (hour = 0, minute = 0, second = 0, miliSecond = 0) => {
+var time_to_miliSeconds = (hour = 0, minute = 0, second = 0, miliSecond = 0) => {
   return ((((hour * 3600) + (minute * 60) + second) * 1000) + miliSecond);
 }
 
-const time_to_Seconds = (hour = 0, minute = 0, second = 0) => {
+var time_to_Seconds = (hour = 0, minute = 0, second = 0) => {
   return ((hour * 3600) + (minute * 60) + second);
 }
 
-const miliSeconds_to_time = (miliSeconds) => {
+var miliSeconds_to_time = (miliSeconds) => {
   let miliSecond = ~~(miliSeconds % 1000);
   let second = ~~(miliSeconds / 1000);
   let hour = ~~(second / 3600);
@@ -645,7 +645,7 @@ const miliSeconds_to_time = (miliSeconds) => {
   return [hour, minute, second, miliSecond];
 }
 
-const seconds_to_time = (seconds) => {
+var seconds_to_time = (seconds) => {
   let hour = ~~(seconds / 3600);
   let second = seconds % 3600;
   let minute = ~~(second / 60);
@@ -654,20 +654,20 @@ const seconds_to_time = (seconds) => {
 }
 
 
-const julianDay_to_time = (none = null) => {
+var julianDay_to_time = (none = null) => {
   return [12, 0, 0, 0];
 }
-const julianDayFloat_to_time = (julianDayFloat) => {
+var julianDayFloat_to_time = (julianDayFloat) => {
   let date0 = new Date(julianDayFloat_to_timeStamp(julianDayFloat));
   return [date0.getHours(), date0.getMinutes(), date0.getSeconds(), date0.getMilliseconds()];
 }
 
-const timeStamp_to_time = (timeStamp) => {
+var timeStamp_to_time = (timeStamp) => {
   let date0 = new Date(timeStamp);
   return [date0.getHours(), date0.getMinutes(), date0.getSeconds(), date0.getMilliseconds()];
 }
 
-const timeStamp_to_julianDayFloat = (timeStamp, time = null) => {
+var timeStamp_to_julianDayFloat = (timeStamp, time = null) => {
   if (Array.isArray(time)) {
     let tmp = 0;
     if (!isNaN(time[0])) tmp += (time[0] * 3600);
@@ -677,11 +677,11 @@ const timeStamp_to_julianDayFloat = (timeStamp, time = null) => {
   }
   return ((timeStamp / 86400000) + 2440587.5);
 }
-const timeStamp_to_julianDay = (timeStamp, time = null) => {
+var timeStamp_to_julianDay = (timeStamp, time = null) => {
   return ~~(timeStamp_to_julianDayFloat(timeStamp, time) + 0.5);
 }
 
-const julianDay_to_timeStamp = (julianDay, time = null) => {
+var julianDay_to_timeStamp = (julianDay, time = null) => {
   let [hour, minute, second, miliSecond] = (time === null) ? [12, 0, 0, 0]
     : [time[0] || 12, time[1] || 0, time[2] || 0, time[3] || 0];
   let date0 = new Date(~~(julianDay - 2440587) * 86400000);
@@ -689,76 +689,76 @@ const julianDay_to_timeStamp = (julianDay, time = null) => {
   return date0.getTime();
 }
 
-const julianDayFloat_to_timeStamp = (julianDayFloat) => {
+var julianDayFloat_to_timeStamp = (julianDayFloat) => {
   return Math.round((julianDayFloat - 2440587.5) * 86400000);
 }
 
-const now_gregorian = () => {
+var now_gregorian = () => {
   let gDate = new Date();
   return [gDate.getFullYear(), gDate.getMonth() + 1, gDate.getDate()];
 }
 
-const now_persian = () => {
+var now_persian = () => {
   let gDate = now_gregorian();
   return gregorian_to_persian(gDate[0], gDate[1], gDate[2]);
 }
 
-const now_islamic = () => {
+var now_islamic = () => {
   let gDate = now_gregorian();
   return gregorian_to_islamic(gDate[0], gDate[1], gDate[2]);
 }
 
-const now_islamicA = () => {
+var now_islamicA = () => {
   let gDate = now_gregorian();
   return gregorian_to_islamicA(gDate[0], gDate[1], gDate[2]);
 }
 
-const now_julianDay = (time = null) => {
+var now_julianDay = (time = null) => {
   return timeStamp_to_julianDay(Date.now(), time);
 }
 
-const now_timeStamp = () => {
+var now_timeStamp = () => {
   return Date.now();
 }
 
-const now_timeStampS = (intOut = true) => {
+var now_timeStampS = (intOut = true) => {
   let tsS = (Date.now() / 1000);
   return (intOut) ? ~~(tsS) : tsS;
 }
 
-const diff_gregorian = (date1, date0 = null) => {
+var diff_gregorian = (date1, date0 = null) => {
   return (
     gregorian_to_julianDay(date1[0], date1[1], date1[2]) -
     ((date0 === null) ? now_julianDay() : gregorian_to_julianDay(date0[0], date0[1], date0[2]))
   );
 }
 
-const diff_persian = (date1, date0 = null) => {
+var diff_persian = (date1, date0 = null) => {
   return (
     persian_to_julianDay(date1[0], date1[1], date1[2]) -
     ((date0 === null) ? now_julianDay() : persian_to_julianDay(date0[0], date0[1], date0[2]))
   );
 }
 
-const diff_islamic = (date1, date0 = null) => {
+var diff_islamic = (date1, date0 = null) => {
   return (
     islamic_to_julianDay(date1[0], date1[1], date1[2]) -
     ((date0 === null) ? now_julianDay() : islamic_to_julianDay(date0[0], date0[1], date0[2]))
   );
 }
 
-const diff_islamicA = (date1, date0 = null) => {
+var diff_islamicA = (date1, date0 = null) => {
   return (
     islamicA_to_julianDay(date1[0], date1[1], date1[2]) -
     ((date0 === null) ? now_julianDay() : islamicA_to_julianDay(date0[0], date0[1], date0[2]))
   );
 }
 
-const daysOfMonth_persian = (year, month) => {
+var daysOfMonth_persian = (year, month) => {
   return ((month < 7) ? 31 : ((month < 12) ? 30 : (is_persian_leap(year) ? 30 : 29)));
 }
 
-const check_persian = (year, month, day, strict = true) => {
+var check_persian = (year, month, day, strict = true) => {
   return !(
     isNaN(year) || isNaN(month) || isNaN(day) ||
     year < -32767 || year > 32767 ||
@@ -768,11 +768,11 @@ const check_persian = (year, month, day, strict = true) => {
 }
 
 
-const daysOfMonth_gregorian = (year, month) => {
+var daysOfMonth_gregorian = (year, month) => {
   return [0, 31, (is_gregorian_leap(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 }
 
-const check_gregorian = (year, month, day, strict = true) => {
+var check_gregorian = (year, month, day, strict = true) => {
   return !(
     isNaN(year) || isNaN(month) || isNaN(day) ||
     year < -32767 || year > 32767 ||
@@ -782,7 +782,7 @@ const check_gregorian = (year, month, day, strict = true) => {
 }
 
 
-const daysOfMonth_islamic = (year, month) => {
+var daysOfMonth_islamic = (year, month) => {
   if (month === 12) {
     year++;
     month = 1;
@@ -792,7 +792,7 @@ const daysOfMonth_islamic = (year, month) => {
   return julianDay_to_islamic(islamic_to_julianDay(year, month, 1) - 1)[2];
 }
 
-const check_islamic = (year, month, day, strict = false) => {
+var check_islamic = (year, month, day, strict = false) => {
   return !(
     isNaN(year) || isNaN(month) || isNaN(day) ||
     year < -641 || year > 32767 ||
@@ -802,7 +802,7 @@ const check_islamic = (year, month, day, strict = false) => {
 }
 
 
-const daysOfMonth_islamicA = (year, month) => {
+var daysOfMonth_islamicA = (year, month) => {
   if (month === 12) {
     year++;
     month = 1;
@@ -812,7 +812,7 @@ const daysOfMonth_islamicA = (year, month) => {
   return julianDay_to_islamicA(islamicA_to_julianDay(year, month, 1) - 1)[2];
 }
 
-const check_islamicA = (year, month, day, strict = false) => {
+var check_islamicA = (year, month, day, strict = false) => {
   return !(
     isNaN(year) || isNaN(month) || isNaN(day) ||
     year < -641 || year > 32767 ||
@@ -821,7 +821,7 @@ const check_islamicA = (year, month, day, strict = false) => {
   );
 }
 
-const change_persian = (change, dateTime = null) => {
+var change_persian = (change, dateTime = null) => {
   let _julianDay = 0, _miliSeconds, year, month, day, hour, minute, second, miliSecond;
 
   let [ch_year, ch_month, ch_day, ch_hour, ch_minute, ch_second, ch_miliSecond] = [
@@ -886,7 +886,7 @@ const change_persian = (change, dateTime = null) => {
   ];
 }
 
-const change_gregorian = (change, dateTime = null) => {
+var change_gregorian = (change, dateTime = null) => {
   let _julianDay = 0, _miliSeconds, year, month, day, hour, minute, second, miliSecond;
 
   let [ch_year, ch_month, ch_day, ch_hour, ch_minute, ch_second, ch_miliSecond] = [
@@ -934,7 +934,7 @@ const change_gregorian = (change, dateTime = null) => {
   ];
 }
 
-const change_islamic = (change, dateTime = null) => {
+var change_islamic = (change, dateTime = null) => {
   let _julianDay = 0, _miliSeconds, year, month, day, hour, minute, second, miliSecond;
 
   let [ch_year, ch_month, ch_day, ch_hour, ch_minute, ch_second, ch_miliSecond] = [
@@ -982,7 +982,7 @@ const change_islamic = (change, dateTime = null) => {
   ];
 }
 
-const change_islamicA = (change, dateTime = null) => {
+var change_islamicA = (change, dateTime = null) => {
   let _julianDay = 0, _miliSeconds, year, month, day, hour, minute, second, miliSecond;
 
   let [ch_year, ch_month, ch_day, ch_hour, ch_minute, ch_second, ch_miliSecond] = [
@@ -1031,107 +1031,107 @@ const change_islamicA = (change, dateTime = null) => {
 }
 
 
-const persian_to_dayOfWeek = (year, month, day) => {
+var persian_to_dayOfWeek = (year, month, day) => {
   return ((persian_to_julianDay(year, month, day) + 2) % 7);
 }
-const gregorian_to_dayOfWeek = (year, month, day) => {
+var gregorian_to_dayOfWeek = (year, month, day) => {
   return ((gregorian_to_julianDay(year, month, day) + 2) % 7);
 }
-const islamic_to_dayOfWeek = (year, month, day) => {
+var islamic_to_dayOfWeek = (year, month, day) => {
   return ((islamic_to_julianDay(year, month, day) + 2) % 7);
 }
-const islamicA_to_dayOfWeek = (year, month, day) => {
+var islamicA_to_dayOfWeek = (year, month, day) => {
   return ((islamicA_to_julianDay(year, month, day) + 2) % 7);
 }
 
 
 
-const persian_to_julianDay_in_monthStart = (year, month) => {
+var persian_to_julianDay_in_monthStart = (year, month) => {
   return persian_to_julianDay(year, month, 1);
 }
-const gregorian_to_julianDay_in_monthStart = (year, month) => {
+var gregorian_to_julianDay_in_monthStart = (year, month) => {
   return gregorian_to_julianDay(year, month, 1);
 }
-const islamic_to_julianDay_in_monthStart = (year, month) => {
+var islamic_to_julianDay_in_monthStart = (year, month) => {
   return islamic_to_julianDay(year, month, 1);
 }
-const islamicA_to_julianDay_in_monthStart = (year, month) => {
+var islamicA_to_julianDay_in_monthStart = (year, month) => {
   return islamicA_to_julianDay(year, month, 1);
 }
 
-const persian_to_julianDay_in_monthEnd = (year, month) => {
+var persian_to_julianDay_in_monthEnd = (year, month) => {
   return persian_to_julianDay(year, month, daysOfMonth_persian(year, month));
 }
-const gregorian_julianDay_in_to_monthEnd = (year, month) => {
+var gregorian_julianDay_in_to_monthEnd = (year, month) => {
   return gregorian_to_julianDay(year, month, daysOfMonth_gregorian(year, month));
 }
-const islamic_to_julianDay_in_monthEnd = (year, month) => {
+var islamic_to_julianDay_in_monthEnd = (year, month) => {
   return islamic_to_julianDay(year, month, daysOfMonth_islamic(year, month));
 }
-const islamicA_to_julianDay_in_monthEnd = (year, month) => {
+var islamicA_to_julianDay_in_monthEnd = (year, month) => {
   return islamicA_to_julianDay(year, month, daysOfMonth_islamicA(year, month));
 }
 
 
 
-const persian_to_dayOfWeek_in_monthStart = (year, month) => {
+var persian_to_dayOfWeek_in_monthStart = (year, month) => {
   return ((persian_to_julianDay(year, month, 1) + 2) % 7);
 }
-const gregorian_to_dayOfWeek_in_monthStart = (year, month) => {
+var gregorian_to_dayOfWeek_in_monthStart = (year, month) => {
   return ((gregorian_to_julianDay(year, month, 1) + 2) % 7);
 }
-const islamic_to_dayOfWeek_in_monthStart = (year, month) => {
+var islamic_to_dayOfWeek_in_monthStart = (year, month) => {
   return ((islamic_to_julianDay(year, month, 1) + 2) % 7);
 }
-const islamicA_to_dayOfWeek_in_monthStart = (year, month) => {
+var islamicA_to_dayOfWeek_in_monthStart = (year, month) => {
   return ((islamicA_to_julianDay(year, month, 1) + 2) % 7);
 }
 
-const persian_to_dayOfWeek_in_monthEnd = (year, month) => {
+var persian_to_dayOfWeek_in_monthEnd = (year, month) => {
   return ((persian_to_julianDay(year, month, daysOfMonth_persian(year, month)) + 2) % 7);
 }
-const gregorian_to_dayOfWeek_in_monthEnd = (year, month) => {
+var gregorian_to_dayOfWeek_in_monthEnd = (year, month) => {
   return ((gregorian_to_julianDay(year, month, daysOfMonth_gregorian(year, month)) + 2) % 7);
 }
-const islamic_to_dayOfWeek_in_monthEnd = (year, month) => {
+var islamic_to_dayOfWeek_in_monthEnd = (year, month) => {
   return ((islamic_to_julianDay(year, month, daysOfMonth_islamic(year, month)) + 2) % 7);
 }
-const islamicA_to_dayOfWeek_in_monthEnd = (year, month) => {
+var islamicA_to_dayOfWeek_in_monthEnd = (year, month) => {
   return ((islamicA_to_julianDay(year, month, daysOfMonth_islamicA(year, month)) + 2) % 7);
 }
 
 
 
-const firstNthDayOfWeek_in_persianMonth = (year, month, nthDayOfWeek) => {
+var firstNthDayOfWeek_in_persianMonth = (year, month, nthDayOfWeek) => {
   let mStartJD = persian_to_julianDay(year, month, 1);
   return (mStartJD + ((7 + nthDayOfWeek - ((mStartJD + 2) % 7)) % 7));
 }
-const firstNthDayOfWeek_in_gregorianMonth = (year, month, nthDayOfWeek) => {
+var firstNthDayOfWeek_in_gregorianMonth = (year, month, nthDayOfWeek) => {
   let mStartJD = gregorian_to_julianDay(year, month, 1);
   return (mStartJD + ((7 + nthDayOfWeek - ((mStartJD + 2) % 7)) % 7));
 }
-const firstNthDayOfWeek_in_islamicMonth = (year, month, nthDayOfWeek) => {
+var firstNthDayOfWeek_in_islamicMonth = (year, month, nthDayOfWeek) => {
   let mStartJD = islamic_to_julianDay(year, month, 1);
   return (mStartJD + ((7 + nthDayOfWeek - ((mStartJD + 2) % 7)) % 7));
 }
-const firstNthDayOfWeek_in_islamicAMonth = (year, month, nthDayOfWeek) => {
+var firstNthDayOfWeek_in_islamicAMonth = (year, month, nthDayOfWeek) => {
   let mStartJD = islamicA_to_julianDay(year, month, 1);
   return (mStartJD + ((7 + nthDayOfWeek - ((mStartJD + 2) % 7)) % 7));
 }
 
-const lastNthDayOfWeek_in_persianMonth = (year, month, nthDayOfWeek) => {
+var lastNthDayOfWeek_in_persianMonth = (year, month, nthDayOfWeek) => {
   let mEndJD = persian_to_julianDay(year, month, daysOfMonth_persian(year, month));
   return (mEndJD - ((7 + ((mEndJD + 2) % 7) - nthDayOfWeek) % 7));
 }
-const lastNthDayOfWeek_in_gregorianMonth = (year, month, nthDayOfWeek) => {
+var lastNthDayOfWeek_in_gregorianMonth = (year, month, nthDayOfWeek) => {
   let mEndJD = gregorian_to_julianDay(year, month, daysOfMonth_gregorian(year, month));
   return (mEndJD - ((7 + ((mEndJD + 2) % 7) - nthDayOfWeek) % 7));
 }
-const lastNthDayOfWeek_in_islamicMonth = (year, month, nthDayOfWeek) => {
+var lastNthDayOfWeek_in_islamicMonth = (year, month, nthDayOfWeek) => {
   let mEndJD = islamic_to_julianDay(year, month, daysOfMonth_islamic(year, month));
   return (mEndJD - ((7 + ((mEndJD + 2) % 7) - nthDayOfWeek) % 7));
 }
-const lastNthDayOfWeek_in_islamicAMonth = (year, month, nthDayOfWeek) => {
+var lastNthDayOfWeek_in_islamicAMonth = (year, month, nthDayOfWeek) => {
   let mEndJD = islamicA_to_julianDay(year, month, daysOfMonth_islamicA(year, month));
   return (mEndJD - ((7 + ((mEndJD + 2) % 7) - nthDayOfWeek) % 7));
 }
@@ -1140,9 +1140,9 @@ const lastNthDayOfWeek_in_islamicAMonth = (year, month, nthDayOfWeek) => {
 
 
 
-// const roozeHafteh = ['شنبه', 'یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
+// var roozeHafteh = ['شنبه', 'یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
 
-const roozeHafteh = new Proxy(
+var roozeHafteh = new Proxy(
   ['شنبه', 'یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'],
   {
     get(target, prop) {
@@ -1159,7 +1159,7 @@ const roozeHafteh = new Proxy(
   }
 );
 
-const TarikhObject = function (timeStamp = Date.now()) {
+var TarikhObject = function (timeStamp = Date.now()) {
 
   const [
     _all, _setPersian, _setGregorian, _setIslamic, _setIslamicA, _setTime

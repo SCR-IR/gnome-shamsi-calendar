@@ -18,7 +18,7 @@ const player = extension.imports.sound.player;
 function init() {
 }
 
-const App = new Lang.Class({
+var App = new Lang.Class({
   Name: 'ShamsiCalendar.App',
   el: {},
   _init: function () {
@@ -461,24 +461,9 @@ const App = new Lang.Class({
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3, margin_top: 6 });
     hbox.border_width = 3;
 
-    const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/sounds/';
+    const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/' + extension.imports.sound.soundsDir + '/';
     const sounds = {
-      "azan_01": [
-        'اذان ۱ ،مرحوم مؤذن‌زاده',
-        'azan_01.mp3'
-      ],
-      "doa_01": [
-        'ذکر قبل اذان ۱',
-        'doa_01.mp3'
-      ],
-      "salawat_01": [
-        'صلوات ۱',
-        'salawat_01.mp3'
-      ],
-      "alert_01": [
-        'هشدار صوتی ساده ۱',
-        'alert_01.mp3'
-      ],
+      ...extension.imports.sound.sounds,
       "_custom_": [
         'انتخاب فایل سفارشی ←',
         '_custom_'
@@ -608,19 +593,6 @@ const App = new Lang.Class({
           });
           fChNative.show();
         });
-
-
-        //this.el['praytime-' + tName + '-sound-uri'].set_sensitive(SoundId === '_custom_');
-        //this.el['praytime-' + tName + '-sound-uri'].set_title('انتخاب یک فایل صوتی');
-        //this.el['praytime-' + tName + '-sound-uri'].set_filename(SoundUri);
-        //{
-        //  let audioFilter = new Gtk.FileFilter;
-        //  audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
-        //  this.el['praytime-' + tName + '-sound-uri'].set_filter(audioFilter);
-        //}
-        //this.el['praytime-' + tName + '-sound-uri'].connect('file-set', (f) => {
-        //  Schema.set_string('praytime-' + tName + '-sound-uri', f.get_filename());
-        //});
 
         // SoundId
         this.el['praytime-' + tName + '-setting_SoundId'] = new Gtk.ComboBoxText();
@@ -1111,7 +1083,7 @@ const App = new Lang.Class({
           btnFCh.set_sensitive(false);
           btnFCh.set_label('  →  غیرفعال  ');
         }
-        if (player.isPlaying()) {
+        if (player !== null && player.isPlaying()) {
           player.pause();
           playPauseBtn.label = 'پخش';
         }
@@ -1156,6 +1128,7 @@ const App = new Lang.Class({
 
       let playPauseBtn = new Gtk.Button({ label: 'پخش', margin_top: 14 });
       playPauseBtn.connect('clicked', () => {
+        if (player === null) return;
         if (player.isPlaying()) {
           player.pause();
           testValume.set_sensitive(true);
@@ -1175,7 +1148,7 @@ const App = new Lang.Class({
       box.append(playPauseBtn);
 
       box.append(new Gtk.Label({
-        label: '<span size="medium" color="#f99">\nاین صفحه فقط برای شنیدن و آزمایش صداهاست.\nتغییر موارد بالا، هرگز در تنظیمات ذخیره نمی‌شود.</span>',
+        label: '<span size="medium" color="#999">\nاین صفحه فقط برای شنیدن و آزمایش صداهاست.\nتغییر موارد بالا، هرگز در تنظیمات ذخیره نمی‌شود.</span>',
         use_markup: true
       }));
 
@@ -1183,7 +1156,7 @@ const App = new Lang.Class({
 
       dialog.connect('response', (dialog, id) => {
         if (id != 1) {
-          if (player.isPlaying()) player.pause();
+          if (player !== null && player.isPlaying()) player.pause();
           //dialog.get_content_area().remove(box);
           //dialog.destroy();
         }
@@ -1218,18 +1191,18 @@ const App = new Lang.Class({
 
     this.el['praytime-play-and-notify'] = new Gtk.CheckButton({ label: 'اعلان و پخش اذان' });
     Schema.bind('praytime-play-and-notify', this.el['praytime-play-and-notify'], 'active', Gio.SettingsBindFlags.DEFAULT);
-    // sensitiveFunc = () => {
-    //   let els = [this.el['label_praytime-play-valume'], this.el['praytime-play-valume']];
-    //   let active = Schema.get_boolean('praytime-play-and-notify');
-    //   els.forEach((el) => el.set_sensitive(active));
-    // }
-    // sensitiveFunc();
-    // Schema.connect('changed::praytime-play-and-notify', sensitiveFunc);
 
-    hbox.append(playSounds);
-    hbox.append(this.el['praytime-play-valume']);
-    hbox.append(this.el['label_praytime-play-valume']);
-    hbox.append(this.el['praytime-play-and-notify']);
+    if (player !== null) {
+      hbox.append(playSounds);
+      hbox.append(this.el['praytime-play-valume']);
+      hbox.append(this.el['label_praytime-play-valume']);
+      hbox.append(this.el['praytime-play-and-notify']);
+    } else {
+      hbox.append(new Gtk.Label({
+        label: '<span size="medium" color="#f66">برای پخش اذان، باید کتابخانه‌ی gir1.2-gst-plugins-base-1.0 را نصب نمایید:\n</span><span size="large" color="#66f">sudo apt install gir1.2-gst-plugins-base-1.0</span>',
+        use_markup: true
+      }));
+    }
     this.vbox5.append(hbox);
 
 
