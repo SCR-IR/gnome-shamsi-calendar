@@ -488,13 +488,8 @@ var App = new Lang.Class({
     hbox = new Gtk.HBox({ spacing: 3, border_width: 3 });
 
     const soundsUri = '.local/share/gnome-shell/extensions/' + extension.metadata.uuid + '/' + extension.imports.sound.soundsDir + '/';
-    const sounds = {
-      ...extension.imports.sound.sounds,
-      "_custom_": [
-        'انتخاب فایل سفارشی ←',
-        '_custom_'
-      ],
-    };
+    const sounds = extension.imports.sound.sounds;
+    sounds['_custom_'] = ['انتخاب فایل سفارشی ←', '_custom_'];
 
 
 
