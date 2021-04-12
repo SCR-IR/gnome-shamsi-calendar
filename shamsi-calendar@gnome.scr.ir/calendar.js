@@ -60,7 +60,7 @@ Calendar.prototype = {
 
     this.actorRight.connect('scroll-event', Lang.bind(this, this._onScroll));
 
-    PrayTimes.setMethod(Schema.get_string('praytime-calc-method-main'));
+    //PrayTimes.setMethod(Schema.get_string('praytime-calc-method-main'));
 
     this._buildHeader();
   },
@@ -524,7 +524,7 @@ Calendar.prototype = {
         let PT = PrayTimes;
         PT.setMethod(method);
         _prayTimes[method] = PT.getTimes(
-          new Date(this._selectedDateObj.timeStamp),
+          this._selectedDateObj.gregorian,
           [
             Schema.get_double('praytime-lat'),
             Schema.get_double('praytime-lng')
