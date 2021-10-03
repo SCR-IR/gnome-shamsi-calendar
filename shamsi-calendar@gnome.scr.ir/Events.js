@@ -20,7 +20,7 @@ Events.prototype = {
   _init: function () {
     this._eventsList = [];
     if (Schema.get_boolean('show-islamic-events')) {
-      this._eventsList.push(new islamicEvents.evList());
+      this._eventsList.push(new islamicEvents.evList(Tarikh));
     }
     if (Schema.get_boolean('show-persian-events')) {
       this._eventsList.push(new persianEvents.evList());

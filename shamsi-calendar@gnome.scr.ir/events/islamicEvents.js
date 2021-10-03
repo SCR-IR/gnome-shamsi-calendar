@@ -1,4 +1,5 @@
-function evList() {
+function evList(Tarikh) {
+  this.Tarikh = Tarikh;
   this._init();
 }
 
@@ -50,10 +51,6 @@ evList.prototype = {
     this.events[2][28] = [[
       ['رحلت حضرت رسول اکرم صلی اللّه علیه و آله (۱۱ ه‍.ق)', true],
       ['شهادت حضرت امام حسن مجتبی علیه‌السلام (۵۰ ه‍.ق)', true],
-    ], true];
-
-    this.events[2][29] = [[
-      ['شهادت حضرت امام رضا علیه‌السلام', true],
     ], true];
 
     this.events[3][1] = [[
@@ -232,14 +229,6 @@ evList.prototype = {
       ['ولادت حضرت امام رضا علیه‌السلام (۱۴۸ ه‍.ق)'],
     ]];
 
-    this.events[11][29] = [[
-      ['آخرین روز (۲۹ یا ۳۰) ماه ذی‌القعده: شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۱۴۸ ه‍.ق)'],
-    ]];
-
-    this.events[11][30] = [[
-      ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)'],
-    ]];
-
     this.events[12][1] = [[
       ['سالروز ازدواج حضرت امام علی علیه‌السلام و حضرت فاطمه سلام‌اللّه علیها (۲ ه‍.ق)'],
       ['روز ازدواج'],
@@ -279,6 +268,22 @@ evList.prototype = {
 
     this.events[12][25] = [[
       ['روز خانواده و تکریم بازنشستگان'],
+    ]];
+
+    this.addSpecificEvents();
+  },
+
+  addSpecificEvents: function () {
+    let date = this.Tarikh.timeStamp_to_islamic(Date.now());
+
+    //آخرین روز ماه صَفَر 
+    this.events[2][this.Tarikh.daysOfMonth_islamic(date[0], 2)] = [[
+      ['شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true]
+    ], true];
+
+    //آخرین روز ماه ذیقعده 
+    this.events[11][this.Tarikh.daysOfMonth_islamic(date[0], 11)] = [[
+      ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)']
     ]];
 
   }

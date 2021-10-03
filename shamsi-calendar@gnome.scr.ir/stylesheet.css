@@ -218,10 +218,10 @@
   text-align: center;
   min-height: 1.7em;
   min-width: 1.7em;
-  font-size: 1.3em;
+  font-size: 1.4em;
   margin: 0;
   padding: 0;
-  padding-top: 0.3em;
+  padding-top: 0.4em;
 }
 
 .pcalendar-txt-hdate-color {
@@ -235,7 +235,7 @@
   text-align: center;
   min-height: 1.5em;
   min-width: 2em;
-  font-size: 0.9em;
+  font-size: 1em;
   margin: 0;
   padding: 0;
 }
@@ -251,7 +251,7 @@
   text-align: center;
   min-height: 1.5em;
   min-width: 2em;
-  font-size: 0.9em;
+  font-size: 1em;
   margin: 0;
   padding: 0;
 }
