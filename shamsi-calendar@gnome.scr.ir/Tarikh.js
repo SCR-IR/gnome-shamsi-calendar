@@ -323,7 +323,7 @@ var hilalIM = (country = 'IR') => {
       startJD: 2453767,/* =islamicA_to_julianDay(startYear,1,1) */
 
       endYear: 1444,/* =iDoM:lastYear */
-      endJD: 2460143.5,/* =islamicA_to_julianDay(endYear+1,1,1)-1 */
+      endJD: 2460144,/* =islamicA_to_julianDay(endYear+1,1,1)-1 */
 
       iDoM: {
         1427: [355, 30, 29, 29, 30, 29, 30, 30, 30, 30, 29, 29, 30],
