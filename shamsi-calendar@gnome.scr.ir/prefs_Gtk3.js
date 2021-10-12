@@ -1,27 +1,19 @@
-const Gtk = imports.gi.Gtk;
-const Gio = imports.gi.Gio;
-const Gdk = imports.gi.Gdk;
+const { Gtk, Gio, Gdk } = imports.gi;
 const Lang = imports.lang;
-
 // const Gettext = imports.gettext.domain('shamsi-calendar');
 // const _ = Gettext.gettext;
-
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let convenience = extension.imports.convenience;
-let Schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
 const Tarikh = extension.imports.Tarikh;
 const str = extension.imports.strFunctions;
 const Cities = extension.imports.cities;
 const PrayTimes = extension.imports.PrayTimes.prayTimes;
 const player = extension.imports.sound.player;
 
-function init() {
-}
-
-var App = new Lang.Class({
-  Name: 'ShamsiCalendar.App',
-  el: {},
-  _init: function () {
+const App = class ShamsiCalendarApp {
+  constructor() {
+    this.schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
+    this.el = {};
     this.main_hbox = new Gtk.Notebook();
     let _dateObj = new Tarikh.TarikhObject();
     let sensitiveFunc, hbox;
@@ -102,12 +94,12 @@ var App = new Lang.Class({
     this.el['position'].append('left', 'سمت چپ');
     this.el['position'].append('center', 'وسط');
     this.el['position'].append('right', 'سمت راست');
-    this.el['position'].set_active(Schema.get_enum('position'));
-    Schema.bind('position', this.el['position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    this.el['position'].set_active(this.schema.get_enum('position'));
+    this.schema.bind('position', this.el['position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
 
 
     this.el['custom-color'] = new Gtk.CheckButton({ label: 'رنگ سفارشی متن' });
-    Schema.bind('custom-color', this.el['custom-color'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('custom-color', this.el['custom-color'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     let colorsGrid = new Gtk.Box({
       orientation: Gtk.Orientation.HORIZONTAL,
@@ -116,21 +108,21 @@ var App = new Lang.Class({
     });
 
     this.el['pray-time-color'] = new Gtk.ColorButton();
-    this.el['pray-time-color'].set_color(this.getColorByHexadecimal(Schema.get_string('pray-time-color')));
+    this.el['pray-time-color'].set_color(this.getColorByHexadecimal(this.schema.get_string('pray-time-color')));
     this.el['pray-time-color'].connect('color-set', (function (innerColor) {
-      Schema.set_string('pray-time-color', this.getHexadecimalByColor(innerColor.get_color()));
+      this.schema.set_string('pray-time-color', this.getHexadecimalByColor(innerColor.get_color()));
     }).bind(this));
 
     this.el['holiday-color'] = new Gtk.ColorButton();
-    this.el['holiday-color'].set_color(this.getColorByHexadecimal(Schema.get_string('holiday-color')));
+    this.el['holiday-color'].set_color(this.getColorByHexadecimal(this.schema.get_string('holiday-color')));
     this.el['holiday-color'].connect('color-set', (function (innerColor) {
-      Schema.set_string('holiday-color', this.getHexadecimalByColor(innerColor.get_color()));
+      this.schema.set_string('holiday-color', this.getHexadecimalByColor(innerColor.get_color()));
     }).bind(this));
 
     this.el['not-holiday-color'] = new Gtk.ColorButton();
-    this.el['not-holiday-color'].set_color(this.getColorByHexadecimal(Schema.get_string('not-holiday-color')));
+    this.el['not-holiday-color'].set_color(this.getColorByHexadecimal(this.schema.get_string('not-holiday-color')));
     this.el['not-holiday-color'].connect('color-set', (function (innerColor) {
-      Schema.set_string('not-holiday-color', this.getHexadecimalByColor(innerColor.get_color()));
+      this.schema.set_string('not-holiday-color', this.getHexadecimalByColor(innerColor.get_color()));
     }).bind(this));
 
     colorsGrid.pack_start(this.el['pray-time-color'], false, false, 0);
@@ -143,11 +135,11 @@ var App = new Lang.Class({
 
     sensitiveFunc = () => {
       let els = ['pray-time-color', 'not-holiday-color', 'holiday-color'];
-      let active = Schema.get_boolean('custom-color');
+      let active = this.schema.get_boolean('custom-color');
       els.forEach((el) => this.el[el].set_sensitive(active));
     }
     sensitiveFunc();
-    Schema.connect('changed::custom-color', sensitiveFunc);
+    this.schema.connect('changed::custom-color', sensitiveFunc);
 
 
 
@@ -168,8 +160,8 @@ var App = new Lang.Class({
         )
       )
     );
-    this.el['widget-format'].set_active(Schema.get_string('widget-format'));
-    Schema.bind('widget-format', this.el['widget-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    this.el['widget-format'].set_active(this.schema.get_string('widget-format'));
+    this.schema.bind('widget-format', this.el['widget-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
 
     hbox = new Gtk.HBox();
     hbox.add(this.el['widget-format']);
@@ -193,14 +185,14 @@ var App = new Lang.Class({
 
     this.el['startup-notification'] = new Gtk.CheckButton({ label: 'اعلان متنی هنگام راه‌اندازی' });
     this.vbox1.add(this.el['startup-notification']);
-    Schema.bind('startup-notification', this.el['startup-notification'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('startup-notification', this.el['startup-notification'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.vbox1.add(new Gtk.Label({ label: '\n' }));
 
     // FONT
     /* item = new Gtk.CheckButton({label: 'Use custom font'})
     this.vbox1.add(item)
-    Schema.bind('custom-font', item, 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('custom-font', item, 'active', Gio.SettingsBindFlags.DEFAULT);
    
     label = new Gtk.Label({label: "Font: "});
     let font = new Gtk.FontButton();
@@ -210,11 +202,11 @@ var App = new Lang.Class({
     let _actor = new Gtk.HBox();
     _actor.add(label);
     _actor.add(font);
-    font.set_font_name(Schema.get_string('font'));
+    font.set_font_name(this.schema.get_string('font'));
    
     this.vbox1.add(_actor);
     font.connect('font-set', function(font){
-    Schema.set_string('font', font.get_font_name());
+    this.schema.set_string('font', font.get_font_name());
     });*/
 
 
@@ -240,8 +232,8 @@ var App = new Lang.Class({
     };
     this.el['default-tab'] = new Gtk.ComboBoxText();
     for (let i in tabs) this.el['default-tab'].append(i, tabs[i]);
-    this.el['default-tab'].set_active(Schema.get_string('default-tab'));
-    Schema.bind('default-tab', this.el['default-tab'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    this.el['default-tab'].set_active(this.schema.get_string('default-tab'));
+    this.schema.bind('default-tab', this.el['default-tab'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
     hbox = new Gtk.HBox();
     hbox.add(new Gtk.Label({ label: '' }));
     hbox.add(this.el['default-tab']);
@@ -253,7 +245,7 @@ var App = new Lang.Class({
     this.vbox2.add(new Gtk.Label({ label: '\n\nنمایش تاریخ‌ها:\n' }));
 
     this.el['persian-display'] = new Gtk.CheckButton({ label: 'هجری شمسی' });
-    Schema.bind('persian-display', this.el['persian-display'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('persian-display', this.el['persian-display'], 'active', Gio.SettingsBindFlags.DEFAULT);
     this.el['persian-display-format'] = new Gtk.ComboBoxText();
     for (let showFormat of showFormats) this.el['persian-display-format'].append(
       showFormat,
@@ -268,13 +260,13 @@ var App = new Lang.Class({
         )
       )
     );
-    this.el['persian-display-format'].set_active(Schema.get_string('persian-display-format'));
-    Schema.bind('persian-display-format', this.el['persian-display-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    this.el['persian-display-format'].set_active(this.schema.get_string('persian-display-format'));
+    this.schema.bind('persian-display-format', this.el['persian-display-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
     sensitiveFunc = () => {
-      this.el['persian-display-format'].set_sensitive(Schema.get_boolean('persian-display'));
+      this.el['persian-display-format'].set_sensitive(this.schema.get_boolean('persian-display'));
     }
     sensitiveFunc();
-    Schema.connect('changed::persian-display', sensitiveFunc);
+    this.schema.connect('changed::persian-display', sensitiveFunc);
     hbox = new Gtk.HBox();
     hbox.add(new Gtk.Label({ label: '' }));
     hbox.add(this.el['persian-display-format']);
@@ -287,7 +279,7 @@ var App = new Lang.Class({
 
 
     this.el['islamic-display'] = new Gtk.CheckButton({ label: 'هجری قمری' });
-    Schema.bind('islamic-display', this.el['islamic-display'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('islamic-display', this.el['islamic-display'], 'active', Gio.SettingsBindFlags.DEFAULT);
     this.el['islamic-display-format'] = new Gtk.ComboBoxText();
     for (let showFormat of showFormats) this.el['islamic-display-format'].append(
       showFormat,
@@ -302,13 +294,13 @@ var App = new Lang.Class({
         )
       )
     );
-    this.el['islamic-display-format'].set_active(Schema.get_string('islamic-display-format'));
-    Schema.bind('islamic-display-format', this.el['islamic-display-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    this.el['islamic-display-format'].set_active(this.schema.get_string('islamic-display-format'));
+    this.schema.bind('islamic-display-format', this.el['islamic-display-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
     sensitiveFunc = () => {
-      this.el['islamic-display-format'].set_sensitive(Schema.get_boolean('islamic-display'));
+      this.el['islamic-display-format'].set_sensitive(this.schema.get_boolean('islamic-display'));
     }
     sensitiveFunc();
-    Schema.connect('changed::islamic-display', sensitiveFunc);
+    this.schema.connect('changed::islamic-display', sensitiveFunc);
     hbox = new Gtk.HBox();
     hbox.add(new Gtk.Label({ label: '' }));
     hbox.add(this.el['islamic-display-format']);
@@ -321,7 +313,7 @@ var App = new Lang.Class({
 
 
     this.el['gregorian-display'] = new Gtk.CheckButton({ label: 'میلادی' });
-    Schema.bind('gregorian-display', this.el['gregorian-display'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('gregorian-display', this.el['gregorian-display'], 'active', Gio.SettingsBindFlags.DEFAULT);
     this.el['gregorian-display-format'] = new Gtk.ComboBoxText();
     for (let showFormat of showFormats) this.el['gregorian-display-format'].append(
       showFormat,
@@ -336,13 +328,13 @@ var App = new Lang.Class({
       )
       // )
     );
-    this.el['gregorian-display-format'].set_active(Schema.get_string('gregorian-display-format'));
-    Schema.bind('gregorian-display-format', this.el['gregorian-display-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    this.el['gregorian-display-format'].set_active(this.schema.get_string('gregorian-display-format'));
+    this.schema.bind('gregorian-display-format', this.el['gregorian-display-format'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
     sensitiveFunc = () => {
-      this.el['gregorian-display-format'].set_sensitive(Schema.get_boolean('gregorian-display'));
+      this.el['gregorian-display-format'].set_sensitive(this.schema.get_boolean('gregorian-display'));
     }
     sensitiveFunc();
-    Schema.connect('changed::gregorian-display', sensitiveFunc);
+    this.schema.connect('changed::gregorian-display', sensitiveFunc);
     hbox = new Gtk.HBox();
     hbox.add(new Gtk.Label({ label: '' }));
     hbox.add(this.el['gregorian-display-format']);
@@ -371,19 +363,19 @@ var App = new Lang.Class({
 
     this.el['show-persian-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: هجری‌شمسی' });
     this.vbox3.add(this.el['show-persian-events']);
-    Schema.bind('show-persian-events', this.el['show-persian-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('show-persian-events', this.el['show-persian-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['show-islamic-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: هجری‌قمری' });
     this.vbox3.add(this.el['show-islamic-events']);
-    Schema.bind('show-islamic-events', this.el['show-islamic-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('show-islamic-events', this.el['show-islamic-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['show-gregorian-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: میلادی (جهانی)' });
     this.vbox3.add(this.el['show-gregorian-events']);
-    Schema.bind('show-gregorian-events', this.el['show-gregorian-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('show-gregorian-events', this.el['show-gregorian-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['show-old-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های غیر رسمی ایران باستان' });
     this.vbox3.add(this.el['show-old-events']);
-    Schema.bind('show-old-events', this.el['show-old-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('show-old-events', this.el['show-old-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.vbox3.add(new Gtk.Label({ label: '\n\n\n' }));
 
@@ -405,8 +397,8 @@ var App = new Lang.Class({
     this.el['week-start'].append('4', 'چهارشنبه');
     this.el['week-start'].append('5', 'پنج‌شنبه');
     this.el['week-start'].append('6', 'جمعه');
-    this.el['week-start'].set_active(Schema.get_string('week-start'));
-    Schema.bind('week-start', this.el['week-start'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    this.el['week-start'].set_active(this.schema.get_string('week-start'));
+    this.schema.bind('week-start', this.el['week-start'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
     hbox = new Gtk.HBox();
     hbox.add(new Gtk.Label({ label: '' }));
     hbox.add(new Gtk.Label({ label: '' }));
@@ -424,25 +416,25 @@ var App = new Lang.Class({
     this.vbox4.add(new Gtk.HBox({ border_width: 1 }));
 
     this.el['none-work-0'] = new Gtk.CheckButton({ label: 'شنبه' });
-    Schema.bind('none-work-0', this.el['none-work-0'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('none-work-0', this.el['none-work-0'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['none-work-1'] = new Gtk.CheckButton({ label: 'یک‌شنبه' });
-    Schema.bind('none-work-1', this.el['none-work-1'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('none-work-1', this.el['none-work-1'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['none-work-2'] = new Gtk.CheckButton({ label: 'دوشنبه' });
-    Schema.bind('none-work-2', this.el['none-work-2'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('none-work-2', this.el['none-work-2'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['none-work-3'] = new Gtk.CheckButton({ label: 'سه‌شنبه' });
-    Schema.bind('none-work-3', this.el['none-work-3'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('none-work-3', this.el['none-work-3'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['none-work-4'] = new Gtk.CheckButton({ label: 'چهارشنبه' });
-    Schema.bind('none-work-4', this.el['none-work-4'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('none-work-4', this.el['none-work-4'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['none-work-5'] = new Gtk.CheckButton({ label: 'پنج‌شنبه' });
-    Schema.bind('none-work-5', this.el['none-work-5'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('none-work-5', this.el['none-work-5'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['none-work-6'] = new Gtk.CheckButton({ label: 'جمعه' });
-    Schema.bind('none-work-6', this.el['none-work-6'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('none-work-6', this.el['none-work-6'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     hbox = new Gtk.HBox();
     hbox.add(new Gtk.Label({ label: '' }));
@@ -460,10 +452,10 @@ var App = new Lang.Class({
 
 
     this.el['reverse-direction'] = new Gtk.CheckButton({ label: 'ترتیب چیدمان برعکس' });
-    Schema.bind('reverse-direction', this.el['reverse-direction'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('reverse-direction', this.el['reverse-direction'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     this.el['rotaton-to-vertical'] = new Gtk.CheckButton({ label: 'عمودی‌شدن جدول تقویم' });
-    Schema.bind('rotaton-to-vertical', this.el['rotaton-to-vertical'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('rotaton-to-vertical', this.el['rotaton-to-vertical'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     hbox = new Gtk.HBox();
     hbox.add(new Gtk.Label({ label: '' }));
@@ -514,9 +506,9 @@ var App = new Lang.Class({
     for (let i in ptCalcMethods) {
       this.el['praytime-calc-method-main'].append(i, ptCalcMethods[i]);
     }
-    this.el['praytime-calc-method-main'].set_active_id(Schema.get_string('praytime-calc-method-main'));
+    this.el['praytime-calc-method-main'].set_active_id(this.schema.get_string('praytime-calc-method-main'));
     this.el['praytime-calc-method-main'].connect('changed', () => {
-      Schema.set_string('praytime-calc-method-main', this.el['praytime-calc-method-main'].get_active_id().toString());
+      this.schema.set_string('praytime-calc-method-main', this.el['praytime-calc-method-main'].get_active_id().toString());
     });
 
     // EhtyiatCalcMethod:
@@ -524,13 +516,13 @@ var App = new Lang.Class({
     for (let i in ptCalcMethods) {
       this.el['praytime-calc-method-ehtiyat'].append(i, ptCalcMethods[i]);
     }
-    this.el['praytime-calc-method-ehtiyat'].set_active_id(Schema.get_string('praytime-calc-method-ehtiyat'));
+    this.el['praytime-calc-method-ehtiyat'].set_active_id(this.schema.get_string('praytime-calc-method-ehtiyat'));
     this.el['praytime-calc-method-ehtiyat'].connect('changed', () => {
-      Schema.set_string('praytime-calc-method-ehtiyat', this.el['praytime-calc-method-ehtiyat'].get_active_id().toString());
+      this.schema.set_string('praytime-calc-method-ehtiyat', this.el['praytime-calc-method-ehtiyat'].get_active_id().toString());
     });
 
     this.el['praytime-ehtiyat-show'] = new Gtk.CheckButton({ label: 'نمایش احتیاط' });
-    Schema.bind('praytime-ehtiyat-show', this.el['praytime-ehtiyat-show'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('praytime-ehtiyat-show', this.el['praytime-ehtiyat-show'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     hbox.add(this.el['praytime-calc-method-main']);
     hbox.add(new Gtk.Label({ label: '      روش محاسبه‌ی اصلی: ' }));
@@ -580,7 +572,7 @@ var App = new Lang.Class({
           CalcMethod,
           SoundId
         } = this.getPrayTimeSetting(tName);
-        const SoundUri = Schema.get_string('praytime-' + tName + '-sound-uri');
+        const SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
 
         let label = new Gtk.Label({ label: title + ': ', margin_bottom: 11 });
 
@@ -595,7 +587,7 @@ var App = new Lang.Class({
           this.el['praytime-' + tName + '-sound-uri'].set_filter(audioFilter);
         }
         this.el['praytime-' + tName + '-sound-uri'].connect('file-set', (f) => {
-          Schema.set_string('praytime-' + tName + '-sound-uri', f.get_filename());
+          this.schema.set_string('praytime-' + tName + '-sound-uri', f.get_filename());
         });
 
         // SoundId
@@ -721,23 +713,23 @@ var App = new Lang.Class({
     this.el['praytime-lat'] = new Gtk.Entry({ max_length: 7, width_chars: 7 });
     hbox.add(this.el['praytime-lat']);
     hbox.add(new Gtk.Label({ label: '    عرض جغرافیایی: ' }));
-    this.el['praytime-lat'].set_text(Schema.get_double('praytime-lat').toString());
+    this.el['praytime-lat'].set_text(this.schema.get_double('praytime-lat').toString());
     this.el['praytime-lat'].connect('changed', () => {
       if (isNaN(parseFloat(this.el['praytime-lat'].text))) return false;
-      Schema.set_double('praytime-lat', parseFloat(this.el['praytime-lat'].text));
+      this.schema.set_double('praytime-lat', parseFloat(this.el['praytime-lat'].text));
       this.el['praytime-city'].set_text('_سفارشی_');
-      Schema.set_string('praytime-city', '_سفارشی_');
+      this.schema.set_string('praytime-city', '_سفارشی_');
     });
 
     this.el['praytime-lng'] = new Gtk.Entry({ max_length: 7, width_chars: 7 });
     hbox.add(this.el['praytime-lng']);
     hbox.add(new Gtk.Label({ label: '      طول جغرافیایی: ' }));
-    this.el['praytime-lng'].set_text(Schema.get_double('praytime-lng').toString());
+    this.el['praytime-lng'].set_text(this.schema.get_double('praytime-lng').toString());
     this.el['praytime-lng'].connect('changed', () => {
       if (isNaN(parseFloat(this.el['praytime-lng'].text))) return false;
-      Schema.set_double('praytime-lng', parseFloat(this.el['praytime-lng'].text));
+      this.schema.set_double('praytime-lng', parseFloat(this.el['praytime-lng'].text));
       this.el['praytime-city'].set_text('_سفارشی_');
-      Schema.set_string('praytime-city', '_سفارشی_');
+      this.schema.set_string('praytime-city', '_سفارشی_');
     });
 
 
@@ -745,21 +737,21 @@ var App = new Lang.Class({
 
     const chaneLocation = (cityData) => {
       this.el['praytime-lat'].set_text(cityData[1].toString());
-      Schema.set_double('praytime-lat', cityData[1]);
+      this.schema.set_double('praytime-lat', cityData[1]);
 
       this.el['praytime-lng'].set_text(cityData[2].toString());
-      Schema.set_double('praytime-lng', cityData[2]);
+      this.schema.set_double('praytime-lng', cityData[2]);
 
       this.el['praytime-city'].set_text(cityData[0]);
-      Schema.set_string('praytime-city', cityData[0]);
+      this.schema.set_string('praytime-city', cityData[0]);
     }
 
 
 
     let selectCity = new Gtk.Button({ label: 'انتخاب شهر از فهرست' });
     selectCity.connect('clicked', () => {
-      let _stateId = Schema.get_int('praytime-state');
-      let _cityData = [Schema.get_string('praytime-city'), 0, 0];
+      let _stateId = this.schema.get_int('praytime-state');
+      let _cityData = [this.schema.get_string('praytime-city'), 0, 0];
 
       let dialog = new Gtk.Dialog({
         title: 'انتخاب شهر از فهرست',
@@ -859,22 +851,22 @@ var App = new Lang.Class({
 
       stateAndCitySubmit.connect('clicked', () => {
         chaneLocation(_cityData);
-        Schema.set_int('praytime-state', _stateId);
+        this.schema.set_int('praytime-state', _stateId);
         // this.el['praytime-timezone'].set_active(18);//index 18: Asia/Tehran
-        // Schema.set_double('praytime-timezone', 3.5);//TZ 3.5: Asia/Tehran
+        // this.schema.set_double('praytime-timezone', 3.5);//TZ 3.5: Asia/Tehran
       });
 
       dialog.connect('response', (dialog, id) => {
         if (id == 1) {
           changeStateAndCity(7);// 7: Tehran State
           this.el['praytime-state'].set_active(7);// 7: Tehran State
-          Schema.bind('praytime-state', this.el['praytime-state'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+          this.schema.bind('praytime-state', this.el['praytime-state'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
           // this.el['praytime-timezone'].set_active(18);//index 18: Asia/Tehran
-          // Schema.set_double('praytime-timezone', 3.5);//TZ 3.5: Asia/Tehran
+          // this.schema.set_double('praytime-timezone', 3.5);//TZ 3.5: Asia/Tehran
         } else {
           // remove the settings box so it doesn't get destroyed;
           // this.el['praytime-state'].set_active(7);// 7: Tehran State
-          // Schema.bind('praytime-state', this.el['praytime-state'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+          // this.schema.bind('praytime-state', this.el['praytime-state'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
           dialog.get_content_area().remove(box);
           dialog.destroy();
         }
@@ -930,7 +922,7 @@ var App = new Lang.Class({
     //   [14, 'UTC+14:00']
     // ];
     // this.el['praytime-timezone'] = new Gtk.ComboBoxText();
-    // let _tz = Schema.get_double('praytime-timezone');
+    // let _tz = this.schema.get_double('praytime-timezone');
     // let tzIndex = -1;
     // for (let i in tzs) {
     //   this.el['praytime-timezone'].append(tzs[i][0].toString(), tzs[i][1]);
@@ -938,16 +930,16 @@ var App = new Lang.Class({
     // }
     // this.el['praytime-timezone'].set_active(tzIndex);
     // this.el['praytime-timezone'].connect('changed', () => {
-    //   Schema.set_double('praytime-timezone', parseFloat(tzs[this.el['praytime-timezone'].get_active()][0]));
+    //   this.schema.set_double('praytime-timezone', parseFloat(tzs[this.el['praytime-timezone'].get_active()][0]));
     // });
     // hbox.add(this.el['praytime-timezone']);
     // hbox.add(new Gtk.Label({ label: '      اختلاف ساعت: ' }));
 
     // let tzEl = new Gtk.Entry({ max_length: 22, width_chars: 22 });
-    // tzEl.set_text(Schema.get_double('praytime-timezone').toString());
-    // //Schema.bind('praytime-timezone', tzEl, 'active', Gio.SettingsBindFlags.DEFAULT);
+    // tzEl.set_text(this.schema.get_double('praytime-timezone').toString());
+    // //this.schema.bind('praytime-timezone', tzEl, 'active', Gio.SettingsBindFlags.DEFAULT);
     // tzEl.connect('changed', () => {
-    //   Schema.set_double('praytime-timezone', parseFloat(tzEl.text));
+    //   this.schema.set_double('praytime-timezone', parseFloat(tzEl.text));
     // });
     // hbox.add(tzEl);
     // hbox.add(new Gtk.Label({ label: '      اختلاف ساعت: ' }));
@@ -957,9 +949,9 @@ var App = new Lang.Class({
 
 
 
-    this.el['praytime-city'].set_text(Schema.get_string('praytime-city'));
+    this.el['praytime-city'].set_text(this.schema.get_string('praytime-city'));
     this.el['praytime-city'].connect('changed', () => {
-      Schema.set_string('praytime-city', this.el['praytime-city'].text);
+      this.schema.set_string('praytime-city', this.el['praytime-city'].text);
     });
     hbox.add(this.el['praytime-city']);
     hbox.add(new Gtk.Label({ label: 'نام نمایشی مکان: ' }));
@@ -1044,7 +1036,7 @@ var App = new Lang.Class({
       let testValume = new Gtk.Scale;
       testValume.set_size_request(293, 14);
       testValume.set_range(0.0, 1.0);
-      testValume.set_value(Schema.get_double('praytime-play-valume'));
+      testValume.set_value(this.schema.get_double('praytime-play-valume'));
       const DEFAULT_ICONS_SIZES = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
       for (let i in DEFAULT_ICONS_SIZES) {
         testValume.add_mark(DEFAULT_ICONS_SIZES[i], Gtk.PositionType.TOP, '');
@@ -1111,7 +1103,7 @@ var App = new Lang.Class({
     this.el['praytime-play-valume'] = new Gtk.Scale;
     this.el['praytime-play-valume'].set_size_request(220, 14);
     this.el['praytime-play-valume'].set_range(0.0, 1.0);
-    this.el['praytime-play-valume'].set_value(Schema.get_double('praytime-play-valume'));
+    this.el['praytime-play-valume'].set_value(this.schema.get_double('praytime-play-valume'));
     const DEFAULT_ICONS_SIZES = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
     for (let i in DEFAULT_ICONS_SIZES) {
       this.el['praytime-play-valume'].add_mark(DEFAULT_ICONS_SIZES[i], Gtk.PositionType.TOP, '');
@@ -1123,19 +1115,19 @@ var App = new Lang.Class({
       this.el['praytime-play-valume'].set_inverted(true);
     }
     this.el['praytime-play-valume'].connect('format-value', () => {
-      Schema.set_double('praytime-play-valume', this.el['praytime-play-valume'].get_value());
+      this.schema.set_double('praytime-play-valume', this.el['praytime-play-valume'].get_value());
     });
     this.el['label_praytime-play-valume'] = new Gtk.Label({ label: 'شدّت صدا:' });
 
     this.el['praytime-play-and-notify'] = new Gtk.CheckButton({ label: 'اعلان و پخش اذان' });
-    Schema.bind('praytime-play-and-notify', this.el['praytime-play-and-notify'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('praytime-play-and-notify', this.el['praytime-play-and-notify'], 'active', Gio.SettingsBindFlags.DEFAULT);
     // sensitiveFunc = () => {
     //   let els = [this.el['label_praytime-play-valume'], this.el['praytime-play-valume']];
-    //   let active = Schema.get_boolean('praytime-play-and-notify');
+    //   let active = this.schema.get_boolean('praytime-play-and-notify');
     //   els.forEach((el) => el.set_sensitive(active));
     // }
     // sensitiveFunc();
-    // Schema.connect('changed::praytime-play-and-notify', sensitiveFunc);
+    // this.schema.connect('changed::praytime-play-and-notify', sensitiveFunc);
 
     if (player !== null) {
       hbox.add(playSounds);
@@ -1203,25 +1195,25 @@ var App = new Lang.Class({
 
 
     this.main_hbox.show_all();
-  },
+  }
 
-  _resetPrayTimesAdvanceSettings: function () {
+  _resetPrayTimesAdvanceSettings() {
     for (let tName in PrayTimes.persianMap) {
-      Schema.reset('praytime-' + tName + '-setting');
-      Schema.reset('praytime-' + tName + '-sound-uri');
+      this.schema.reset('praytime-' + tName + '-setting');
+      this.schema.reset('praytime-' + tName + '-sound-uri');
       if (this.el['praytime-imsak-setting_ShowTime'] === undefined) continue;
       const settings = this.getPrayTimeSetting(tName);
-      // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+      // this.schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
       ['ShowTime', 'TextNotify', 'PlaySound', 'CalcMethod', 'SoundId'].forEach((indexId) => {
         this.el['praytime-' + tName + '-setting_' + indexId].set_active_id(settings[indexId]);
       });
       this.el['praytime-' + tName + '-sound-uri'].set_filename(
-        Schema.get_string('praytime-' + tName + '-sound-uri')
+        this.schema.get_string('praytime-' + tName + '-sound-uri')
       );
     }
-  },
+  }
 
-  _resetConfig: function (sections = ['vbox1', 'vbox2', 'vbox3', 'vbox4', 'vbox5']) {
+  _resetConfig(sections = ['vbox1', 'vbox2', 'vbox3', 'vbox4', 'vbox5']) {
     const keysObj = {
       vbox1: {
         'widget-format': 'ComboBoxText',
@@ -1275,34 +1267,34 @@ var App = new Lang.Class({
 
     for (let i in sections) {
       for (let key in keysObj[sections[i]]) {
-        Schema.reset(key);
+        this.schema.reset(key);
         switch (keysObj[sections[i]][key]) {
           case 'Entry-String':
-            this.el[key].set_text(Schema.get_string(key));
+            this.el[key].set_text(this.schema.get_string(key));
             break;
           case 'Entry-Double':
-            this.el[key].set_text(Schema.get_double(key).toString());
+            this.el[key].set_text(this.schema.get_double(key).toString());
             break;
           case 'CheckButton':
-            Schema.bind(key, this.el[key], 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, this.el[key], 'active', Gio.SettingsBindFlags.DEFAULT);
             break;
           case 'ColorButton':
-            this.el[key].set_color(this.getColorByHexadecimal(Schema.get_string(key)));
+            this.el[key].set_color(this.getColorByHexadecimal(this.schema.get_string(key)));
             break;
           case 'ComboBoxText':
-            Schema.bind(key, this.el[key], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, this.el[key], 'active-id', Gio.SettingsBindFlags.DEFAULT);
             break;
           case 'Scale':
-            this.el[key].set_value(Schema.get_double(key));
+            this.el[key].set_value(this.schema.get_double(key));
             break;
         }
       }
     }
-  },
+  }
 
-  setPrayTimeSetting: function (tName, indexId, value) {
+  setPrayTimeSetting(tName, indexId, value) {
     indexId = indexId.toString();
-    // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+    // this.schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
     const indexIds = {
       ShowTime: 0,
       TextNotify: 1,
@@ -1310,20 +1302,20 @@ var App = new Lang.Class({
       CalcMethod: 3,
       SoundId: 4
     };
-    let setting = Schema.get_string('praytime-' + tName + '-setting').split(',');
+    let setting = this.schema.get_string('praytime-' + tName + '-setting').split(',');
     setting[indexIds[indexId]] = value;
-    Schema.set_string('praytime-' + tName + '-setting', setting.join(','));
-  },
+    this.schema.set_string('praytime-' + tName + '-setting', setting.join(','));
+  }
 
-  getPrayTimeSetting: function (tName) {
-    // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+  getPrayTimeSetting(tName) {
+    // this.schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
     const [
       ShowTime,
       TextNotify,
       PlaySound,
       CalcMethod,
       SoundId
-    ] = Schema.get_string('praytime-' + tName + '-setting').split(',');
+    ] = this.schema.get_string('praytime-' + tName + '-setting').split(',');
     return {
       ShowTime,
       TextNotify,
@@ -1331,9 +1323,9 @@ var App = new Lang.Class({
       CalcMethod,
       SoundId
     };
-  },
+  }
 
-  createTextEntry: function (value, labelText, commentText) {
+  createTextEntry(value, labelText, commentText) {
     let label = new Gtk.Label({ label: labelText });
     let format = new Gtk.Entry();
     let hbox = new Gtk.HBox();
@@ -1345,28 +1337,28 @@ var App = new Lang.Class({
         label: commentText,
         use_markup: true
       });
-    format.set_text(Schema.get_double(value).toString());
+    format.set_text(this.schema.get_double(value).toString());
     format.connect('changed', function (innerFormat) {
-      Schema.set_string(value, innerFormat.text);
+      this.schema.set_string(value, innerFormat.text);
     });
 
     return { hbox: hbox, comment: comment };
-  },
+  }
 
-  _scaleRound: function (value) {
+  _scaleRound(value) {
     // Based on gtk/gtkcoloreditor.c
     return Math.min(Math.max(Math.floor((value / 255) + 0.5), 0), 255);
-  },
+  }
 
-  _dec2Hex: function (value) {
+  _dec2Hex(value) {
     value = value.toString(16);
     while (value.length < 2) {
       value = '0' + value;
     }
     return value;
-  },
+  }
 
-  getColorByHexadecimal: function (hex) {
+  getColorByHexadecimal(hex) {
     let colorArray = Gdk.Color.parse(hex);
     let color = null;
     if (colorArray[0]) {
@@ -1376,18 +1368,19 @@ var App = new Lang.Class({
       color = new Gdk.Color({ red: 65535 });
     }
     return color;
-  },
+  }
 
-  getHexadecimalByColor: function (color) {
+  getHexadecimalByColor(color) {
     let red = this._scaleRound(color.red);
     let green = this._scaleRound(color.green);
     let blue = this._scaleRound(color.blue);
     return '#' + this._dec2Hex(red) + this._dec2Hex(green) + this._dec2Hex(blue);
   }
 
-});
 
-function buildPrefsWidget() {
-  let widget = new App();
-  return widget.main_hbox;
 }
+
+// function buildPrefsWidget() {
+//   let widget = new App();
+//   return widget.main_hbox;
+// }

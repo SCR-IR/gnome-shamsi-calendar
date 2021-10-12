@@ -15,29 +15,10 @@ const player = extension.imports.sound.player;
 const str = extension.imports.strFunctions;
 const Events = extension.imports.Events;
 
-const Schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
+var Calendar = class {
 
-function _rotate(a, b, x, y) {
-  return (Schema.get_boolean('rotaton-to-vertical')) ? [7 - b, 8 - a + 1, y, x] : [a, b, x, y];
-}
-
-function _colPosition(rtl) {
-  return ((
-    Schema.get_boolean('reverse-direction') && rtl ||
-    !Schema.get_boolean('reverse-direction') && !rtl
-  ) ? 6 : 0);
-}
-
-function Calendar() {
-  this._init();
-}
-
-Calendar.prototype = {
-  _selectedDateObj: new Tarikh.TarikhObject(),
-  _rtl: (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL),
-  _selectedTab: Schema.get_string('default-tab'),
-
-  _init: function () {
+  constructor(Schema) {
+    this.schema = Schema;
 
     this.actorRight = new St.Widget({
       style_class: 'pcalendar-actor-right',
@@ -60,12 +41,14 @@ Calendar.prototype = {
 
     this.actorRight.connect('scroll-event', Lang.bind(this, this._onScroll));
 
-    //PrayTimes.setMethod(Schema.get_string('praytime-calc-method-main'));
-
     this._buildHeader();
-  },
 
-  _buildHeader: function () {
+    this._selectedDateObj = new Tarikh.TarikhObject();
+    this._rtl = (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL);
+    this._selectedTab = this.schema.get_string('default-tab');
+  }
+
+  _buildHeader() {
 
     this.actorRight.destroy_all_children();
 
@@ -134,9 +117,9 @@ Calendar.prototype = {
 
     // All the children after this are days, and get removed when we update the calendar
     this._firstDayIndex = this.actorRight.get_children().length;
-  },
+  }
 
-  _onScroll: function (actor, event) {
+  _onScroll(actor, event) {
     switch (event.get_scroll_direction()) {
       case Clutter.ScrollDirection.UP:
       case Clutter.ScrollDirection.LEFT:
@@ -147,34 +130,34 @@ Calendar.prototype = {
         this._onPrevMonthButtonClicked();
         break;
     }
-  },
+  }
 
-  _onPrevMonthButtonClicked: function () {
+  _onPrevMonthButtonClicked() {
     this._selectedDateObj.change([0, -1], 'persian');
     this._update();
-  },
+  }
 
-  _onNextMonthButtonClicked: function () {
+  _onNextMonthButtonClicked() {
     this._selectedDateObj.change([0, +1], 'persian');
     this._update();
-  },
+  }
 
-  _onPrevYearButtonClicked: function () {
+  _onPrevYearButtonClicked() {
     this._selectedDateObj.change([-1], 'persian');
     this._update();
-  },
+  }
 
-  _onNextYearButtonClicked: function () {
+  _onNextYearButtonClicked() {
     this._selectedDateObj.change([+1], 'persian');
     this._update();
-  },
+  }
 
-  _update: function () {
-    let weekStart = parseInt(Schema.get_string('week-start'));
+  _update() {
+    let weekStart = parseInt(this.schema.get_string('week-start'));
     let dateDisplay = {
-      persian: Schema.get_boolean('persian-display'),
-      islamic: Schema.get_boolean('islamic-display'),
-      gregorian: Schema.get_boolean('gregorian-display')
+      persian: this.schema.get_boolean('persian-display'),
+      islamic: this.schema.get_boolean('islamic-display'),
+      gregorian: this.schema.get_boolean('gregorian-display')
     };
     // Remove everything but the topBox and the weekday labels
     let children = this.actorRight.get_children();
@@ -191,9 +174,10 @@ Calendar.prototype = {
         text: weekdayAbbr[i % 7]
       });
       {
-        let [left, top, width, height] = _rotate(
-          Math.abs(_colPosition(this._rtl) - ((7 + i - weekStart) % 7)),
-          1, 1, 1
+        let [left, top, width, height] = this._rotate(
+          Math.abs(this._colPosition(this._rtl, this.schema) - ((7 + i - weekStart) % 7)),
+          1, 1, 1,
+          this.schema
         );
         this.actorRight.layout_manager.attach(label, left, top, width, height);
       }
@@ -337,11 +321,12 @@ Calendar.prototype = {
 
 
       {
-        let [left, top, width, height] = _rotate(
-          Math.abs(_colPosition(this._rtl) - ((7 + iterObj.dayOfWeek - weekStart) % 7)),
+        let [left, top, width, height] = this._rotate(
+          Math.abs(this._colPosition(this._rtl, this.schema) - ((7 + iterObj.dayOfWeek - weekStart) % 7)),
           row,
           1,
-          1
+          1,
+          this.schema
         );
         this.actorRight.layout_manager.attach(dayButton, left, top, width, height);
       }
@@ -361,7 +346,7 @@ Calendar.prototype = {
 
 
     if (row === 6) {
-      let [left, top, width, height] = _rotate(0, ++row, 7, 1);
+      let [left, top, width, height] = this._rotate(0, ++row, 7, 1, this.schema);
       this.actorRight.layout_manager.attach(new St.Label({ text: " ", style_class: 'pcalendar-extra-height' }), left, top, width, height);
     }
 
@@ -400,7 +385,7 @@ Calendar.prototype = {
       let dateLabel = new St.Label({
         text: str.numbersFormat(
           str.dateStrFormat(
-            Schema.get_string('persian-display-format'),
+            this.schema.get_string('persian-display-format'),
             this._selectedDateObj.persianDay,
             this._selectedDateObj.persianMonth,
             this._selectedDateObj.persianYear,
@@ -420,7 +405,7 @@ Calendar.prototype = {
       let dateLabel = new St.Label({
         text: str.numbersFormat(
           str.dateStrFormat(
-            Schema.get_string('islamic-display-format'),
+            this.schema.get_string('islamic-display-format'),
             this._selectedDateObj.islamicDay,
             this._selectedDateObj.islamicMonth,
             this._selectedDateObj.islamicYear,
@@ -439,7 +424,7 @@ Calendar.prototype = {
     if (dateDisplay.gregorian) {
       let dateLabel = new St.Label({
         text: str.dateStrFormat(
-          Schema.get_string('gregorian-display-format'),
+          this.schema.get_string('gregorian-display-format'),
           this._selectedDateObj.gregorianDay,
           this._selectedDateObj.gregorianMonth,
           this._selectedDateObj.gregorianYear,
@@ -516,8 +501,8 @@ Calendar.prototype = {
 
       /* 'Tehran','Jafari','MWL','ISNA','Egypt','Makkah','Karachi' */
       const azanMethods = [
-        Schema.get_string('praytime-calc-method-ehtiyat'),
-        Schema.get_string('praytime-calc-method-main')
+        this.schema.get_string('praytime-calc-method-ehtiyat'),
+        this.schema.get_string('praytime-calc-method-main')
       ]
       let _prayTimes = {};
       for (let method of azanMethods) {
@@ -526,8 +511,8 @@ Calendar.prototype = {
         _prayTimes[method] = PT.getTimes(
           this._selectedDateObj.gregorian,
           [
-            Schema.get_double('praytime-lat'),
-            Schema.get_double('praytime-lng')
+            this.schema.get_double('praytime-lat'),
+            this.schema.get_double('praytime-lng')
           ]
         );
       }
@@ -538,7 +523,7 @@ Calendar.prototype = {
       let _prayColumnBox = new St.BoxLayout({ x_expand: false });
 
       {
-        let playAzan = Schema.get_boolean('praytime-play-and-notify');
+        let playAzan = this.schema.get_boolean('praytime-play-and-notify');
         let playAzanBtn = new St.Button({
           child: new St.Label({
             text: 'اذان‌گو ' + ((playAzan) ? '☑' : '☐'),
@@ -548,11 +533,11 @@ Calendar.prototype = {
           })
         });
         playAzanBtn.connect('clicked', () => {
-          Schema.set_boolean('praytime-play-and-notify', !playAzan);
+          this.schema.set_boolean('praytime-play-and-notify', !playAzan);
           this._update();
         });
         let ofogh = new St.Label({
-          text: 'به اُفق ' + Schema.get_string('praytime-city'),
+          text: 'به اُفق ' + this.schema.get_string('praytime-city'),
           x_align: Clutter.ActorAlign.CENTER,
           x_expand: true,
           style: 'text-align: right; color: #b50'
@@ -564,7 +549,7 @@ Calendar.prototype = {
       }
 
 
-      let ehtiyatShow = Schema.get_boolean('praytime-ehtiyat-show');
+      let ehtiyatShow = this.schema.get_boolean('praytime-ehtiyat-show');
       if (ehtiyatShow) _prayColumnBox.add(new St.Label({
         text: 'احتیاط',
         style_class: 'pcalendar-praytimes-time pcalendar-txt-grey pcalendar-underline',
@@ -586,18 +571,18 @@ Calendar.prototype = {
       _prayColumnBox = new St.BoxLayout({ x_expand: false });
       for (let tName in _prayTimes[azanMethods[0]]) {
         // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
-        const settings = getPrayTimeSetting(tName);
+        const settings = this.getPrayTimeSetting(tName, this.schema);
         if (
           settings.ShowTime === 'never' ||
           (settings.ShowTime === 'ramazan' && this._selectedDateObj.islamicMonth !== 9)
         ) continue;
-        // settings.SoundUri = Schema.get_string('praytime-' + tName + '-sound-uri');
+        // settings.SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
 
         let oghat = { method: [], timeStr: [], minutes: [] };
         for (let i in azanMethods) {
           oghat.method[i] = parseInt(i);
           oghat.timeStr[i] = _prayTimes[azanMethods[i]][tName];
-          oghat.minutes[i] = timeStrToMinutes(oghat.timeStr[i]);
+          oghat.minutes[i] = this.timeStrToMinutes(oghat.timeStr[i]);
         }
 
         let ehtiyat = (
@@ -620,7 +605,7 @@ Calendar.prototype = {
         let prayTimeStyle = 'pcalendar-txt-white', prayTimeSymbol = ' ';
         if (nowObj.julianDay === this._selectedDateObj.julianDay) {
           let date = new Date();
-          let nowToMinutes = timeStrToMinutes(date.getHours() + ':' + date.getMinutes());
+          let nowToMinutes = this.timeStrToMinutes(date.getHours() + ':' + date.getMinutes());
           if (nowToMinutes >= ehtiyat) {
             prayTimeSymbol = '✓';
             if (nowToMinutes === ehtiyat) prayTimeStyle = 'pcalendar-txt-green';
@@ -771,7 +756,7 @@ Calendar.prototype = {
             let button = new St.Button({
               label: str.numbersFormat(
                 str.dateStrFormat(
-                  Schema.get_string('persian-display-format'),
+                  this.schema.get_string('persian-display-format'),
                   cDateObj.persianDay,
                   cDateObj.persianMonth,
                   cDateObj.persianYear,
@@ -793,7 +778,7 @@ Calendar.prototype = {
             let button = new St.Button({
               label: str.numbersFormat(
                 str.dateStrFormat(
-                  Schema.get_string('islamic-display-format'),
+                  this.schema.get_string('islamic-display-format'),
                   cDateObj.islamicDay,
                   cDateObj.islamicMonth,
                   cDateObj.islamicYear,
@@ -815,7 +800,7 @@ Calendar.prototype = {
             let button = new St.Button({
               label: str.numbersFormat(
                 str.dateStrFormat(
-                  Schema.get_string('gregorian-display-format'),
+                  this.schema.get_string('gregorian-display-format'),
                   cDateObj.gregorianDay,
                   cDateObj.gregorianMonth,
                   cDateObj.gregorianYear,
@@ -937,29 +922,40 @@ Calendar.prototype = {
 
   }
 
+  getPrayTimeSetting(tName, Schema) {
+    // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+    const [
+      ShowTime,
+      TextNotify,
+      PlaySound,
+      CalcMethod,
+      SoundId
+    ] = Schema.get_string('praytime-' + tName + '-setting').split(',');
+    return {
+      ShowTime,
+      TextNotify,
+      PlaySound,
+      CalcMethod,
+      SoundId
+    };
+  }
+
+  timeStrToMinutes(timeStr, Schema) {
+    let [hour, min] = timeStr.split(':');
+    hour = parseInt(hour);
+    if (hour === 0) hour = 24;
+    return ((hour * 60) + parseInt(min));
+  }
+
+  _rotate(a, b, x, y, Schema) {
+    return (Schema.get_boolean('rotaton-to-vertical')) ? [7 - b, 8 - a + 1, y, x] : [a, b, x, y];
+  }
+
+  _colPosition(rtl, Schema) {
+    return ((
+      Schema.get_boolean('reverse-direction') && rtl ||
+      !Schema.get_boolean('reverse-direction') && !rtl
+    ) ? 6 : 0);
+  }
+
 };
-
-function getPrayTimeSetting(tName) {
-  // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
-  const [
-    ShowTime,
-    TextNotify,
-    PlaySound,
-    CalcMethod,
-    SoundId
-  ] = Schema.get_string('praytime-' + tName + '-setting').split(',');
-  return {
-    ShowTime,
-    TextNotify,
-    PlaySound,
-    CalcMethod,
-    SoundId
-  };
-}
-
-function timeStrToMinutes(timeStr) {
-  let [hour, min] = timeStr.split(':');
-  hour = parseInt(hour);
-  if (hour === 0) hour = 24;
-  return ((hour * 60) + parseInt(min));
-}
