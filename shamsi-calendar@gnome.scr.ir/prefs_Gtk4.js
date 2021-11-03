@@ -587,6 +587,7 @@ const App = class ShamsiCalendarApp {
         });
 
         // SoundId
+        let fileName = '';
         this.el['praytime-' + tName + '-setting_SoundId'] = new Gtk.ComboBoxText();
         for (let i in sounds) {
           this.el['praytime-' + tName + '-setting_SoundId'].append(i, sounds[i][0]);
@@ -609,7 +610,7 @@ const App = class ShamsiCalendarApp {
               this.btnIconLabel(this.el['praytime-' + tName + '-sound-uri'], fileName);
             }
           } else {
-            selectedSoundUri = soundsUri + sounds[newSoundId][1];
+            //selectedSoundUri = soundsUri + sounds[newSoundId][1];
             this.el['praytime-' + tName + '-sound-uri'].set_sensitive(false);
             this.el['praytime-' + tName + '-sound-uri'].set_label('  →  غیرفعال  ');
           }

@@ -471,6 +471,7 @@ function enable() {
     GLib.SpawnFlags.DEFAULT,
     null
   );
+
 }
 
 function disable() {
