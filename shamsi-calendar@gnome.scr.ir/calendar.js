@@ -17,7 +17,7 @@ var Calendar = class {
 
   constructor(Schema) {
     this.schema = Schema;
-    this.themeID = '-thm' + this.schema.get_int('theme-id') ?? 0;
+    this.themeID = '-thm' + this.schema.get_int('theme-id');
 
     this.actorRight = new St.Widget({
       style_class: 'pcalendar-actor-right',
