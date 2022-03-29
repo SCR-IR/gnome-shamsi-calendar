@@ -5,10 +5,8 @@ const Pango = imports.gi.Pango;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const extension = ExtensionUtils.getCurrentExtension();
-const convenience = extension.imports.convenience;
 
 const Tarikh = extension.imports.Tarikh;
-
 const PrayTimes = extension.imports.PrayTimes.prayTimes;
 const player = extension.imports.sound.player;
 
@@ -19,6 +17,7 @@ var Calendar = class {
 
   constructor(Schema) {
     this.schema = Schema;
+    this.themeID = '-thm' + this.schema.get_int('theme-id') ?? 0;
 
     this.actorRight = new St.Widget({
       style_class: 'pcalendar-actor-right',
@@ -26,13 +25,13 @@ var Calendar = class {
       reactive: true
     });
     this.actorLeft = new St.Widget({
-      style_class: 'pcalendar-actor-left',
+      style_class: 'pcalendar-actor-left pcalendar-actor-left' + this.themeID,
       layout_manager: new Clutter.GridLayout(),
       reactive: true
     });
 
     this.actor = new St.Widget({
-      style_class: 'pcalendar pcalendar-top-div',
+      style_class: 'pcalendar pcalendar' + this.themeID + ' pcalendar-top-div',
       layout_manager: new Clutter.GridLayout(),
       reactive: true
     });
@@ -58,7 +57,7 @@ var Calendar = class {
 
     let rightButton = null;
     let icon = null;
-    let style = 'pcalendar-top-button';
+    let style = 'pcalendar-top-button pcalendar-top-button' + this.themeID;
     if (this._rtl) {
       icon = new St.Icon({ icon_name: 'go-last-symbolic' });
       rightButton = new St.Button({ style_class: style, child: icon });
@@ -84,7 +83,7 @@ var Calendar = class {
     this._topBox.add(rightButton);
 
     this._monthLabel = new St.Label({
-      style_class: 'pcalendar-month-label',
+      style_class: 'pcalendar-month-label pcalendar-month-label' + this.themeID,
       x_align: Clutter.ActorAlign.CENTER,
       x_expand: true
     });
@@ -170,7 +169,7 @@ var Calendar = class {
     const weekdayAbbr = ['شنبه', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'جمعه'];
     for (let i = weekStart; i < (weekStart + 7); i++) {
       let label = new St.Label({
-        style_class: 'pcalendar-day-heading pcalendar-rtl',
+        style_class: 'pcalendar-day-heading pcalendar-day-heading' + this.themeID + ' pcalendar-rtl',
         text: weekdayAbbr[i % 7]
       });
       {
@@ -255,21 +254,21 @@ var Calendar = class {
         style_class: 'pcalendar-pdate-day-txt'
       });
       if (eventStatus.persian.hasEvent) shamsiLabel.style_class += ' pcalendar-underline';
-      shamsiLabel.style_class += ((eventStatus.persian.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-pdate-color') + alpha;
+      shamsiLabel.style_class += ((eventStatus.persian.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-pdate-color') + alpha + this.themeID;
 
       let ghamariLabel = new St.Label({
         text: ((dateDisplay.islamic) ? str.numbersFormat(iterObj.islamicDay) : ' '),
         style_class: 'pcalendar-hdate-day-txt'
       });
       if (eventStatus.islamic.hasEvent) ghamariLabel.style_class += ' pcalendar-underline';
-      ghamariLabel.style_class += ((eventStatus.islamic.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-hdate-color') + alpha;
+      ghamariLabel.style_class += ((eventStatus.islamic.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-hdate-color') + alpha + this.themeID;
 
       let miladiLabel = new St.Label({
         text: ((dateDisplay.gregorian) ? iterObj.gregorianDay.toString() : ' '),
         style_class: 'pcalendar-gdate-day-txt'
       });
       if (eventStatus.gregorian.hasEvent) miladiLabel.style_class += ' pcalendar-underline';
-      miladiLabel.style_class += ((eventStatus.gregorian.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-gdate-color') + alpha;
+      miladiLabel.style_class += ((eventStatus.gregorian.isHoliday) ? ' pcalendar-txt-red' : ' pcalendar-txt-gdate-color') + alpha + this.themeID;
 
       let datesOfDay = new St.Widget({
         style_class: '',
@@ -289,27 +288,27 @@ var Calendar = class {
       }));
 
 
-      let styleClass = 'pcalendar-day-button';
+      let styleClass = 'pcalendar-day-button pcalendar-day-button' + this.themeID;
 
       {
         let bgColorStyle = '';
         if (events[1] && iterObj.julianDay === nowObj.julianDay) {// Holiday + Today
-          bgColorStyle = ' pcalendar-bg-orange ';
+          bgColorStyle = ' pcalendar-bg-orange' + this.themeID + ' ';
         } else if (iterObj.julianDay === nowObj.julianDay) {// Today
-          bgColorStyle = ' pcalendar-bg-green ';
+          bgColorStyle = ' pcalendar-bg-green' + this.themeID + ' ';
         } else if (events[1]) {// Holiday
-          bgColorStyle = ' pcalendar-bg-red ';
+          bgColorStyle = ' pcalendar-bg-red' + this.themeID + ' ';
         }
         styleClass += bgColorStyle;
-        if (iterObj.julianDay === this._selectedDateObj.julianDay) selectedDateStyleClass = (bgColorStyle === '') ? ' pcalendar-bg-grey ' : bgColorStyle;
+        if (iterObj.julianDay === this._selectedDateObj.julianDay) selectedDateStyleClass = (bgColorStyle === '') ? ' pcalendar-bg-grey' + this.themeID + ' ' : bgColorStyle;
       }
 
       if (iterObj.persianMonth !== this._selectedDateObj.persianMonth) {
-        styleClass += ' pcalendar-other-month-day';
+        styleClass += ' pcalendar-other-month-day' + this.themeID;
       } else if (iterObj.julianDay === this._selectedDateObj.julianDay) {
-        styleClass += ' pcalendar-active-day';
+        styleClass += ' pcalendar-active-day' + this.themeID;
       } else {
-        styleClass += ' pcalendar-notactive-day';
+        styleClass += ' pcalendar-notactive-day' + this.themeID;
       }
 
       dayButton.style_class = styleClass;
@@ -375,7 +374,7 @@ var Calendar = class {
       ),
       x_align: Clutter.ActorAlign.CENTER,
       x_expand: true,
-      style_class: 'pcalendar-dates-show-label pcalendar-txt-pdate-color'
+      style_class: 'pcalendar-dates-show-label pcalendar-txt-pdate-color' + this.themeID
     });
     _datesBox.add(dateLabel);
 
@@ -395,7 +394,7 @@ var Calendar = class {
         ) + ' هجری شمسی',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
-        style_class: 'pcalendar-dates-show-label pcalendar-txt-pdate-color'
+        style_class: 'pcalendar-dates-show-label pcalendar-txt-pdate-color' + this.themeID
       });
       _datesBox.add(dateLabel);
     }
@@ -415,7 +414,7 @@ var Calendar = class {
         ) + ' هجری قمری',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
-        style_class: 'pcalendar-dates-show-label pcalendar-txt-hdate-color'
+        style_class: 'pcalendar-dates-show-label pcalendar-txt-hdate-color' + this.themeID
       });
       _datesBox.add(dateLabel);
     }
@@ -433,7 +432,7 @@ var Calendar = class {
         ) + ' میلادی',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
-        style_class: 'pcalendar-dates-show-label pcalendar-txt-gdate-color'
+        style_class: 'pcalendar-dates-show-label pcalendar-txt-gdate-color' + this.themeID
       });
       _datesBox.add(dateLabel);
     }
@@ -442,11 +441,11 @@ var Calendar = class {
 
 
     let _eventsBox3 = new St.BoxLayout({
-      style: 'background-color: #323236; margin-bottom: 5px;'
+      style: 'margin-bottom: 5px;'
     });
     _eventsBox3.add(new St.Button({
       label: '',
-      style_class: 'pcalendar-tab-space',
+      style_class: 'pcalendar-tab-space pcalendar-tab-space' + this.themeID,
       x_expand: true
     }));
     let tabs = {
@@ -457,8 +456,8 @@ var Calendar = class {
     for (let i in tabs) {
       let tabBtn = new St.Button({
         label: tabs[i],
-        style_class: 'pcalendar-tab' +
-          ((this._selectedTab === i) ? ' pcalendar-selected-tab' : '')
+        style_class: 'pcalendar-tab pcalendar-tab' + this.themeID +
+          ((this._selectedTab === i) ? ' pcalendar-selected-tab pcalendar-selected-tab' + this.themeID : '')
       });
       tabBtn.connect('clicked', () => {
         this._selectedTab = i;
@@ -481,7 +480,7 @@ var Calendar = class {
           text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
           x_align: Clutter.ActorAlign.CENTER,
           x_expand: true,
-          style_class: 'pcalendar-event-label ' + ((evObj.holiday) ? 'pcalendar-event-label-nonwork' : 'pcalendar-event-label-work')
+          style_class: 'pcalendar-event-label ' + ((evObj.holiday) ? 'pcalendar-event-label-nonwork' + this.themeID : 'pcalendar-event-label-work' + this.themeID)
         });
         evLabel.clutter_text.line_wrap = true;
         evLabel.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
@@ -529,7 +528,7 @@ var Calendar = class {
             text: 'اذان‌گو ' + ((playAzan) ? '☑' : '☐'),
             x_align: Clutter.ActorAlign.CENTER,
             x_expand: true,
-            style: 'text-align: center; color: #' + ((playAzan) ? '269' : '666')
+            style: 'text-align: center; color: #' + ((playAzan) ? '05e' : '666')
           })
         });
         playAzanBtn.connect('clicked', () => {
@@ -552,18 +551,18 @@ var Calendar = class {
       let ehtiyatShow = this.schema.get_boolean('praytime-ehtiyat-show');
       if (ehtiyatShow) _prayColumnBox.add(new St.Label({
         text: 'احتیاط',
-        style_class: 'pcalendar-praytimes-time pcalendar-txt-grey pcalendar-underline',
+        style_class: 'pcalendar-praytimes-time pcalendar-txt-grey' + this.themeID + ' pcalendar-underline',
         x_expand: false,
       }));
       _prayColumnBox.add(new St.Label({
         text: 'زمان',
-        style_class: 'pcalendar-praytimes-time pcalendar-txt-grey pcalendar-underline',
+        style_class: 'pcalendar-praytimes-time pcalendar-txt-grey' + this.themeID + ' pcalendar-underline',
         x_expand: false,
         style: 'text-align: center'
       }));
       _prayColumnBox.add(new St.Label({
         text: 'اوقات شرعی',
-        style_class: 'pcalendar-praytimes-tname pcalendar-txt-grey pcalendar-underline',
+        style_class: 'pcalendar-praytimes-tname pcalendar-txt-grey' + this.themeID + ' pcalendar-underline',
         x_expand: false,
       }));
       _prayBox_v.add(_prayColumnBox);
@@ -597,18 +596,18 @@ var Calendar = class {
           _prayColumnBox.add(new St.Label({
             text: str.numbersFormat((oghat.method[i] === 1 || (oghat.minutes[i] === ehtiyat && oghat.minutes[0] !== oghat.minutes[1])) ? oghat.timeStr[i] : ''),
             style_class: 'pcalendar-praytimes-time ' +
-              ((oghat.minutes[i] === ehtiyat) ? 'pcalendar-txt-green' : 'pcalendar-txt-grey'),
+              ((oghat.minutes[i] === ehtiyat) ? 'pcalendar-txt-green' + this.themeID : 'pcalendar-txt-grey' + this.themeID),
             x_expand: false,
           }));
         }
 
-        let prayTimeStyle = 'pcalendar-txt-white', prayTimeSymbol = ' ';
+        let prayTimeStyle = 'pcalendar-txt-color' + this.themeID, prayTimeSymbol = ' ';
         if (nowObj.julianDay === this._selectedDateObj.julianDay) {
           let date = new Date();
           let nowToMinutes = this.timeStrToMinutes(date.getHours() + ':' + date.getMinutes());
           if (nowToMinutes >= ehtiyat) {
             prayTimeSymbol = '✓';
-            if (nowToMinutes === ehtiyat) prayTimeStyle = 'pcalendar-txt-green';
+            if (nowToMinutes === ehtiyat) prayTimeStyle = 'pcalendar-txt-green' + this.themeID;
           }
         }
         _prayColumnBox.add(new St.Label({
@@ -666,21 +665,21 @@ var Calendar = class {
           hint_text: 'سال',
           can_focus: true,
           x_expand: true,
-          style_class: 'pcalendar-converter-entry'
+          style_class: 'pcalendar-converter-entry pcalendar-converter-entry' + this.themeID
         });
         let converterMonth = new St.Entry({
           name: 'month',
           hint_text: 'ماه',
           can_focus: true,
           x_expand: true,
-          style_class: 'pcalendar-converter-entry'
+          style_class: 'pcalendar-converter-entry pcalendar-converter-entry' + this.themeID
         });
         let converterDay = new St.Entry({
           name: 'day',
           hint_text: 'روز',
           can_focus: true,
           x_expand: true,
-          style_class: 'pcalendar-converter-entry'
+          style_class: 'pcalendar-converter-entry pcalendar-converter-entry' + this.themeID
         });
 
         const enNum = (faNum_) => {
@@ -745,7 +744,7 @@ var Calendar = class {
             let button = new St.Button({
               label: 'تاریـخ وارد‌شده، صحیح نیست!\nاین تاریخ در تقویم وجود ندارد.',
               x_expand: true,
-              style_class: 'pcalendar-day pcalendar-date-label'
+              style_class: 'pcalendar-date-label' + this.themeID
             });
             convertedDatesVbox.add(button);
             return;
@@ -765,7 +764,7 @@ var Calendar = class {
                 )
               ) + ' هجری شمسی',
               x_expand: true,
-              style_class: 'pcalendar-day pcalendar-date-label'
+              style_class: 'pcalendar-date-label' + this.themeID + ' pcalendar-rtl'
             });
             convertedDatesVbox.add(button);
             button.connect('clicked', Lang.bind(button, function () {
@@ -787,7 +786,7 @@ var Calendar = class {
                 )
               ) + ' هجری قمری',
               x_expand: true,
-              style_class: 'pcalendar-day pcalendar-date-label'
+              style_class: 'pcalendar-date-label' + this.themeID + ' pcalendar-rtl'
             });
             convertedDatesVbox.add(button);
             button.connect('clicked', Lang.bind(button, function () {
@@ -798,7 +797,7 @@ var Calendar = class {
           // add gregorian date
           if (_activeConverter !== ConverterTypes.fromGregorian) {
             let button = new St.Button({
-              label: str.numbersFormat(
+              label: (
                 str.dateStrFormat(
                   this.schema.get_string('gregorian-display-format'),
                   cDateObj.gregorianDay,
@@ -809,7 +808,7 @@ var Calendar = class {
                 )
               ) + ' میلادی',
               x_expand: true,
-              style_class: 'pcalendar-day pcalendar-date-label'
+              style_class: 'pcalendar-date-label' + this.themeID + ' pcalendar-ltr'
             });
             convertedDatesVbox.add(button);
             button.connect('clicked', Lang.bind(button, function () {
@@ -857,7 +856,7 @@ var Calendar = class {
           x_expand: true,
           label: 'از هـ.شمسی',
           accessible_name: 'fromPersian',
-          style_class: 'popup-menu-item button pcalendar-button fromPersian active'
+          style_class: 'pcalendar-converter-button pcalendar-converter-button' + this.themeID + ' fromPersian active'
         });
         fromPersian.connect('clicked', _toggleConverter);
         fromPersian.TypeID = ConverterTypes.fromPersian;
@@ -869,7 +868,7 @@ var Calendar = class {
           x_expand: true,
           label: 'از هـ.قمری',
           accessible_name: 'fromIslamic',
-          style_class: 'popup-menu-item button pcalendar-button fromIslamic'
+          style_class: 'pcalendar-converter-button pcalendar-converter-button' + this.themeID
         });
         fromIslamic.connect('clicked', _toggleConverter);
         fromIslamic.TypeID = ConverterTypes.fromIslamic;
@@ -881,7 +880,7 @@ var Calendar = class {
           x_expand: true,
           label: 'از میلادی',
           accessible_name: 'fromGregorian',
-          style_class: 'popup-menu-item button pcalendar-button fromGregorian'
+          style_class: 'pcalendar-converter-button pcalendar-converter-button' + this.themeID + ' fromGregorian'
         });
         fromGregorian.connect('clicked', _toggleConverter);
         fromGregorian.TypeID = ConverterTypes.fromGregorian;
@@ -912,7 +911,7 @@ var Calendar = class {
     }
 
     if (player !== null && player.isPlaying()) {
-      let btn = new St.Button({ label: 'توقف پخش صدا', style_class: 'pcalendar-praytimes-azan' });
+      let btn = new St.Button({ label: 'توقف پخش صدا', style_class: 'pcalendar-praytimes-azan pcalendar-praytimes-azan' + this.themeID });
       btn.connect('clicked', Lang.bind(btn, () => {
         player.pause();
         this._update();

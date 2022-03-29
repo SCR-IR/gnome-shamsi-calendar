@@ -7,9 +7,10 @@
     "3.36",
     "3.38",
     "40",
-    "41"
+    "41",
+    "42"
   ],
   "url": "https://github.com/scr-ir/gnome-shamsi-calendar",
   "uuid": "shamsi-calendar@gnome.scr.ir",
-  "version": 16
+  "version": 17
 }

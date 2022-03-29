@@ -21,6 +21,7 @@ const player = extension.imports.sound.player;
 const Events = extension.imports.Events;
 const str = extension.imports.strFunctions;
 
+
 let _mainLable, _indicator, _timer, messageTray;
 let _prayTimeIs = '';
 
@@ -33,11 +34,12 @@ function _labelSchemaName(events1 = null) {
 const ShamsiCalendar = GObject.registerClass(
   class ShamsiCalendar extends PanelMenu.Button {
 
-
     _init() {
-      super._init(0.0);
-      // this.parent(0.0);
       this.schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
+      super._init(({ left: 1.0, center: 0.5, right: 0.0 }[this.schema.get_string('window-position')])/*, 'ShamsiCalendar', false*/);
+      // this.parent();
+      this.themeID = '-thm' + this.schema.get_int('theme-id');
+
       messageTray = new MessageTray.MessageTray({ style_class: 'pcalendar-system-tray pcalendar-font' });
       _mainLable = new St.Label({
         style_class: 'pcalendar-font',
@@ -90,8 +92,21 @@ const ShamsiCalendar = GObject.registerClass(
         }
       ));
 
+      this.schema_theme_id_signal = this.schema.connect('changed::theme-id', Lang.bind(
+        that, function () {
+          disable();
+          enable();
+        }
+      ));
 
-      this.schema_position_signal = this.schema.connect('changed::position', Lang.bind(
+      this.schema_widget_position_signal = this.schema.connect('changed::widget-position', Lang.bind(
+        that, function () {
+          disable();
+          enable();
+        }
+      ));
+
+      this.schema_window_position_signal = this.schema.connect('changed::window-position', Lang.bind(
         that, function () {
           disable();
           enable();
@@ -100,7 +115,7 @@ const ShamsiCalendar = GObject.registerClass(
 
       // /////////////////////////////
       // // some codes for fonts
-      // let font = this.schema.get_string('font').split(' ');
+      // let font = this.schema.get_string('font-name').split(' ');
       // font.pop(); // remove size
       // font = font.join(' ');
       // if (this.schema.get_boolean('custom-font')) {
@@ -109,7 +124,7 @@ const ShamsiCalendar = GObject.registerClass(
       // this.schema.connect('changed::font', Lang.bind(
       //   this, function (schema, key) {
       //     if (this.schema.get_boolean('custom-font')) {
-      //       let font = this.schema.get_string('font').split(' ');
+      //       let font = this.schema.get_string('font-name').split(' ');
       //       font.pop(); // remove size
       //       font = font.join(' ');
       //       _mainLable.set_style('font-family: ' + font);
@@ -119,7 +134,7 @@ const ShamsiCalendar = GObject.registerClass(
       // this.schema.connect('changed::custom-font', Lang.bind(
       //   this, function (schema, key) {
       //     if (this.schema.get_boolean('custom-font')) {
-      //       let font = this.schema.get_string('font').split(' ');
+      //       let font = this.schema.get_string('font-name').split(' ');
       //       font.pop(); // remove size
       //       font = font.join(' ');
       //       _mainLable.set_style('font-family: ' + font);
@@ -146,11 +161,11 @@ const ShamsiCalendar = GObject.registerClass(
       this._calendar = new Calendar.Calendar(this.schema);
       vbox.add_actor(this._calendar.actor);
 
-      this._calendar.actor.add_style_class_name('pcalendar pcalendar-font');
+      this._calendar.actor.add_style_class_name('pcalendar pcalendar' + this.themeID + ' pcalendar-font');
 
       let actionButtons = new St.BoxLayout({
         vertical: false,
-        style_class: 'pcalendar pcalendar-font pcalendar-bottom-menu'
+        style_class: 'pcalendar pcalendar' + this.themeID + ' pcalendar-font pcalendar-bottom-menu pcalendar-bottom-menu' + this.themeID
       });
       vbox.add_actor(actionButtons);
 
@@ -166,34 +181,10 @@ const ShamsiCalendar = GObject.registerClass(
         child: icon,
         reactive: true,
         can_focus: true,
-        style_class: 'pcalendar-preferences-button'
+        style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
       });
       preferencesIcon.connect('clicked', openExtensionSetting);
       actionButtons.add(preferencesIcon);
-
-
-
-
-
-      let icon3 = new St.Icon({
-        icon_name: 'view-refresh-symbolic',
-        icon_size: 25,
-        style: 'color: #1ea'
-      });
-      let todayIcon = new St.Button({
-        child: icon3,
-        reactive: true,
-        can_focus: true,
-        style_class: 'pcalendar-preferences-button'
-      });
-      todayIcon.connect('clicked', function () {
-        that._calendar._selectedDateObj.setNow();
-        that._calendar._update();
-        // const Gst = imports.gi.Gst;
-        // const GstAudio = imports.gi.GstAudio;
-        // print(typeof(Gst)+' :GA-'+typeof(GstAudio))
-      });
-      actionButtons.add(todayIcon);
 
 
 
@@ -203,14 +194,14 @@ const ShamsiCalendar = GObject.registerClass(
       icon = new St.Icon({
         icon_name: 'emblem-favorite-symbolic',
         icon_size: 25,
-        style: 'color: #c66'
+        style: 'color: #c55'
       });
 
       let nowroozIcon = new St.Button({
         child: icon,
         reactive: true,
         can_focus: true,
-        style_class: 'pcalendar-preferences-button'
+        style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
       });
       nowroozIcon.connect('clicked', function () {
         /* calculate exact hour/minute/second of the next new year.
@@ -236,6 +227,52 @@ const ShamsiCalendar = GObject.registerClass(
       actionButtons.add(nowroozIcon);
       // actionButtons.actor.add(nowroozIcon);
 
+
+
+
+
+
+      let icon4 = new St.Icon({
+        icon_name: 'preferences-desktop-theme',
+        icon_size: 25,
+        style: 'color: #c60'
+      });
+      let themeIcon = new St.Button({
+        child: icon4,
+        reactive: true,
+        can_focus: true,
+        style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
+      });
+      themeIcon.connect('clicked', () => {
+        this.schema.set_int('theme-id', (this.themeID === '-thm0') ? 1 : 0);
+      });
+      actionButtons.add(themeIcon);
+
+
+
+
+
+      let icon3 = new St.Icon({
+        icon_name: 'view-refresh-symbolic',
+        icon_size: 25,
+        style: 'color: #0c9'
+      });
+      let todayIcon = new St.Button({
+        child: icon3,
+        reactive: true,
+        can_focus: true,
+        style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
+      });
+      todayIcon.connect('clicked', function () {
+        that._calendar._selectedDateObj.setNow();
+        that._calendar._update();
+      });
+      actionButtons.add(todayIcon);
+
+
+
+
+
       this.menu.connect('open-state-changed', Lang.bind(that, function (menu, isOpen) {
         if (isOpen) {
           that._calendar._selectedDateObj.setNow();
@@ -259,7 +296,6 @@ const ShamsiCalendar = GObject.registerClass(
 
       let events = new Events.Events().getEvents(_dateObj.all, 150);
       if (this.schema.get_boolean('custom-color')) {
-        // _mainLable.set_style(null);
         _mainLable.set_style('color: ' + this.schema.get_string(_labelSchemaName(events[1])));
       }
 
@@ -445,15 +481,13 @@ function enable() {
   if (player !== null && player.isPlaying()) player.pause();
 
   _indicator = new ShamsiCalendar();
-
-  let positions = ['left', 'center', 'right'];
-  let indexes = ['99999', '99999', '0'];
-
+  // _indicator.positions
+  let positions = { 'left': '99999', 'center': '99999', 'right': '0' };
   Main.panel.addToStatusArea(
     'shamsi_calendar',
     _indicator,
-    indexes[_indicator.schema.get_enum('position')],
-    positions[_indicator.schema.get_enum('position')]
+    positions[_indicator.schema.get_string('widget-position')],
+    _indicator.schema.get_string('widget-position')
   );
   _indicator._updateDate(_indicator.schema.get_boolean('startup-notification'), true);
   _timer = MainLoop.timeout_add(
@@ -482,7 +516,9 @@ function disable() {
   _indicator.schema.disconnect(_indicator.schema_holiday_color_change_signal);
   _indicator.schema.disconnect(_indicator.schema_custom_color_signal);
   _indicator.schema.disconnect(_indicator.schema_widget_format_signal);
-  _indicator.schema.disconnect(_indicator.schema_position_signal);
+  _indicator.schema.disconnect(_indicator.schema_theme_id_signal);
+  _indicator.schema.disconnect(_indicator.schema_widget_position_signal);
+  _indicator.schema.disconnect(_indicator.schema_window_position_signal);
   _indicator.destroy();
   MainLoop.source_remove(_timer);
 }

@@ -1,80 +1,45 @@
 <schemalist gettext-domain="gnome-shell-extensions-shamsi-calendar">
-  <enum id="org.gnome.shell.extensions.shamsi-calendar.positions">
-    <value nick="left" value="0"/>
-    <value nick="center" value="1"/>
-    <value nick="right" value="2"/>
-  </enum>
   <schema id="org.gnome.shell.extensions.shamsi-calendar" path="/org/gnome/shell/extensions/shamsi-calendar/">
-    <key name="v" type="i">
-      <default>11</default>
+    <key name="schema-version" type="i">
+      <default>17</default>
+    </key>
+
+    <!-- view -->
+    <key name="theme-id" type="i">
+      <default>0</default>
+      <summary>Theme ID (0:Dark, 1:Light)</summary>
+    </key>
+    <key name="theme-change" type="s">      <!-- for later -->
+      <default>'manual'</default>
+      <summary>Theme auto change or ...</summary>
+    </key>
+    <key name="show-mode" type="s">      <!-- for later -->
+      <default>'all'</default>
+      <summary>show All elements or ...</summary>
+    </key>
+    <key name="text-size" type="i">      <!-- for later -->
+      <default>10</default>
+      <summary>config Text size</summary>
     </key>
     <key name="default-tab" type="s">
       <default>'events'</default>
       <summary>Default selected Tab</summary>
     </key>
-    <key name="persian-display" type="b">
-      <default>true</default>
-      <summary>Display Persian date below the calendar</summary>
-      <description>Set to true to display Persian date.</description>
+    <key name="window-position" type="s">
+      <default>'center'</default>
+      <summary>Where to display window of calendar (left:1, center:0.5, right:0)</summary>
+      <description>Where to display window of calendar </description>
     </key>
-    <key name="islamic-display" type="b">
-      <default>true</default>
-      <summary>Display Islamic date below the calendar</summary>
-      <description>Set to true to display Islamic date.</description>
-    </key>
-    <key name="gregorian-display" type="b">
-      <default>true</default>
-      <summary>Display Gregorian date below the calendar</summary>
-      <description>Set to true to display Gregorian date.</description>
-    </key>
-    <key name="persian-display-format" type="s">
-      <default>'%d / %m / %Y (%MM)'</default>
-      <summary>Persian date format</summary>
-      <description>Persian date format</description>
-    </key>
-    <key name="islamic-display-format" type="s">
-      <default>'%d / %m / %Y (%MM)'</default>
-      <summary>Islamic date format</summary>
-      <description>Islamic date format</description>
-    </key>
-    <key name="gregorian-display-format" type="s">
-      <default>'%d / %m / %Y (%MM)'</default>
-      <summary>Gregorian date format</summary>
-      <description>Gregorian date format</description>
-    </key>
-    <key name="show-persian-events" type="b">
-      <default>true</default>
-      <summary>Display official Iranian solar events</summary>
-      <description>Display official Iranian solar events.</description>
-    </key>
-    <key name="show-islamic-events" type="b">
-      <default>true</default>
-      <summary>Display official Iranian lunar events</summary>
-      <description>Display official Iranian lunar events.</description>
-    </key>
-    <key name="show-gregorian-events" type="b">
-      <default>true</default>
-      <summary>Display official international events</summary>
-      <description>Display official international events.</description>
-    </key>
-    <key name="show-old-events" type="b">
-      <default>false</default>
-      <summary>Display old Persian events</summary>
-      <description>Display old Persian events.</description>
+
+    <key name="widget-position" type="s">
+      <default>'center'</default>
+      <summary>Where to display widget of calendar (left, center, right)</summary>
+      <description>Where to display widget of calendar</description>
     </key>
     <key name="widget-format" type="s">
       <default>'%WW %d %MM'</default>
       <summary>Widget date format</summary>
       <description>Widget date format</description>
-    </key>
-    <key name="position" enum="org.gnome.shell.extensions.shamsi-calendar.positions">
-      <default>'center'</default>
-      <summary>Where to display calendar (left, center, right)</summary>
-    </key>
-    <key name="startup-notification" type="b">
-      <default>true</default>
-      <summary>Startup Notification</summary>
-      <description>Show notification on start up</description>
     </key>
     <key name="custom-color" type="b">
       <default>true</default>
@@ -96,22 +61,105 @@
       <summary>Not-holiday custom color.</summary>
       <description>Not-holiday custom color.</description>
     </key>
-    <!--
-    <key name="custom-font" type="b">
+
+    <key name="custom-font" type="b">      <!-- for later -->
       <default>false</default>
-      <summary>Use custom font</summary>
-      <description>Use custom font.</description>
+      <summary>custom font</summary>
+      <description>Use custom font</description>
     </key>
-    <key name="font" type="s">
-      <default>''</default>
+    <key name="font-name" type="s">      <!-- for later -->
+      <default>'Vazir'</default>
       <summary>Custom font</summary>
-      <description>Custom font.</description>
+      <description>Custom font name</description>
     </key>
-    -->
+
+    <key name="startup-notification" type="b">
+      <default>true</default>
+      <summary>Startup Notification</summary>
+      <description>Show notification on start up</description>
+    </key>
+
+    <!-- dates -->
+    <key name="islamic-hilal" type="s">      <!-- for later -->
+      <default>'IR'</default>
+      <summary>Hilali Calculate for Islamic date</summary>
+    </key>
+    <key name="islamic-correction" type="i">      <!-- for later -->
+      <default>0</default>
+      <summary>Correct Islamic date, 0 + - Days</summary>
+    </key>
+
+    <key name="persian-display" type="b">
+      <default>true</default>
+      <summary>Display Persian date below the calendar</summary>
+      <description>Set to true to display Persian date.</description>
+    </key>
+    <key name="islamic-display" type="b">
+      <default>true</default>
+      <summary>Display Islamic date below the calendar</summary>
+      <description>Set to true to display Islamic date.</description>
+    </key>
+    <key name="gregorian-display" type="b">
+      <default>true</default>
+      <summary>Display Gregorian date below the calendar</summary>
+      <description>Set to true to display Gregorian date.</description>
+    </key>
+
+    <key name="persian-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Persian date format</summary>
+      <description>Persian date format</description>
+    </key>
+    <key name="islamic-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Islamic date format</summary>
+      <description>Islamic date format</description>
+    </key>
+    <key name="gregorian-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Gregorian date format</summary>
+      <description>Gregorian date format</description>
+    </key>
+
+    <!-- events -->
+    <key name="show-persian-events" type="b">
+      <default>true</default>
+      <summary>Display official Iranian solar events</summary>
+      <description>Display official Iranian solar events.</description>
+    </key>
+    <key name="show-islamic-events" type="b">
+      <default>true</default>
+      <summary>Display official Iranian lunar events</summary>
+      <description>Display official Iranian lunar events.</description>
+    </key>
+    <key name="show-gregorian-events" type="b">
+      <default>true</default>
+      <summary>Display official international events</summary>
+      <description>Display official international events.</description>
+    </key>
+    <key name="show-old-events" type="b">
+      <default>false</default>
+      <summary>Display old Persian events</summary>
+      <description>Display old Persian events.</description>
+    </key>
+    <!-- calendar table -->
+    <key name="reverse-direction" type="b">
+      <default>false</default>
+      <summary>Reverse Direction Table of days</summary>
+      <description>Reverse Direction Table of days.</description>
+    </key>
+    <key name="rotaton-to-vertical" type="b">
+      <default>false</default>
+      <summary>Rotation Table of days to vertical</summary>
+      <description>Rotation Table of days to vertical.</description>
+    </key>
+
+    <!-- week -->
     <key name="week-start" type="s">
       <default>'0'</default>
       <summary>Week Start</summary>
     </key>
+
     <key name="none-work-0" type="b">
       <default>false</default>
       <summary>None Work Day in Week</summary>
@@ -147,16 +195,6 @@
       <summary>None Work Day in Week</summary>
       <description>None Work Day in Week.</description>
     </key>
-    <key name="reverse-direction" type="b">
-      <default>false</default>
-      <summary>Reverse Direction Table of days</summary>
-      <description>Reverse Direction Table of days.</description>
-    </key>
-    <key name="rotaton-to-vertical" type="b">
-      <default>false</default>
-      <summary>Rotation Table of days to vertical</summary>
-      <description>Rotation Table of days to vertical.</description>
-    </key>
 
     <!-- PrayTime: -->
     <key name="praytime-state" type="i">
@@ -166,25 +204,6 @@
     <key name="praytime-city" type="s">
       <default>'تهران'</default>
       <summary>City name</summary>
-    </key>
-    <key name="praytime-main-show" type="b">
-      <default>true</default>
-      <summary>Display PrayTime</summary>
-      <description>Display Pray time based on location</description>
-    </key>
-    <key name="praytime-ehtiyat-show" type="b">
-      <default>true</default>
-      <summary>praytime ehtiyat show</summary>
-    </key>
-    <key name="praytime-play-and-notify" type="b">
-      <default>false</default>
-      <summary>Play Call to prayer song (Azaan)</summary>
-      <description>Play Azan</description>
-    </key>
-    <key name="praytime-play-valume" type="d">
-      <default>0.3</default>
-      <summary>System Valume (Play Azan)</summary>
-      <description>System Valume (Play Azan)</description>
     </key>
     <key name="praytime-lat" type="d">
       <default>35.70</default>
@@ -196,11 +215,12 @@
       <summary>Longitude</summary>
       <description>your location longitude</description>
     </key>
-    <!-- <key name="praytime-timezone" type="d">
+    <key name="praytime-timezone" type="d">      <!-- for later -->
       <default>3.5</default>
       <summary>Timezone</summary>
-      <description>Your timezone based on GMT</description>
-    </key> -->
+      <description>Your timezone based on GMT -+H</description>
+    </key>
+
     <key name="praytime-calc-method-main" type="s">
       <default>'Tehran'</default>
       <summary>calc method main"</summary>
@@ -208,6 +228,27 @@
     <key name="praytime-calc-method-ehtiyat" type="s">
       <default>'Jafari'</default>
       <summary>calc method ehtiyat</summary>
+    </key>
+
+    <key name="praytime-main-show" type="b">
+      <default>true</default>
+      <summary>Display PrayTime</summary>
+      <description>Display Pray time based on location</description>
+    </key>
+    <key name="praytime-ehtiyat-show" type="b">
+      <default>true</default>
+      <summary>praytime ehtiyat show</summary>
+    </key>
+
+    <key name="praytime-play-and-notify" type="b">
+      <default>false</default>
+      <summary>Play Call to prayer song (Azaan)</summary>
+      <description>Play Azan</description>
+    </key>
+    <key name="praytime-play-valume" type="d">
+      <default>0.3</default>
+      <summary>System Valume (Play Azan)</summary>
+      <description>System Valume (Play Azan)</description>
     </key>
 
     <!-- Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
