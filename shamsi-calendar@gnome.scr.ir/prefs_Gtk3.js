@@ -90,12 +90,12 @@ const App = class ShamsiCalendarApp {
     // COLOR
     this.vbox1.add(new Gtk.Label({ label: '\nحالت نمایش در نوار وضعیت:\n' }));
 
-    this.el['position'] = new Gtk.ComboBoxText();
-    this.el['position'].append('left', 'سمت چپ');
-    this.el['position'].append('center', 'وسط');
-    this.el['position'].append('right', 'سمت راست');
-    this.el['position'].set_active(this.schema.get_enum('position'));
-    this.schema.bind('position', this.el['position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    this.el['widget-position'] = new Gtk.ComboBoxText();
+    this.el['widget-position'].append('left', 'سمت چپ');
+    this.el['widget-position'].append('center', 'وسط');
+    this.el['widget-position'].append('right', 'سمت راست');
+    this.el['widget-position'].set_active(this.schema.get_string('widget-position'));
+    this.schema.bind('widget-position', this.el['widget-position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
 
 
     this.el['custom-color'] = new Gtk.CheckButton({ label: 'رنگ سفارشی متن' });
@@ -168,7 +168,7 @@ const App = class ShamsiCalendarApp {
     hbox.add(new Gtk.Label({ label: '' }));
     hbox.add(new Gtk.Label({ label: 'قالب: ' }));
     hbox.add(new Gtk.Label({ label: '' }));
-    hbox.add(this.el['position']);
+    hbox.add(this.el['widget-position']);
     hbox.add(new Gtk.Label({ label: 'موقعیت: ' }));
     hbox.add(new Gtk.Label({ label: '' }));
     this.vbox1.add(hbox);
@@ -202,11 +202,11 @@ const App = class ShamsiCalendarApp {
     let _actor = new Gtk.HBox();
     _actor.add(label);
     _actor.add(font);
-    font.set_font_name(this.schema.get_string('font'));
+    font.set_font_name(this.schema.get_string(font-name));
    
     this.vbox1.add(_actor);
     font.connect('font-set', function(font){
-    this.schema.set_string('font', font.get_font_name());
+    this.schema.set_string(font-name, font.get_font_name());
     });*/
 
 
@@ -225,6 +225,36 @@ const App = class ShamsiCalendarApp {
 
 
     // TAB and DATES FORMAT
+    hbox = new Gtk.HBox();
+
+    this.el['window-position'] = new Gtk.ComboBoxText();
+    this.el['window-position'].append('left', 'سمت چپ');
+    this.el['window-position'].append('center', 'وسط');
+    this.el['window-position'].append('right', 'سمت راست');
+    this.el['window-position'].set_active(this.schema.get_string('window-position'));
+    this.schema.bind('window-position', this.el['window-position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    hbox.add(new Gtk.Label({ label: '' }));
+    hbox.add(this.el['window-position']);
+    hbox.add(new Gtk.Label({ label: 'مکان بازشدن پنجره: ' }));
+
+
+    let themes = {
+      0: "تاریک",
+      1: "روشن"
+    };
+    this.el['theme-id'] = new Gtk.ComboBoxText();
+    for (let i in themes) this.el['theme-id'].append(i, themes[i]);
+    this.el['theme-id'].set_active(this.schema.get_int('theme-id'));
+    this.schema.bind('theme-id', this.el['theme-id'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    hbox.add(new Gtk.Label({ label: '' }));
+    hbox.add(this.el['theme-id']);
+    hbox.add(new Gtk.Label({ label: 'قالب پنجره‌ی تقویم: ' }));
+
+    this.vbox2.add(hbox);
+
+    this.vbox2.add(new Gtk.Label({ label: '\n' }));
+
+
     let tabs = {
       dateConvert: "تبدیل تاریخ",
       prayTimes: "اوقات شرعی",
@@ -1217,7 +1247,7 @@ const App = class ShamsiCalendarApp {
     const keysObj = {
       vbox1: {
         'widget-format': 'ComboBoxText',
-        'position': 'ComboBoxText',
+        'widget-position': 'ComboBoxText',
         'pray-time-color': 'ColorButton',
         'holiday-color': 'ColorButton',
         'not-holiday-color': 'ColorButton',
@@ -1225,6 +1255,8 @@ const App = class ShamsiCalendarApp {
         'startup-notification': 'CheckButton'
       },
       vbox2: {
+        'window-position': 'ComboBoxText',
+        'theme-id': 'ComboBoxText',
         'default-tab': 'ComboBoxText',
         'persian-display-format': 'ComboBoxText',
         'persian-display': 'CheckButton',
