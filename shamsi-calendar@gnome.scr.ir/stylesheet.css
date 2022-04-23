@@ -1,5 +1,9 @@
 .pcalendar {
   border-radius: 0.6em;
+  padding-left: 0;
+  padding-right: 1.65em;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
 }
 .pcalendar-thm0 {
   background-color: #303232;

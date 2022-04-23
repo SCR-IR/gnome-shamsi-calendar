@@ -152,7 +152,7 @@ const ShamsiCalendar = GObject.registerClass(
         activate: false,
         hover: false,
         can_focus: false,
-        style_class: 'pcalendar-font'
+        style_class: 'pcalendar pcalendar-font'
       });
       calendar.actor.add_child(vbox);
 
@@ -161,7 +161,7 @@ const ShamsiCalendar = GObject.registerClass(
       this._calendar = new Calendar.Calendar(this.schema);
       vbox.add_actor(this._calendar.actor);
 
-      this._calendar.actor.add_style_class_name('pcalendar pcalendar' + this.themeID + ' pcalendar-font');
+      //this._calendar.actor.add_style_class_name('pcalendar pcalendar' + this.themeID + ' pcalendar-font');
 
       let actionButtons = new St.BoxLayout({
         vertical: false,
@@ -233,7 +233,7 @@ const ShamsiCalendar = GObject.registerClass(
 
 
       let icon4 = new St.Icon({
-        icon_name: 'preferences-desktop-theme',
+        icon_name: 'night-light-symbolic',
         icon_size: 25,
         style: 'color: #c60'
       });

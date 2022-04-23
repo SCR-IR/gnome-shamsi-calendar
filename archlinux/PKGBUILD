@@ -1,6 +1,6 @@
 # Maintainer: JDF.SCR.IR
 pkgname=gnome-shamsi-calendar
-pkgver=20201122
+pkgver=20220422
 pkgrel=1
 pkgdesc="Persian Calendar extension for Gnome-Shell"
 arch=('any')

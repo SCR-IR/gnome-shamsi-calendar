@@ -9,11 +9,15 @@ ___________________________________________________________________________
 
 * Restart Extension for testing:
 
+
 - Xorg:
  ( Alt+F2 -> r -> Enter )
 
+
 - Wayland:
+env MUTTER_DEBUG_DUMMY_MODE_SPECS=1024x768 \
 dbus-run-session -- gnome-shell --nested --wayland
+
 
 - Xorg + Wayland:
  ( logOut -> LogIn )
