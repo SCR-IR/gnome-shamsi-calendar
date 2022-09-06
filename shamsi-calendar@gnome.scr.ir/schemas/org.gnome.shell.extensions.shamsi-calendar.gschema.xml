@@ -67,8 +67,8 @@
       <summary>custom font</summary>
       <description>Use custom font</description>
     </key>
-    <key name="font-name" type="s">      <!-- for later -->
-      <default>'Vazir'</default>
+    <key name="font-family" type="s">      <!-- for later -->
+      <default>'Vazirmatn'</default>
       <summary>Custom font</summary>
       <description>Custom font name</description>
     </key>
