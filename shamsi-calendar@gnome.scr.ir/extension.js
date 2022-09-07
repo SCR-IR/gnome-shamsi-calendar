@@ -1,4 +1,4 @@
-const { GObject, Clutter, St } = imports.gi;
+const { GObject, Clutter, St, Gio } = imports.gi;
 const GLib = imports.gi.GLib;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
@@ -20,6 +20,7 @@ const player = extension.imports.sound.player;
 
 const Events = extension.imports.Events;
 const str = extension.imports.strFunctions;
+const file = extension.imports.file;
 
 
 let _mainLable, _indicator, _timer, messageTray;
@@ -495,17 +496,16 @@ function enable() {
     Lang.bind(_indicator, _indicator._updateDate)
   );
 
+  install_fonts();
+}
 
-  // install fonts
+function install_fonts() {
   let path = extension.dir.get_path();
-  GLib.spawn_sync(
-    null,
-    ['/bin/bash', path + '/bin/install_fonts.sh', path],
-    null,
-    GLib.SpawnFlags.DEFAULT,
-    null
-  );
-
+  let dst = Gio.file_new_for_path(`${path}/../../../fonts/shamsiCalendarFonts/`);
+  if (!dst.query_exists(null)) {
+    let src = Gio.file_new_for_path(`${path}/fonts`);
+    file.copyDir(src, dst);
+  }
 }
 
 function disable() {
@@ -521,7 +521,18 @@ function disable() {
   _indicator.schema.disconnect(_indicator.schema_window_position_signal);
   _indicator.destroy();
   MainLoop.source_remove(_timer);
+
+  // uninstall_fonts();
 }
+
+// function uninstall_fonts() {
+//   let isLocked = (Main.sessionMode.currentMode === 'unlock-dialog');
+//   let path = extension.dir.get_path();
+//   let dir = Gio.file_new_for_path(`${path}/../../../fonts/shamsiCalendarFonts/`);
+//   if (dir.query_exists(null) && !isLocked) {
+//     file.deleteDir(dir);
+//   }
+// }
 
 function openExtensionSetting() {
   if (typeof ExtensionUtils.openPrefs === 'function') {
