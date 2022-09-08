@@ -2,16 +2,23 @@
 
 extName=shamsi-calendar@gnome.scr.ir
 
+extFontsDirName=shamsiCalendarFonts
 
 cd $extName
+
+## After Change & Develop:
 glib-compile-schemas ./schemas/
 zip -qrD9 ../extension.zip ./
 
+## Install Extension:
 extDir=$HOME/.local/share/gnome-shell/extensions/$extName/
 rm -rf $extDir
 mkdir -p $extDir && cp -r ./* $extDir
 
-$HOME/.local/share/gnome-shell/extensions/$extName/bin/install_fonts.sh
+## Install Fonts:
+extFontDir=$HOME/.local/share/fonts/$extFontsDirName/
+rm -rf $extFontDir
+mkdir -p $extFontDir && cp -r ./fonts/* $extFontDir
 
 echo ""
 echo "Please restart gnome-shell:"
