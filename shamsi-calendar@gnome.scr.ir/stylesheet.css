@@ -137,12 +137,18 @@
   text-align: center;
   min-width: 22em;
 }
+.pcalendar-events-scrollable {
+  width: 22em;
+  max-height: 19em;
+}
+.pcalendar-events-layout {
+}
 .pcalendar-event-label {
   font-size: 1em;
   direction: rtl;
   text-align: right;
-  padding-right: 0.6em;
-  min-width: 21.4em;
+  padding-right: 1em;
+  min-width: 21em;
 }
 .pcalendar-event-label-work-thm0 {
   color: #eeeeee;
@@ -283,6 +289,10 @@
 
 .pcalendar-date-label-thm1:hover {
   background-color: rgba(128, 128, 128, 0.1);
+}
+
+.pcalendar-txt-bold {
+  font-weight: bold;
 }
 
 .pcalendar-rtl {

@@ -66,7 +66,8 @@ Events.prototype = {
           type: el.type,
           symbol: sym[el.type],
           event: event,
-          holiday: (events[i][1] !== undefined) ? true : false
+          shadi: events[i][2],
+          holiday: events[i][1]
         };
 
       }

@@ -223,11 +223,13 @@ var Calendar = class {
     let row = 2;
 
     let ev = new Events.Events();
-    let events;
+    let selectedMonthEvents = [];
+    let selectedDateEvents;
+    let afterSelectedDateEvents;
 
     while (true) {
       // find events and holidays
-      events = ev.getEvents(iterObj.all);
+      let events = ev.getEvents(iterObj.all);
       let eventStatus = {
         persian: {
           hasEvent: false,
@@ -247,7 +249,12 @@ var Calendar = class {
         if (evObj.holiday) eventStatus[evObj.type].isHoliday = true;
       }
 
-      let alpha = (iterObj.persianMonth !== this._selectedDateObj.persianMonth) ? '-alpha' : '';
+      let alpha = '';
+      if (iterObj.persianMonth !== this._selectedDateObj.persianMonth) {
+        alpha = '-alpha';
+      } else {
+        selectedMonthEvents.push(events);
+      }
 
       let shamsiLabel = new St.Label({
         text: ((dateDisplay.persian) ? str.numbersFormat(iterObj.persianDay) : ' '),
@@ -307,8 +314,13 @@ var Calendar = class {
         styleClass += ' pcalendar-other-month-day' + this.themeID;
       } else if (iterObj.julianDay === this._selectedDateObj.julianDay) {
         styleClass += ' pcalendar-active-day' + this.themeID;
+        selectedDateEvents = events;
       } else {
         styleClass += ' pcalendar-notactive-day' + this.themeID;
+      }
+
+      if (iterObj.julianDay === (this._selectedDateObj.julianDay + 1)) {
+        afterSelectedDateEvents = events;
       }
 
       dayButton.style_class = styleClass;
@@ -341,6 +353,13 @@ var Calendar = class {
         }
         row++;
       }
+    }
+
+    if (afterSelectedDateEvents === undefined) {
+      let _iterObj = new Tarikh.TarikhObject();
+      _iterObj.julianDay = this._selectedDateObj.julianDay + 1;
+      _events = ev.getEvents(_iterObj.all);
+      afterSelectedDateEvents = _events;
     }
 
 
@@ -469,13 +488,98 @@ var Calendar = class {
 
 
 
+    /* 'Tehran','Jafari','MWL','ISNA','Egypt','Makkah','Karachi' */
+    const azanMethods = [
+      this.schema.get_string('praytime-calc-method-ehtiyat'),
+      this.schema.get_string('praytime-calc-method-main')
+    ]
+    let _prayTimes = {};
+    for (let method of azanMethods) {
+      let PT = PrayTimes;
+      PT.setMethod(method);
+      _prayTimes[method] = PT.getTimes(
+        this._selectedDateObj.gregorian,
+        [
+          this.schema.get_double('praytime-lat'),
+          this.schema.get_double('praytime-lng')
+        ]
+      );
+    }
+    let date = new Date();
+    let nowToMinutes = this.timeStrToMinutes(date.getHours() + ':' + date.getMinutes());
+
+
+
+
+
+
+    let _scrollBox = new St.ScrollView({
+      overlay_scrollbars: true,
+      enable_mouse_scrolling: true,
+      hscrollbar_policy: 2,
+      style_class: 'pcalendar-events-scrollable'
+    });
+    this.actorLeft.layout_manager.attach(_scrollBox, 0, ++evTopPosition, 1, 1);
     if (this._selectedTab === 'events') {
 
-      // add events box for selected date
-      events = ev.getEvents(this._selectedDateObj.all);
-      for (let evObj of events[0]) {
-        let _eventsBox = new St.BoxLayout();
-        this.actorLeft.layout_manager.attach(_eventsBox, 0, ++evTopPosition, 1, 1);
+
+
+      let _eventsBox = new St.BoxLayout({ vertical: true, style_class: 'pcalendar-events-layout' });
+      _scrollBox.add_actor(_eventsBox);
+
+      if (nowObj.julianDay === this._selectedDateObj.julianDay) {
+
+        if (afterSelectedDateEvents[0].some((v) => v.shadi !== 0)) {
+          let isAfterSunset = false;
+          for (let tName in _prayTimes[azanMethods[0]]) {
+            if (tName !== 'sunset') continue
+            let oghat = { method: [], timeStr: [], minutes: [] };
+            for (let i in azanMethods) {
+              oghat.method[i] = parseInt(i);
+              oghat.timeStr[i] = _prayTimes[azanMethods[i]][tName];
+              oghat.minutes[i] = this.timeStrToMinutes(oghat.timeStr[i]);
+            }
+            if (nowToMinutes >= Math.min(...oghat.minutes)) isAfterSunset = true;
+          }
+          if (isAfterSunset) {
+            let evLabelA = new St.Label({
+              text: str.numbersFormat('یادآوری مهم‌ترین‌ها برای فردا:'),
+              x_align: Clutter.ActorAlign.CENTER,
+              x_expand: true,
+              style_class: 'pcalendar-event-label pcalendar-txt-bold pcalendar-txt-orange' + this.themeID
+            });
+            evLabelA.clutter_text.line_wrap = true;
+            evLabelA.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
+            evLabelA.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+            _eventsBox.add(evLabelA);
+            for (let evObj of afterSelectedDateEvents[0]) {
+              if (evObj.shadi === 0) continue;
+              let evLabel = new St.Label({
+                text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
+                x_align: Clutter.ActorAlign.CENTER,
+                x_expand: true,
+                style_class: 'pcalendar-event-label ' + ((evObj.holiday) ? 'pcalendar-event-label-nonwork' + this.themeID : 'pcalendar-event-label-work' + this.themeID)
+              });
+              evLabel.clutter_text.line_wrap = true;
+              evLabel.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
+              evLabel.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+              _eventsBox.add(evLabel);
+            }
+            let evLabelB = new St.Label({
+              text: '#\n' + str.numbersFormat((selectedDateEvents[0].length === 0) ? 'امروز: فاقد مناسبت خاص' : 'مناسبت‌های امروز که گذشت:'),
+              x_align: Clutter.ActorAlign.CENTER,
+              x_expand: true,
+              style_class: 'pcalendar-event-label pcalendar-txt-bold pcalendar-txt-green' + this.themeID
+            });
+            evLabelB.clutter_text.line_wrap = true;
+            evLabelB.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
+            evLabelB.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+            _eventsBox.add(evLabelB);
+          }
+        }
+      }
+
+      for (let evObj of selectedDateEvents[0]) {
         let evLabel = new St.Label({
           text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
           x_align: Clutter.ActorAlign.CENTER,
@@ -488,6 +592,8 @@ var Calendar = class {
         _eventsBox.add(evLabel);
       }
 
+
+
     } else if (this._selectedTab === 'prayTimes') {
 
       // add praytimes box for selected date
@@ -497,24 +603,6 @@ var Calendar = class {
         x_expand: true,
         x_align: Clutter.ActorAlign.CENTER
       });
-
-      /* 'Tehran','Jafari','MWL','ISNA','Egypt','Makkah','Karachi' */
-      const azanMethods = [
-        this.schema.get_string('praytime-calc-method-ehtiyat'),
-        this.schema.get_string('praytime-calc-method-main')
-      ]
-      let _prayTimes = {};
-      for (let method of azanMethods) {
-        let PT = PrayTimes;
-        PT.setMethod(method);
-        _prayTimes[method] = PT.getTimes(
-          this._selectedDateObj.gregorian,
-          [
-            this.schema.get_double('praytime-lat'),
-            this.schema.get_double('praytime-lng')
-          ]
-        );
-      }
 
       let i = 0;
 
@@ -603,8 +691,6 @@ var Calendar = class {
 
         let prayTimeStyle = 'pcalendar-txt-color' + this.themeID, prayTimeSymbol = ' ';
         if (nowObj.julianDay === this._selectedDateObj.julianDay) {
-          let date = new Date();
-          let nowToMinutes = this.timeStrToMinutes(date.getHours() + ':' + date.getMinutes());
           if (nowToMinutes >= ehtiyat) {
             prayTimeSymbol = '✓';
             if (nowToMinutes === ehtiyat) prayTimeStyle = 'pcalendar-txt-green' + this.themeID;
@@ -627,8 +713,7 @@ var Calendar = class {
       }
 
 
-
-      this.actorLeft.layout_manager.attach(_prayBox_v, 0, ++evTopPosition, 1, 1);
+      _scrollBox.add_actor(_prayBox_v);
 
       {
         const persianDate = nowObj.persian;
@@ -649,10 +734,9 @@ var Calendar = class {
 
     } else if (this._selectedTab === 'dateConvert') {
       let _eventsBox = new St.BoxLayout();
-      this.actorLeft.layout_manager.attach(_eventsBox, 0, ++evTopPosition, 1, 1);
+      _scrollBox.add_actor(_eventsBox);
 
       {
-        let this1 = {};
         const ConverterTypes = {
           fromPersian: 0,
           fromGregorian: 1,
@@ -704,6 +788,8 @@ var Calendar = class {
 
           return out;
         }
+
+
 
         const _onModifyConverter = () => {
           // erase old date
@@ -816,6 +902,15 @@ var Calendar = class {
             }));
           }
 
+          if (this._selectedDateObj.julianDay !== cDateObj.julianDay) {
+            let btn = new St.Button({ label: 'رفتن تقویم به این تاریخ ↑', style_class: 'pcalendar-praytimes-azan pcalendar-bg-green' + this.themeID });
+            btn.connect('clicked', Lang.bind(btn, () => {
+              this._selectedDateObj.julianDay = cDateObj.julianDay;
+              this._update();
+            }));
+            convertedDatesVbox.add(btn);
+          }
+
         }
 
         const _toggleConverter = (button) => {
@@ -839,9 +934,9 @@ var Calendar = class {
           _onModifyConverter()
         }
 
-        converterYear.clutter_text.connect('text-changed', _onModifyConverter);
-        converterMonth.clutter_text.connect('text-changed', _onModifyConverter);
-        converterDay.clutter_text.connect('text-changed', _onModifyConverter);
+        converterYear.clutter_text.connect('text-changed', () => _onModifyConverter());
+        converterMonth.clutter_text.connect('text-changed', () => _onModifyConverter());
+        converterDay.clutter_text.connect('text-changed', () => _onModifyConverter());
 
         let converterVbox = new St.BoxLayout({ style_class: 'pcalendar-font', vertical: true, x_expand: true });
 

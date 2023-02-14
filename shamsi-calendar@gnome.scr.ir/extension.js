@@ -205,8 +205,6 @@ const ShamsiCalendar = GObject.registerClass(
         style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
       });
       nowroozIcon.connect('clicked', function () {
-        /* calculate exact hour/minute/second of the next new year.
-         it calculate with some small differences!*/
 
         let month_delta = 12 - dateObj.persianMonth;
         let day_delta, nowrooz = '';
@@ -226,7 +224,6 @@ const ShamsiCalendar = GObject.registerClass(
         notify(str.numbersFormat(nowrooz) + (day_delta < 7 ? ' * ' : ''));
       });
       actionButtons.add(nowroozIcon);
-      // actionButtons.actor.add(nowroozIcon);
 
 
 
