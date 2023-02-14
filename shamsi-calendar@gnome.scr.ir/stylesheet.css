@@ -141,8 +141,6 @@
   width: 22em;
   max-height: 19em;
 }
-.pcalendar-events-layout {
-}
 .pcalendar-event-label {
   font-size: 1em;
   direction: rtl;
@@ -238,6 +236,9 @@
 .pcalendar-txt-color-thm0 {
   color: #ffffff;
 }
+.pcalendar-txt-blue-thm0 {
+  color: #0086ff;
+}
 .pcalendar-txt-green-thm0 {
   color: #319901;
 }
@@ -255,12 +256,14 @@
 .pcalendar-txt-color-thm1 {
   color: #000000;
 }
+.pcalendar-txt-blue-thm1 {
+  color: #0026ff;
+}
 .pcalendar-txt-green-thm1 {
   color: #287e00;
 }
 .pcalendar-txt-red-thm1 {
-  color: #ac0000;
-  font-weight: bold;
+  color: #c60000;
 }
 .pcalendar-txt-orange-thm1 {
   color: #e66008;
@@ -457,6 +460,25 @@
 }
 .pcalendar-day-button-thm1:hover {
   background-color: rgba(100, 100, 100, 0.357);
+}
+
+.pcalendar-custom-btn {
+  padding: 6px;
+  border-radius: 1.4em;
+}
+.pcalendar-custom-btn-thm0 {
+  background-color: #005e99;
+  border: #1f1f1f 1pt solid;
+}
+.pcalendar-custom-btn-thm0:hover {
+  background-color: #005081;
+}
+.pcalendar-custom-btn-thm1 {
+  background-color: #005e99;
+  border: #1f1f1f 1pt solid;
+}
+.pcalendar-custom-btn-thm1:hover {
+  background-color: #005081;
 }
 
 .pcalendar-praytimes-symbol {

@@ -20,6 +20,7 @@ const player = extension.imports.sound.player;
 
 const Events = extension.imports.Events;
 const str = extension.imports.strFunctions;
+const tahvil = extension.imports.tahvil;
 const file = extension.imports.file;
 
 
@@ -170,6 +171,14 @@ const ShamsiCalendar = GObject.registerClass(
       });
       vbox.add_actor(actionButtons);
 
+      let tahvilText = new St.Label({
+        text: '',
+        x_align: Clutter.ActorAlign.CENTER,
+        x_expand: true,
+        style_class: 'pcalendar-month-heading pcalendar-month-heading' + this.themeID + ' pcalendar-txt-bold pcalendar-txt-green' + this.themeID
+      });
+
+
 
 
       // Add preferences button
@@ -206,22 +215,26 @@ const ShamsiCalendar = GObject.registerClass(
       });
       nowroozIcon.connect('clicked', function () {
 
-        let month_delta = 12 - dateObj.persianMonth;
-        let day_delta, nowrooz = '';
-        if (month_delta >= 6) {
-          day_delta = 31 - dateObj.persianDay;
-        } else {
-          day_delta = 30 - dateObj.persianDay;
-        }
+        // let month_delta = 12 - dateObj.persianMonth;
+        // let day_delta, nowrooz = '';
+        // if (month_delta >= 6) {
+        //   day_delta = 31 - dateObj.persianDay;
+        // } else {
+        //   day_delta = 30 - dateObj.persianDay;
+        // }
 
-        if (dateObj.persianMonth !== 12) nowrooz += month_delta + ' ماه و ';
+        // if (dateObj.persianMonth !== 12) nowrooz += month_delta + ' ماه و ';
 
-        if (day_delta !== 0) {
-          nowrooz += day_delta + ' روز مانده به ';
-          nowrooz += 'نوروز سال ' + (dateObj.persianYear + 1);
-        }
+        // if (day_delta !== 0) {
+        //   nowrooz += day_delta + ' روز مانده به ';
+        //   nowrooz += 'نوروز سال ' + (dateObj.persianYear + 1);
+        // }
 
-        notify(str.numbersFormat(nowrooz) + (day_delta < 7 ? ' * ' : ''));
+        let text = str.numbersFormat(tahvil.tahvilData(dateObj.persianYear + ((dateObj.persianMonth === 1) ? 0 : 1)).text);
+        //str.numbersFormat(nowrooz) + (day_delta < 7 ? ' * ' : '') + '\n' + 
+
+        tahvilText.set_text(text);
+        // notify(text);
       });
       actionButtons.add(nowroozIcon);
 
@@ -266,6 +279,10 @@ const ShamsiCalendar = GObject.registerClass(
         that._calendar._update();
       });
       actionButtons.add(todayIcon);
+
+
+
+      actionButtons.add(tahvilText);
 
 
 
