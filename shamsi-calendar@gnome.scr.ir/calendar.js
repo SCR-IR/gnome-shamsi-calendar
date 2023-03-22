@@ -733,12 +733,13 @@ var Calendar = class {
       _scrollBox.add_actor(_prayBox_v);
 
       {
-        const persianDate = nowObj.persian;
-        const iranTZO = (
-          persianDate[1] > 6 ||
-          (persianDate[1] === 6 && persianDate[2] === 31) ||
-          (persianDate[1] === 1 && persianDate[2] === 1)
-        ) ? -210 : -270;
+        // const persianDate = nowObj.persian;
+        // const iranTZO = (
+        //   persianDate[1] > 6 ||
+        //   (persianDate[1] === 6 && persianDate[2] === 31) ||
+        //   (persianDate[1] === 1 && persianDate[2] === 1)
+        // ) ? -210 : -270;
+        const iranTZO = -210; // from Year: 1402
         if ((new Date().getTimezoneOffset()) !== iranTZO) {
           _prayBox_v.add(new St.Label({
             text: 'منطقه‌زمانی سیستم، ایران نیست!',
