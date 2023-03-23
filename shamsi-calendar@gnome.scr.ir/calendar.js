@@ -355,11 +355,10 @@ var Calendar = class {
       }
     }
 
-    if (afterSelectedDateEvents === undefined) {
+    if (afterSelectedDateEvents === undefined) {// Example: 1404/12/29
       let _iterObj = new Tarikh.TarikhObject();
       _iterObj.julianDay = this._selectedDateObj.julianDay + 1;
-      _events = ev.getEvents(_iterObj.all);
-      afterSelectedDateEvents = _events;
+      afterSelectedDateEvents = ev.getEvents(_iterObj.all);
     }
 
 
