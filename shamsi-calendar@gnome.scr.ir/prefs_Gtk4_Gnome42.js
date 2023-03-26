@@ -570,7 +570,9 @@ class App extends Adw.PreferencesPage {
       let vBoxShowTime = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxShowTime.append(new Gtk.Label({ label: 'نمایش' }));
       let vBoxTitle = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxTitle.append(new Gtk.Label({ label: '' }));
+      vBoxTitle.append(new Gtk.Button({ label: ' ', margin_bottom: 0, has_frame: false, sensitive: false }));
+      //vBoxTitle.append(new Gtk.Label({ label: '' }));
+      
       hBoxSetting.append(vBoxSoundUri);
       hBoxSetting.append(vBoxSoundId);
       hBoxSetting.append(vBoxCalcMethod);
@@ -590,10 +592,10 @@ class App extends Adw.PreferencesPage {
         } = this.getPrayTimeSetting(tName);
         const SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
 
-        let label = new Gtk.Label({ label: title + ': ', margin_bottom: 11 });
+        let label = new Gtk.Button({ label: title + ': ', margin_bottom: 0, has_frame: false });
 
         // SoundUri
-        this.el['praytime-' + tName + '-sound-uri'] = new Gtk.Button({ label: '  →  غیرفعال  ', sensitive: (SoundId === '_custom_') });
+        this.el['praytime-' + tName + '-sound-uri'] = new Gtk.Button({ label: '  →  غیرفعال  ',  sensitive: (SoundId === '_custom_'), margin_bottom: 0 });
 
         this.el['praytime-' + tName + '-sound-uri'].connect('clicked', () => {
           let fChNative = new Gtk.FileChooserNative({
@@ -624,7 +626,7 @@ class App extends Adw.PreferencesPage {
 
         // SoundId
         let fileName = '';
-        this.el['praytime-' + tName + '-setting_SoundId'] = new Gtk.ComboBoxText();
+        this.el['praytime-' + tName + '-setting_SoundId'] = new Gtk.ComboBoxText({ margin_bottom: 2 });
         for (let i in sounds) {
           this.el['praytime-' + tName + '-setting_SoundId'].append(i, sounds[i][0]);
         }
@@ -670,7 +672,7 @@ class App extends Adw.PreferencesPage {
           main: "اصلی",
           ehtiyat: "احتیاط"
         };
-        this.el['praytime-' + tName + '-setting_CalcMethod'] = new Gtk.ComboBoxText();
+        this.el['praytime-' + tName + '-setting_CalcMethod'] = new Gtk.ComboBoxText({ margin_bottom: 2 });
         for (let i in list) {
           this.el['praytime-' + tName + '-setting_CalcMethod'].append(i, list[i]);
         }
@@ -687,7 +689,7 @@ class App extends Adw.PreferencesPage {
         };
 
         //PlaySound
-        this.el['praytime-' + tName + '-setting_PlaySound'] = new Gtk.ComboBoxText();
+        this.el['praytime-' + tName + '-setting_PlaySound'] = new Gtk.ComboBoxText({ margin_bottom: 2 });
         for (let i in list) {
           this.el['praytime-' + tName + '-setting_PlaySound'].append(i, list[i]);
         }
@@ -709,6 +711,7 @@ class App extends Adw.PreferencesPage {
 
         //TextNotify
         this.el['praytime-' + tName + '-setting_TextNotify'] = new Gtk.ComboBoxText({
+          margin_bottom: 2,
           margin_start: 4,
           margin_end: 4
         });
@@ -721,7 +724,7 @@ class App extends Adw.PreferencesPage {
         });
 
         //ShowTime
-        this.el['praytime-' + tName + '-setting_ShowTime'] = new Gtk.ComboBoxText();
+        this.el['praytime-' + tName + '-setting_ShowTime'] = new Gtk.ComboBoxText({ margin_bottom: 2 });
         for (let i in list) {
           this.el['praytime-' + tName + '-setting_ShowTime'].append(i, list[i]);
         }
