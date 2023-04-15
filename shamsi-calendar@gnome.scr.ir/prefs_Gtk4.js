@@ -373,7 +373,7 @@ const App = class ShamsiCalendarApp {
     this.vbox3.append(this.el['show-gregorian-events']);
     this.schema.bind('show-gregorian-events', this.el['show-gregorian-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
-    this.el['show-old-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های غیر رسمی ایران باستان' });
+    this.el['show-old-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های غیر رسمی در ایران باستان' });
     this.vbox3.append(this.el['show-old-events']);
     this.schema.bind('show-old-events', this.el['show-old-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
