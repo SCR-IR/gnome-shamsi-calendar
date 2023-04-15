@@ -265,7 +265,7 @@ evList.prototype = {
     ], false];
 
     this.events[12][this.Tarikh.julianDay_to_persian(this.Tarikh.lastNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, 12, 4))[2] - 1] = [[
-      ['چارشنبه سوری، شب چهارشنبه آخر سال', false, 1]
+      ['چهارشنبه سوری، شب چهارشنبه آخر سال', false, 1]
     ], false];
 
   }
