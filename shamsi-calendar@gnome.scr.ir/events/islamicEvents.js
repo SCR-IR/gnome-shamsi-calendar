@@ -1,17 +1,18 @@
-function evList(Tarikh) {
+function evList(Tarikh, todayObj) {
   this.Tarikh = Tarikh;
+  this.todayObj = todayObj;
   this._init();
 }
 
 evList.prototype = {
   name: 'مناسبت‌های مذهبی ایران',
   type: 'islamic',
-  /* [month][day] = [title, isHoliday] */
-  events: [[], [], [], [], [], [], [], [], [], [], [], [], []],
+  events: [],
 
   _init: function () {
+    this.events = [[], [], [], [], [], [], [], [], [], [], [], [], []];
 
-
+    /* this.events[month][day] = [ [ [title, eventIsHoliday, shadiState], ... ] , dayIsHoliday ] */
 
     this.events[1][1] = [[
       ['آغاز سال هجری قمری (اوّل ماه محرّم)', false, -1],
@@ -193,10 +194,6 @@ evList.prototype = {
       ['شب قدر', false, -1],
     ], false];
 
-    this.events[9][23] = [[
-      ['پیش‌یادآوری: آخرین جمعه‌ی ماه مبارک رمضان، روز قدس خواهد‌بود', false, 0],
-    ], false];
-
     this.events[10][1] = [[
       ['عید سعید فطر', true, 1],
     ], true];
@@ -277,22 +274,24 @@ evList.prototype = {
       ['روز خانواده و تکریم بازنشستگان', false, 0],
     ], false];
 
-
-
     this.addSpecificEvents();
   },
 
   addSpecificEvents: function () {
-    let date = this.Tarikh.timeStamp_to_islamic(Date.now());
 
     //آخرین روز ماه صَفَر 
-    this.events[2][this.Tarikh.daysOfMonth_islamic(date[0], 2)] = [[
+    this.events[2][this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 2)] = [[
       ['شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1]
     ], true];
 
     //آخرین روز ماه ذیقعده 
-    this.events[11][this.Tarikh.daysOfMonth_islamic(date[0], 11)] = [[
+    this.events[11][this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 11)] = [[
       ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1]
+    ], false];
+
+    //آخرین جمعه‌ی قطعی ماه رمضان = روز قدس
+    this.events[9][29 - ((29 + this.Tarikh.islamic_to_dayOfWeek_in_monthStart(this.todayObj.islamicYear, 9)) % 7)] = [[
+      ['روز قدس', false, 0]
     ], false];
 
   }

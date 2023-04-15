@@ -11,7 +11,8 @@ const Tarikh = extension.imports.Tarikh;
 
 const Schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
 
-function Events() {
+function Events(todayObj) {
+  this.todayObj = todayObj;
   this._init();
 }
 
@@ -20,30 +21,29 @@ Events.prototype = {
   _init: function () {
     this._eventsList = [];
     if (Schema.get_boolean('show-islamic-events')) {
-      this._eventsList.push(new islamicEvents.evList(Tarikh));
+      this._eventsList.push(new islamicEvents.evList(Tarikh, this.todayObj));
     }
     if (Schema.get_boolean('show-persian-events')) {
-      this._eventsList.push(new persianEvents.evList());
+      this._eventsList.push(new persianEvents.evList(Tarikh, this.todayObj));
     }
     if (Schema.get_boolean('show-gregorian-events')) {
-      this._eventsList.push(new gregorianEvents.evList());
+      this._eventsList.push(new gregorianEvents.evList(Tarikh, this.todayObj));
     }
     if (Schema.get_boolean('show-old-events')) {
-      this._eventsList.push(new oldPersianEvents.evList(Tarikh));
+      this._eventsList.push(new oldPersianEvents.evList(Tarikh, this.todayObj));
     }
   },
 
-  getEvents: function (todayObj, maxLineLength = 40) {
-    this._today = todayObj;
+  getEvents: function (maxLineLength = 40) {
     this._maxLineLength = maxLineLength;
     this._events = [];
-    this._isHoliday = Schema.get_boolean('none-work-' + this._today.dayOfWeek);
+    this._isHoliday = Schema.get_boolean('none-work-' + this.todayObj.dayOfWeek);
     this._eventsList.forEach(this._checkEvent, this);
     return [this._events, this._isHoliday];
   },
 
   _checkEvent: function (el) {
-    let evArr = el.events[this._today[el.type][1]][this._today[el.type][2]];
+    let evArr = el.events[this.todayObj[el.type][1]][this.todayObj[el.type][2]];
     let sym = { persian: '▪', islamic: '◆', gregorian: '▫' };
     if (evArr) {
       let events = evArr[0];

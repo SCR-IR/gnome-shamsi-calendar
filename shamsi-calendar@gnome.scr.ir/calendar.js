@@ -222,14 +222,13 @@ var Calendar = class {
 
     let row = 2;
 
-    let ev = new Events.Events();
     let selectedMonthEvents = [];
     let selectedDateEvents;
     let afterSelectedDateEvents;
 
     while (true) {
       // find events and holidays
-      let events = ev.getEvents(iterObj.all);
+      let events = new Events.Events(iterObj).getEvents();
       let eventStatus = {
         persian: {
           hasEvent: false,
@@ -358,7 +357,7 @@ var Calendar = class {
     if (afterSelectedDateEvents === undefined) {// Example: 1404/12/29
       let _iterObj = new Tarikh.TarikhObject();
       _iterObj.julianDay = this._selectedDateObj.julianDay + 1;
-      afterSelectedDateEvents = ev.getEvents(_iterObj.all);
+      afterSelectedDateEvents = new Events.Events(_iterObj).getEvents();
     }
 
 

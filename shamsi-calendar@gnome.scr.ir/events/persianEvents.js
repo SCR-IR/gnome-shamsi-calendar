@@ -1,17 +1,18 @@
-function evList() {
+function evList(Tarikh, todayObj) {
+  this.Tarikh = Tarikh;
+  this.todayObj = todayObj;
   this._init();
 }
 
 evList.prototype = {
   name: 'مناسبت‌های رسمی ایران',
   type: 'persian',
-  /* [month][day] = [title, isHoliday] */
-  events: [[], [], [], [], [], [], [], [], [], [], [], [], []],
+  events: [],
 
   _init: function () {
+    this.events = [[], [], [], [], [], [], [], [], [], [], [], [], []];
 
-
-
+    /* this.events[month][day] = [ [ [title, eventIsHoliday, shadiState], ... ] , dayIsHoliday ] */
 
     this.events[1][1] = [[
       ['آغاز نوروز', true, 1],
@@ -772,7 +773,14 @@ evList.prototype = {
       ['این روز فقط در سال‌های کبیسه وجود دارد و معمولاً تعطیل اعلام می‌گردد', false, 0],
     ], false];
 
+    this.addSpecificEvents();
+  },
 
+  addSpecificEvents: function () {
+
+    this.events[12][this.Tarikh.julianDay_to_persian(this.Tarikh.lastNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, 12, 4))[2] - 1] = [[
+      ['شب چهارشنبه سوری : احتیاط کنیم!', false, 1]
+    ], false];
 
   }
 };

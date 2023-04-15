@@ -29,7 +29,7 @@ let _prayTimeIs = '';
 
 function _labelSchemaName(events1 = null) {
   let dateObj = new Tarikh.TarikhObject();
-  if (events1 === null) events1 = new Events.Events().getEvents(dateObj.all)[1];
+  if (events1 === null) events1 = new Events.Events(dateObj).getEvents()[1];
   return (events1) ? 'holiday-color' : 'not-holiday-color';
 }
 
@@ -61,7 +61,7 @@ const ShamsiCalendar = GObject.registerClass(
       }
 
       let dateObj = new Tarikh.TarikhObject();
-      let isHoliday = new Events.Events().getEvents(dateObj.all)[1];
+      let isHoliday = new Events.Events(dateObj).getEvents()[1];
       let that = this;
       this.schema_not_holiday_color_change_signal = this.schema.connect('changed::not-holiday-color', Lang.bind(
         that, function () {
@@ -309,7 +309,7 @@ const ShamsiCalendar = GObject.registerClass(
 
       // set indicator label and popupmenu
 
-      let events = new Events.Events().getEvents(_dateObj.all, 150);
+      let events = new Events.Events(_dateObj).getEvents(150);
       if (this.schema.get_boolean('custom-color')) {
         _mainLable.set_style('color: ' + this.schema.get_string(_labelSchemaName(events[1])));
       }

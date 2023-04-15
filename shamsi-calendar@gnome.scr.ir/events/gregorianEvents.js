@@ -1,18 +1,18 @@
-function evList() {
+function evList(Tarikh, todayObj) {
+  this.Tarikh = Tarikh;
+  this.todayObj = todayObj;
   this._init();
 }
 
 evList.prototype = {
   name: 'مناسبت‌های جهانی',
   type: 'gregorian',
-  /* [month][day] = [title, isHoliday] */
-  events: [[], [], [], [], [], [], [], [], [], [], [], [], []],
+  events: [],
 
   _init: function () {
+    this.events = [[], [], [], [], [], [], [], [], [], [], [], [], []];
 
-
-
-
+    /* this.events[month][day] = [ [ [title, eventIsHoliday, shadiState], ... ] , dayIsHoliday ] */
 
     this.events[1][1] = [[
       ['آغاز سال میلادی', false, 1],
@@ -126,8 +126,6 @@ evList.prototype = {
     this.events[12][25] = [[
       ['ولادت حضرت عیسی مسیح علیه‌السلام', false, 0],
     ], false];
-
-
 
   }
 };
