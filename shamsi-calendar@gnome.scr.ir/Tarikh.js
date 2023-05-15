@@ -7,7 +7,7 @@
  * @website : https://jdf.scr.ir
  * @github : https://github.com/SCR-IR/tarikh-npm
  * @license : GNU/LGPL
- * @version : 2.0.0 alpha نسخه‌ی آزمایشی غیررسمی
+ * @version : 2.0.3 alpha نسخه‌ی آزمایشی غیررسمی
  * 
  * هجری‌شمسی ۱۱۷۸ تا ۱۶۳۳ : دوره‌ی انطباق کامل کبیسه‌بندی جلالی با اعتدال بهاری
  * Persian:[1178-1633] = JD:[2378211-2544760]
@@ -320,8 +320,8 @@ var hilalIM = (country = 'IR') => {
       startYear: 1427,/* =iDoM:firstYear */
       startJD: 2453767,/* =islamicA_to_julianDay(startYear,1,1) */
 
-      endYear: 1464,/* =iDoM:lastYear */ //old:1445
-      endJD: 2467232,/* =islamicA_to_julianDay(endYear+1,1,1)-1 */ //old:2460499
+      endYear: 1464,/* =iDoM:lastYear */
+      endJD: 2467232,/* =islamicA_to_julianDay(endYear+1,1,1)-1 */
 
       iDoM: {//islamicYear: [Sum, m1, ..., m12],
         1427: [355, 30, 29, 29, 30, 29, 30, 30, 30, 30, 29, 29, 30],
