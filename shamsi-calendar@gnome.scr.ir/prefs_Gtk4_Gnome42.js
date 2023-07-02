@@ -12,12 +12,12 @@ const PrayTimes = extension.imports.PrayTimes.prayTimes;
 const player = extension.imports.sound.player;
 
 class App extends Adw.PreferencesPage {
-    static {
-        GObject.registerClass(this);
-    }
+  static {
+    GObject.registerClass(this);
+  }
 
-    constructor() {
-        super();
+  constructor() {
+    super();
     this.schema = convenience.getSettings('org.gnome.shell.extensions.shamsi-calendar');
     this.el = {};
     this.main_hbox = new Gtk.Notebook();
@@ -572,7 +572,7 @@ class App extends Adw.PreferencesPage {
       let vBoxTitle = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxTitle.append(new Gtk.Button({ label: ' ', margin_bottom: 0, has_frame: false, sensitive: false }));
       //vBoxTitle.append(new Gtk.Label({ label: '' }));
-      
+
       hBoxSetting.append(vBoxSoundUri);
       hBoxSetting.append(vBoxSoundId);
       hBoxSetting.append(vBoxCalcMethod);
@@ -595,7 +595,7 @@ class App extends Adw.PreferencesPage {
         let label = new Gtk.Button({ label: title + ': ', margin_bottom: 0, has_frame: false });
 
         // SoundUri
-        this.el['praytime-' + tName + '-sound-uri'] = new Gtk.Button({ label: '  →  غیرفعال  ',  sensitive: (SoundId === '_custom_'), margin_bottom: 0 });
+        this.el['praytime-' + tName + '-sound-uri'] = new Gtk.Button({ label: '  →  غیرفعال  ', sensitive: (SoundId === '_custom_'), margin_bottom: 0 });
 
         this.el['praytime-' + tName + '-sound-uri'].connect('clicked', () => {
           let fChNative = new Gtk.FileChooserNative({
@@ -928,7 +928,6 @@ class App extends Adw.PreferencesPage {
         if (id == 1) {
           changeStateAndCity(7);// 7: Tehran State
           this.el['praytime-state'].set_active(7);// 7: Tehran State
-          this.schema.bind('praytime-state', this.el['praytime-state'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
           // this.el['praytime-timezone'].set_active(18);//index 18: Asia/Tehran
           // this.schema.set_double('praytime-timezone', 3.5);//TZ 3.5: Asia/Tehran
         } else {
@@ -1331,7 +1330,7 @@ class App extends Adw.PreferencesPage {
       },
       vbox2: {
         'window-position': 'ComboBoxText',
-        'theme-id': 'ComboBoxText',
+        'theme-id': 'CheckButton',// <- i <- ComboBoxText
         'default-tab': 'ComboBoxText',
         'persian-display-format': 'ComboBoxText',
         'persian-display': 'CheckButton',
