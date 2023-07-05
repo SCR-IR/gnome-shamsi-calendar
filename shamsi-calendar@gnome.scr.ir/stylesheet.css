@@ -1,70 +1,70 @@
-.pcalendar {
+.shcalendar {
   border-radius: 0.6em;
   padding-left: 0;
   padding-right: 1.65em;
   padding-top: 0.3em;
   padding-bottom: 0.3em;
 }
-.pcalendar-thm0 {
+.shcalendar-thm0 {
   background-color: #303232;
 }
-.pcalendar-thm1 {
+.shcalendar-thm1 {
   background-color: #ffffff;
 }
-.pcalendar-font {
+.shcalendar-font {
   font-family: Vazirmatn, Vazir, sans-serif;
 }
 
-.pcalendar-actor-right {
+.shcalendar-actor-right {
   margin: 1em 1em 0.5em 0;
 }
-.pcalendar-actor-left {
+.shcalendar-actor-left {
   text-align: center;
   border-radius: 1.4em;
   margin: 1em 1em 0.5em 1em;
 }
-.pcalendar-actor-left-thm0 {
+.shcalendar-actor-left-thm0 {
   border: #999 1pt solid;
 }
-.pcalendar-actor-left-thm1 {
+.shcalendar-actor-left-thm1 {
   border: #868686 1pt solid;
 }
 
-.pcalendar-top-div {
+.shcalendar-top-div {
   border-radius: 0.6em 0.6em 0 0;
 }
-.pcalendar-bottom-menu {
+.shcalendar-bottom-menu {
   border-radius: 0 0 0.6 0.6;
   padding: 0.5em 1em;
 }
-.pcalendar-bottom-menu-thm0 {
+.shcalendar-bottom-menu-thm0 {
   border-top: 3px #282828 solid;
 }
-.pcalendar-bottom-menu-thm1 {
+.shcalendar-bottom-menu-thm1 {
   border-top: 3px #535353 solid;
 }
 
-.pcalendar-options-button {
+.shcalendar-options-button {
   margin-right: 0.5em;
   padding: 0.5em;
   border-radius: 0.3em;
 }
-.pcalendar-options-button-thm0 {
+.shcalendar-options-button-thm0 {
   background-color: rgba(110, 110, 110, 0.313);
   border: 1px solid #868686;
 }
-.pcalendar-options-button-thm0:hover {
+.shcalendar-options-button-thm0:hover {
   background-color: rgba(141, 141, 141, 0.313);
 }
-.pcalendar-options-button-thm1 {
+.shcalendar-options-button-thm1 {
   background-color: rgba(141, 141, 141, 0.313);
   border: 1px solid #868686;
 }
-.pcalendar-options-button-thm1:hover {
+.shcalendar-options-button-thm1:hover {
   background-color: rgba(110, 110, 110, 0.313);
 }
 
-.pcalendar-top-button {
+.shcalendar-top-button {
   opacity: 0.5;
   border-radius: 0.3em;
   min-width: 1.3em;
@@ -72,323 +72,323 @@
   margin-bottom: 0.1em;
   font-size: 2.2em;
 }
-.pcalendar-top-button-thm0 {
+.shcalendar-top-button-thm0 {
   background-color: rgba(114, 114, 114, 0.357);
   border: rgba(192, 192, 192, 0.575) 1pt solid;
   color: #eeeeee;
 }
-.pcalendar-top-button-thm0:hover {
+.shcalendar-top-button-thm0:hover {
   background-color: rgba(168, 168, 168, 0.357);
 }
-.pcalendar-top-button-thm1 {
+.shcalendar-top-button-thm1 {
   background-color: rgba(168, 168, 168, 0.357);
   border: rgba(153, 153, 153, 0.575) 1pt solid;
   color: #2c2c2c;
 }
-.pcalendar-top-button-thm1:hover {
+.shcalendar-top-button-thm1:hover {
   background-color: rgba(100, 100, 100, 0.357);
 }
 
-.pcalendar-other-month-day-thm0 {
+.shcalendar-other-month-day-thm0 {
   border: rgba(192, 192, 192, 0.42) 1pt solid;
 }
-.pcalendar-other-month-day-thm1 {
+.shcalendar-other-month-day-thm1 {
   border: rgba(0, 0, 0, 0.42) 1pt solid;
 }
-/* .pcalendar-other-month-nonwork-day-thm0 {
+/* .shcalendar-other-month-nonwork-day-thm0 {
   border: rgba(255, 255, 255, 0.41) 1pt solid;
 }
-.pcalendar-other-month-nonwork-day-thm1 {
+.shcalendar-other-month-nonwork-day-thm1 {
   border: rgba(93, 93, 93, 0.41) 1pt solid;
 } */
 
-.pcalendar-month-label {
+.shcalendar-month-label {
   text-align: center;
   font-size: 1em;
   font-weight: bold;
 }
-.pcalendar-month-label-thm0 {
+.shcalendar-month-label-thm0 {
   color: #eeeeee;
 }
-.pcalendar-month-label-thm1 {
+.shcalendar-month-label-thm1 {
   color: #2a2a2a;
 }
-.pcalendar-day-heading {
+.shcalendar-day-heading {
   font-size: 1em;
   font-weight: bold;
   padding-top: 1em;
   min-width: 4em;
   text-align: center;
 }
-.pcalendar-day-heading-thm0 {
+.shcalendar-day-heading-thm0 {
   color: #9c9c84;
 }
-.pcalendar-day-heading-thm1 {
+.shcalendar-day-heading-thm1 {
   color: #24241e;
 }
 
-.pcalendar-dates-show-label {
+.shcalendar-dates-show-label {
   font-size: 1em;
   direction: rtl;
 }
-.pcalendar-dates-show {
+.shcalendar-dates-show {
   border-radius: 1.4em 1.4em 0 0;
   margin-bottom: 1px;
   text-align: center;
   min-width: 22em;
 }
-.pcalendar-events-scrollable {
+.shcalendar-events-scrollable {
   width: 22em;
   max-height: 19em;
 }
-.pcalendar-event-label {
+.shcalendar-event-label {
   font-size: 1em;
   direction: rtl;
   text-align: right;
   padding-right: 1em;
   min-width: 21em;
 }
-.pcalendar-event-label-work-thm0 {
+.shcalendar-event-label-work-thm0 {
   color: #eeeeee;
 }
-.pcalendar-event-label-work-thm1 {
+.shcalendar-event-label-work-thm1 {
   color: #111111;
 }
-.pcalendar-event-label-nonwork-thm0 {
+.shcalendar-event-label-nonwork-thm0 {
   color: #e77;
 }
-.pcalendar-event-label-nonwork-thm1 {
+.shcalendar-event-label-nonwork-thm1 {
   color: #cc0000;
 }
 
-.pcalendar-tab {
+.shcalendar-tab {
   border-radius: 3pt 3pt 0 0;
   padding: 3px 5px;
 }
-.pcalendar-tab-thm0 {
+.shcalendar-tab-thm0 {
   color: #ccc;
   border: #000 1px solid;
 }
-.pcalendar-tab-thm0:hover {
+.shcalendar-tab-thm0:hover {
   background-color: #3a3a3a;
 }
-.pcalendar-tab-thm1 {
+.shcalendar-tab-thm1 {
   color: #242424;
   border: #acacac 1px solid;
 }
-.pcalendar-tab-thm1:hover {
+.shcalendar-tab-thm1:hover {
   background-color: #e6e6e6;
 }
-.pcalendar-tab-space-thm0 {
+.shcalendar-tab-space-thm0 {
   border: 1px solid #000;
 }
-.pcalendar-tab-space-thm1 {
+.shcalendar-tab-space-thm1 {
   border: 1px solid #acacac;
 }
 /* next */
-.pcalendar-tab-space {
+.shcalendar-tab-space {
   border-left: 0;
   border-right: 0;
   border-top: 0;
 }
 
-.pcalendar-selected-tab-thm0 {
+.shcalendar-selected-tab-thm0 {
   color: #ffffff;
 }
-.pcalendar-selected-tab-thm1 {
+.shcalendar-selected-tab-thm1 {
   color: #000000;
 }
 /* next */
-.pcalendar-selected-tab {
+.shcalendar-selected-tab {
   border-bottom: 0;
 }
 
-.pcalendar-underline {
+.shcalendar-underline {
   text-decoration: underline;
 }
 
-.pcalendar-bg-green-thm0 {
+.shcalendar-bg-green-thm0 {
   background-color: rgba(41, 131, 16, 0.313);
 }
-.pcalendar-bg-red-thm0 {
+.shcalendar-bg-red-thm0 {
   background-color: rgba(160, 0, 0, 0.313);
 }
-.pcalendar-bg-orange-thm0 {
+.shcalendar-bg-orange-thm0 {
   background-color: rgba(152, 61, 0, 0.313);
 }
-.pcalendar-bg-grey-thm0 {
+.shcalendar-bg-grey-thm0 {
   background-color: rgba(204, 204, 204, 0.313);
 }
 
-.pcalendar-bg-green-thm1 {
+.shcalendar-bg-green-thm1 {
   background-color: rgba(41, 190, 0, 0.313);
 }
-.pcalendar-bg-red-thm1 {
+.shcalendar-bg-red-thm1 {
   background-color: rgba(255, 41, 0, 0.313);
 }
-.pcalendar-bg-orange-thm1 {
+.shcalendar-bg-orange-thm1 {
   background-color: rgba(152, 61, 0, 0.313);
 }
-.pcalendar-bg-grey-thm1 {
+.shcalendar-bg-grey-thm1 {
   background-color: rgba(220, 220, 220, 0.313);
 }
 
-.pcalendar-txt-color-thm0 {
+.shcalendar-txt-color-thm0 {
   color: #ffffff;
 }
-.pcalendar-txt-blue-thm0 {
+.shcalendar-txt-blue-thm0 {
   color: #0086ff;
 }
-.pcalendar-txt-green-thm0 {
+.shcalendar-txt-green-thm0 {
   color: #319901;
 }
-.pcalendar-txt-red-thm0 {
+.shcalendar-txt-red-thm0 {
   color: #ff6464;
   font-weight: bold;
 }
-.pcalendar-txt-orange-thm0 {
+.shcalendar-txt-orange-thm0 {
   color: #ff6600;
 }
-.pcalendar-txt-grey-thm0 {
+.shcalendar-txt-grey-thm0 {
   color: #b9b9b9;
 }
 
-.pcalendar-txt-color-thm1 {
+.shcalendar-txt-color-thm1 {
   color: #000000;
 }
-.pcalendar-txt-blue-thm1 {
+.shcalendar-txt-blue-thm1 {
   color: #0026ff;
 }
-.pcalendar-txt-green-thm1 {
+.shcalendar-txt-green-thm1 {
   color: #287e00;
 }
-.pcalendar-txt-red-thm1 {
+.shcalendar-txt-red-thm1 {
   color: #c60000;
 }
-.pcalendar-txt-orange-thm1 {
+.shcalendar-txt-orange-thm1 {
   color: #e66008;
 }
-.pcalendar-txt-grey-thm1 {
+.shcalendar-txt-grey-thm1 {
   color: #686868;
 }
 
-.pcalendar-system-tray {
+.shcalendar-system-tray {
   min-width: 1.5em;
   direction: rtl;
   text-align: right;
 }
 
-.pcalendar-date-label-thm0 {
+.shcalendar-date-label-thm0 {
   color: #ffffff;
 }
 
-.pcalendar-date-label-thm0:hover {
+.shcalendar-date-label-thm0:hover {
   background-color: rgba(128, 128, 128, 0.1);
 }
 
-.pcalendar-date-label-thm1 {
+.shcalendar-date-label-thm1 {
   color: #111111;
 }
 
-.pcalendar-date-label-thm1:hover {
+.shcalendar-date-label-thm1:hover {
   background-color: rgba(128, 128, 128, 0.1);
 }
 
-.pcalendar-txt-bold {
+.shcalendar-txt-bold {
   font-weight: bold;
 }
 
-.pcalendar-rtl {
+.shcalendar-rtl {
   direction: rtl;
 }
-.pcalendar-ltr {
+.shcalendar-ltr {
   direction: ltr;
 }
 
-.pcalendar-converter-button {
+.shcalendar-converter-button {
   border-radius: 0 0 0 0;
   padding: 5px;
   font-size: 0.9em;
 }
-.pcalendar-converter-button-thm0 {
+.shcalendar-converter-button-thm0 {
   background-color: #626262;
   border: 1px solid #000000;
 }
-.pcalendar-converter-button-thm0.active {
+.shcalendar-converter-button-thm0.active {
   background-color: #097200;
   color: #ffffff;
 }
-.pcalendar-converter-button-thm1 {
+.shcalendar-converter-button-thm1 {
   background-color: #626262;
   border: 1px solid #000000;
 }
-.pcalendar-converter-button-thm1.active {
+.shcalendar-converter-button-thm1.active {
   background-color: #097200;
   color: #ffffff;
 }
 
-.pcalendar-converter-button.fromPersian {
+.shcalendar-converter-button.fromPersian {
   border-radius: 0 3px 3px 0;
   border-left: none;
   margin-right: 5px;
 }
 
-.pcalendar-converter-button.fromGregorian {
+.shcalendar-converter-button.fromGregorian {
   border-radius: 3px 0 0 3px;
   border-right: none;
   margin-left: 5px;
 }
 
-.pcalendar-converter-box {
+.shcalendar-converter-box {
   padding: 5px 0;
 }
 
-.pcalendar-converter-entry {
+.shcalendar-converter-entry {
   margin-left: 5px;
   margin-right: 5px;
   font-size: 1em;
   text-align: center;
   direction: ltr;
 }
-.pcalendar-converter-entry-thm0 {
+.shcalendar-converter-entry-thm0 {
   background-color: #5a5a5a;
   color: #ffffff;
   caret-color: #e9da0a;
 }
-.pcalendar-converter-entry-thm1 {
+.shcalendar-converter-entry-thm1 {
   background-color: #959595;
   color: #000000;
   caret-color: #e9da0a;
 }
 
-.pcalendar-active-day-thm0 {
+.shcalendar-active-day-thm0 {
   border: rgba(22, 72, 255, 0.815) 1pt solid;
   box-shadow: 0 0 3em 3em rgba(0, 140, 255, 0.26) inset;
 }
-.pcalendar-active-day-thm1 {
+.shcalendar-active-day-thm1 {
   border: rgba(22, 72, 255, 0.815) 1pt solid;
   box-shadow: 0 0 3em 3em rgba(0, 140, 255, 0.26) inset;
 }
-.pcalendar-notactive-day-thm0 {
+.shcalendar-notactive-day-thm0 {
   border: rgba(255, 255, 255, 0.41) 1pt solid;
 }
-.pcalendar-notactive-day-thm1 {
+.shcalendar-notactive-day-thm1 {
   border: rgba(0, 0, 0, 0.41) 1pt solid;
 }
 
-.pcalendar-txt-pdate-color-thm0 {
+.shcalendar-txt-pdate-color-thm0 {
   color: #ffffff;
 }
-.pcalendar-txt-pdate-color-thm1 {
+.shcalendar-txt-pdate-color-thm1 {
   color: #111111;
 }
-.pcalendar-txt-pdate-color-alpha-thm0 {
+.shcalendar-txt-pdate-color-alpha-thm0 {
   color: rgba(255, 255, 255, 0.313);
 }
-.pcalendar-txt-pdate-color-alpha-thm1 {
+.shcalendar-txt-pdate-color-alpha-thm1 {
   color: rgba(0, 0, 0, 0.313);
 }
-.pcalendar-pdate-day-txt {
+.shcalendar-pdate-day-txt {
   direction: ltr;
   text-align: center;
   min-height: 1.7em;
@@ -399,19 +399,19 @@
   padding-top: 0.4em;
 }
 
-.pcalendar-txt-hdate-color-thm0 {
+.shcalendar-txt-hdate-color-thm0 {
   color: #b9ff99;
 }
-.pcalendar-txt-hdate-color-thm1 {
+.shcalendar-txt-hdate-color-thm1 {
   color: #236e00;
 }
-.pcalendar-txt-hdate-color-alpha-thm0 {
+.shcalendar-txt-hdate-color-alpha-thm0 {
   color: rgba(185, 255, 153, 0.313);
 }
-.pcalendar-txt-hdate-color-alpha-thm1 {
+.shcalendar-txt-hdate-color-alpha-thm1 {
   color: rgba(29, 90, 0, 0.313);
 }
-.pcalendar-hdate-day-txt {
+.shcalendar-hdate-day-txt {
   direction: ltr;
   text-align: center;
   min-height: 1.5em;
@@ -421,19 +421,19 @@
   padding: 0;
 }
 
-.pcalendar-txt-gdate-color-thm0 {
+.shcalendar-txt-gdate-color-thm0 {
   color: #90d6ff;
 }
-.pcalendar-txt-gdate-color-thm1 {
+.shcalendar-txt-gdate-color-thm1 {
   color: #00319c;
 }
-.pcalendar-txt-gdate-color-alpha-thm0 {
+.shcalendar-txt-gdate-color-alpha-thm0 {
   color: rgba(144, 214, 255, 0.313);
 }
-.pcalendar-txt-gdate-color-alpha-thm1 {
+.shcalendar-txt-gdate-color-alpha-thm1 {
   color: rgba(0, 49, 156, 0.313);
 }
-.pcalendar-gdate-day-txt {
+.shcalendar-gdate-day-txt {
   direction: ltr;
   text-align: center;
   min-height: 1.5em;
@@ -443,11 +443,11 @@
   padding: 0;
 }
 
-.pcalendar-extra-height {
+.shcalendar-extra-height {
   min-height: 3.7em; /* (min-height + 2*margin + 2*padding) */
   min-width: 4.4em; /* (min-width + 2*margin + 2*padding) */
 }
-.pcalendar-day-button {
+.shcalendar-day-button {
   direction: ltr;
   min-height: 3.3em;
   min-width: 4em;
@@ -455,62 +455,62 @@
   padding: 0.1em;
   border-radius: 0.3em;
 }
-.pcalendar-day-button-thm0:hover {
+.shcalendar-day-button-thm0:hover {
   background-color: rgba(168, 168, 168, 0.357);
 }
-.pcalendar-day-button-thm1:hover {
+.shcalendar-day-button-thm1:hover {
   background-color: rgba(100, 100, 100, 0.357);
 }
 
-.pcalendar-custom-btn {
+.shcalendar-custom-btn {
   padding: 6px;
   border-radius: 1.4em;
 }
-.pcalendar-custom-btn-thm0 {
+.shcalendar-custom-btn-thm0 {
   background-color: #005e99;
   border: #1f1f1f 1pt solid;
 }
-.pcalendar-custom-btn-thm0:hover {
+.shcalendar-custom-btn-thm0:hover {
   background-color: #005081;
 }
-.pcalendar-custom-btn-thm1 {
+.shcalendar-custom-btn-thm1 {
   background-color: #005e99;
   border: #1f1f1f 1pt solid;
 }
-.pcalendar-custom-btn-thm1:hover {
+.shcalendar-custom-btn-thm1:hover {
   background-color: #005081;
 }
 
-.pcalendar-praytimes-symbol {
+.shcalendar-praytimes-symbol {
   padding: 0 3px;
   text-align: center;
 }
-.pcalendar-praytimes-tname {
+.shcalendar-praytimes-tname {
   padding: 0 5px;
   text-align: right;
   min-width: 100px;
 }
-.pcalendar-praytimes-time {
+.shcalendar-praytimes-time {
   padding: 0 5px;
   text-align: left;
   min-width: 41px;
 }
 
-.pcalendar-praytimes-azan {
+.shcalendar-praytimes-azan {
   padding: 6px;
   border-radius: 1.4em;
 }
-.pcalendar-praytimes-azan-thm0 {
+.shcalendar-praytimes-azan-thm0 {
   background-color: #903;
   border: #1f1f1f 1pt solid;
 }
-.pcalendar-praytimes-azan-thm0:hover {
+.shcalendar-praytimes-azan-thm0:hover {
   background-color: #690125;
 }
-.pcalendar-praytimes-azan-thm1 {
+.shcalendar-praytimes-azan-thm1 {
   background-color: #903;
   border: #1f1f1f 1pt solid;
 }
-.pcalendar-praytimes-azan-thm1:hover {
+.shcalendar-praytimes-azan-thm1:hover {
   background-color: #690125;
 }

@@ -5,6 +5,18 @@
     </key>
 
     <!-- view -->
+    <key name="settings-language" type="s">      <!-- for later -->
+      <default>'fa_IR.UTF-8'</default>
+      <summary>Settings (prefs) language</summary>
+    </key>
+    <key name="calendar-language" type="s">      <!-- for later -->
+      <default>'fa_IR.UTF-8'</default>
+      <summary>Calendar language</summary>
+    </key>
+    <key name="numbers-language" type="s">      <!-- for later -->
+      <default>'fa_IR.UTF-8'</default>
+      <summary>Numbers language</summary>
+    </key>
     <key name="theme-id" type="i">
       <default>0</default>
       <summary>Theme ID (0:Dark, 1:Light)</summary>
@@ -119,6 +131,12 @@
       <default>'%d / %m / %Y (%MM)'</default>
       <summary>Gregorian date format</summary>
       <description>Gregorian date format</description>
+    </key>
+
+    <key name="custom-display-format" type="s">      <!-- for later -->
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Custom format</summary>
+      <description>Add a custom format</description>
     </key>
 
     <!-- events -->
@@ -313,6 +331,10 @@
     </key>
     <key name="praytime-midnight-sound-uri" type="s">
       <default>'Music'</default>
+    </key>
+
+    <key name="extra" type="s">      <!-- for later -->
+      <default>''</default>
     </key>
 
   </schema>

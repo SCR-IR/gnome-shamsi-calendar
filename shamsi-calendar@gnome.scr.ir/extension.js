@@ -42,9 +42,9 @@ const ShamsiCalendar = GObject.registerClass(
       // this.parent();
       this.themeID = '-thm' + this.schema.get_int('theme-id');
 
-      messageTray = new MessageTray.MessageTray({ style_class: 'pcalendar-system-tray pcalendar-font' });
+      messageTray = new MessageTray.MessageTray({ style_class: 'shcalendar-system-tray shcalendar-font' });
       _mainLable = new St.Label({
-        style_class: 'pcalendar-font',
+        style_class: 'shcalendar-font',
         y_expand: true,
         y_align: Clutter.ActorAlign.CENTER
       });
@@ -149,12 +149,12 @@ const ShamsiCalendar = GObject.registerClass(
 
       this._todayJD = '';
 
-      let vbox = new St.BoxLayout({ vertical: true, style_class: 'pcalendar-font' });
+      let vbox = new St.BoxLayout({ vertical: true, style_class: 'shcalendar-font' });
       let calendar = new PopupMenu.PopupBaseMenuItem({
         activate: false,
         hover: false,
         can_focus: false,
-        style_class: 'pcalendar pcalendar-font'
+        style_class: 'shcalendar shcalendar-font'
       });
       calendar.actor.add_child(vbox);
 
@@ -163,11 +163,11 @@ const ShamsiCalendar = GObject.registerClass(
       this._calendar = new Calendar.Calendar(this.schema);
       vbox.add_actor(this._calendar.actor);
 
-      //this._calendar.actor.add_style_class_name('pcalendar pcalendar' + this.themeID + ' pcalendar-font');
+      //this._calendar.actor.add_style_class_name('shcalendar shcalendar' + this.themeID + ' shcalendar-font');
 
       let actionButtons = new St.BoxLayout({
         vertical: false,
-        style_class: 'pcalendar pcalendar' + this.themeID + ' pcalendar-font pcalendar-bottom-menu pcalendar-bottom-menu' + this.themeID
+        style_class: 'shcalendar shcalendar' + this.themeID + ' shcalendar-font shcalendar-bottom-menu shcalendar-bottom-menu' + this.themeID
       });
       vbox.add_actor(actionButtons);
 
@@ -175,7 +175,7 @@ const ShamsiCalendar = GObject.registerClass(
         text: '',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
-        style_class: 'pcalendar-month-heading pcalendar-month-heading' + this.themeID + ' pcalendar-txt-bold pcalendar-txt-green' + this.themeID
+        style_class: 'shcalendar-month-heading shcalendar-month-heading' + this.themeID + ' shcalendar-txt-bold shcalendar-txt-green' + this.themeID
       });
 
 
@@ -191,7 +191,7 @@ const ShamsiCalendar = GObject.registerClass(
         child: icon,
         reactive: true,
         can_focus: true,
-        style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this.themeID
       });
       preferencesIcon.connect('clicked', openExtensionSetting);
       actionButtons.add(preferencesIcon);
@@ -211,7 +211,7 @@ const ShamsiCalendar = GObject.registerClass(
         child: icon,
         reactive: true,
         can_focus: true,
-        style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this.themeID
       });
       nowroozIcon.connect('clicked', function () {
 
@@ -252,7 +252,7 @@ const ShamsiCalendar = GObject.registerClass(
         child: icon4,
         reactive: true,
         can_focus: true,
-        style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this.themeID
       });
       themeIcon.connect('clicked', () => {
         this.schema.set_int('theme-id', (this.themeID === '-thm0') ? 1 : 0);
@@ -272,7 +272,7 @@ const ShamsiCalendar = GObject.registerClass(
         child: icon3,
         reactive: true,
         can_focus: true,
-        style_class: 'pcalendar-options-button pcalendar-options-button' + this.themeID
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this.themeID
       });
       todayIcon.connect('clicked', function () {
         that._calendar._selectedDateObj.setNow();
