@@ -570,8 +570,8 @@ class App extends Adw.PreferencesPage {
       let vBoxShowTime = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxShowTime.append(new Gtk.Label({ label: 'نمایش' }));
       let vBoxTitle = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxTitle.append(new Gtk.Button({ label: ' ', margin_bottom: 0, has_frame: false, sensitive: false }));
-      //vBoxTitle.append(new Gtk.Label({ label: '' }));
+      //vBoxTitle.append(new Gtk.Button({ label: ' ', margin_bottom: 0, has_frame: false, sensitive: false }));
+      vBoxTitle.append(new Gtk.Label({ label: '↴ وقت' }));
 
       hBoxSetting.append(vBoxSoundUri);
       hBoxSetting.append(vBoxSoundId);
@@ -592,10 +592,10 @@ class App extends Adw.PreferencesPage {
         } = this.getPrayTimeSetting(tName);
         const SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
 
-        let label = new Gtk.Button({ label: title + ': ', margin_bottom: 0, has_frame: false });
+        let label = new Gtk.Button({ label: title + ': ', margin_bottom: 2, has_frame: false });
 
         // SoundUri
-        this.el['praytime-' + tName + '-sound-uri'] = new Gtk.Button({ label: '  →  غیرفعال  ', sensitive: (SoundId === '_custom_'), margin_bottom: 0 });
+        this.el['praytime-' + tName + '-sound-uri'] = new Gtk.Button({ label: '  →  غیرفعال  ', sensitive: (SoundId === '_custom_'), margin_bottom: 2 });
 
         this.el['praytime-' + tName + '-sound-uri'].connect('clicked', () => {
           let fChNative = new Gtk.FileChooserNative({

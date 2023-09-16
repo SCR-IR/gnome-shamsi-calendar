@@ -565,7 +565,7 @@ const App = class ShamsiCalendarApp {
       let vBoxShowTime = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
       vBoxShowTime.append(new Gtk.Label({ label: 'نمایش' }));
       let vBoxTitle = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxTitle.append(new Gtk.Label({ label: '' }));
+      vBoxTitle.append(new Gtk.Label({ label: '↴ وقت' }));
       hBoxSetting.append(vBoxSoundUri);
       hBoxSetting.append(vBoxSoundId);
       hBoxSetting.append(vBoxCalcMethod);
