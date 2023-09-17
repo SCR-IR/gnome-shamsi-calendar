@@ -151,7 +151,6 @@ evList.prototype = {
 
     this.events[2][31] = [[
       ['روز اهدای عضو، اهدای زندگی', false, 0],
-      ['روز چهارمحال و بختیاری', false, 0],
     ], false];
 
     this.events[3][1] = [[
@@ -533,6 +532,7 @@ evList.prototype = {
 
     this.events[8][14] = [[
       ['روز فرهنگ عمومی', false, 0],
+      ['روز مازندران', false, 0],
     ], false];
 
     this.events[8][18] = [[
@@ -542,6 +542,10 @@ evList.prototype = {
     this.events[8][24] = [[
       ['روز کتاب، کتاب‌خوانی و کتابدار', false, 0],
       ['روز بزرگداشت آیت‌اللّه علامه سیدمحمّدحسین طباطبایی (۱۳۶۰ ه‍.ش)', false, 0],
+    ], false];
+
+    this.events[8][26] = [[
+      ['روز اصفهان', false, 0],
     ], false];
 
     this.events[8][26] = [[
@@ -699,6 +703,10 @@ evList.prototype = {
       ['روز نیروی هوایی', false, 0],
     ], false];
 
+    this.events[11][20] = [[
+      ['روز چهارمحال و بختیاری', false, 0],
+    ], false];
+    
     this.events[11][21] = [[
       ['شکسته‌شدن حکومت‌نظامی به فرمان امام خمینی (رحمة‌اللّه علیه) (۱۳۵۷ ه‍.ش)', false, 0],
     ], false];
