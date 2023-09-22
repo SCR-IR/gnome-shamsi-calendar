@@ -5,8 +5,9 @@
  |       Folder       |  Version  | Gnome-shell |       feature       |
  |--------------------|-------------------------|---------------------|
  |   gnome_3.20-3.22  |     5     | 3.20 - 3.38 | Simple              |
- |   gnome_3.24-3.34  |     8     | 3.24 - 3.38 | Setting + PrayTimes |
- |   gnome_3.38-44    |    28     | 3.36 - 44   | Play Azan + Themes  |
+ |   gnome_3.24-3.26  |     8     | 3.24 - 3.38 | Setting + PrayTimes |
+ |   gnome_3.28-3.34  |    14     | 3.28 - 40   | Play Azan           |
+ |   gnome_3.36-44    |    28     | 3.36 - 44   | Play Azan + Themes  |
  |   gnome_45         |    29     | 45          | Play Azan + Themes  |
  |____________________|___________|_____________|_____________________|
  

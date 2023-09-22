@@ -8,15 +8,18 @@ gnomeVersion=$( gnome-shell --version | sed -Ee 's/GNOME Shell (([0-9]{1,2}).([0
 
 dirName=""
 
-if [ "`echo "${gnomeVersion} >= 45" | bc`" -eq 1 ]
+if [ "`echo "${gnomeVersion} == 45" | bc`" -eq 1 ]
 then
 	dirName="gnome_45"
 elif [ "`echo "${gnomeVersion} >= 36" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 45" | bc`" -eq 1 ]
 then
-	dirName="gnome_3.38-44"
-elif [ "`echo "${gnomeVersion} >= 24" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 36" | bc`" -eq 1 ]
+	dirName="gnome_3.36-44"
+elif [ "`echo "${gnomeVersion} >= 28" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 36" | bc`" -eq 1 ]
 then
-	dirName="gnome_3.24-3.34"
+	dirName="gnome_3.28-3.34"
+elif [ "`echo "${gnomeVersion} >= 24" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 28" | bc`" -eq 1 ]
+then
+	dirName="gnome_3.24-3.26"
 elif [ "`echo "${gnomeVersion} >= 20" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 24" | bc`" -eq 1 ]
 then
 	dirName="gnome_3.20-3.22"
