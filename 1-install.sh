@@ -11,23 +11,23 @@ dirName=""
 if [ "`echo "${gnomeVersion} == 45" | bc`" -eq 1 ]
 then
 	dirName="gnome_45"
-elif [ "`echo "${gnomeVersion} >= 36" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 45" | bc`" -eq 1 ]
+elif [ "`echo "${gnomeVersion} >= 3.36" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 45" | bc`" -eq 1 ]
 then
 	dirName="gnome_3.36-44"
-elif [ "`echo "${gnomeVersion} >= 28" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 36" | bc`" -eq 1 ]
+elif [ "`echo "${gnomeVersion} >= 3.28" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 3.36" | bc`" -eq 1 ]
 then
 	dirName="gnome_3.28-3.34"
-elif [ "`echo "${gnomeVersion} >= 24" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 28" | bc`" -eq 1 ]
+elif [ "`echo "${gnomeVersion} >= 3.24" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 3.28" | bc`" -eq 1 ]
 then
 	dirName="gnome_3.24-3.26"
-elif [ "`echo "${gnomeVersion} >= 20" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 24" | bc`" -eq 1 ]
+elif [ "`echo "${gnomeVersion} >= 3.20" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 3.24" | bc`" -eq 1 ]
 then
 	dirName="gnome_3.20-3.22"
 else
 	echo "Gnome $gnomeVersion not support! Please Update extension"
 fi
 
-if [ $dirName != "" ]
+if [ "$dirName" != "" ]
 then
 	# echo "Gnome $gnomeVersion : ./extension/$dirName/"
     
