@@ -1,0 +1,265 @@
+
+
+.pcalendar {
+    background-color: #303232;
+    border-radius: .6em;
+}
+.pcalendar-font {
+    font-family: Vazir, sans-serif;
+}
+
+.pcalendar-converter-menu{
+    margin-right: 1.8em;
+    margin-left: 1.8em;
+    color: #eee;
+}
+.pcalendar-bottom-menu{
+    margin-right: 1.8em;
+    margin-left: 1.8em;
+    margin-top: .5em;
+}
+
+.pcalendar-top-button {
+    opacity: .5; /* for future compatibility! */
+    border: rgba(192, 192, 192, 0.575) 1pt solid;
+    border-radius: .3em;
+    min-width: 1.3em;
+    min-height: 1.5em;
+    margin-bottom: .1em;
+    font-size: 2.2em;
+    color: #eee;
+}
+.pcalendar-top-button:hover {
+    background-color: rgba(168, 168, 168, 0.357);
+}
+
+.pcalendar-other-month-day {
+    border: rgba(192, 192, 192, 0.42) 1pt solid;
+}
+.pcalendar-other-month-nonwork-day {
+    border: rgba(255, 255, 255, 0.41) 1pt solid;
+}
+
+.pcalendar-month-label {
+    text-align: center;
+    color: #eee;
+    font-size: 1em;
+    font-weight: bold;
+}
+.pcalendar-day-heading {
+    color: #9c9c84;
+    font-size: 1em;
+    font-weight: bold;
+    /* min-height: 3.3em; */
+    padding-top: 1em;
+    min-width: 4em;
+    text-align: center;
+}
+
+
+
+.pcalendar-actor-right {
+    margin: 1em;
+}
+.pcalendar-actor-left {
+    text-align: center;
+    border: #999 1pt solid;
+    border-radius: 1.4em;
+    /* padding: .6em; */
+    margin: 1em;
+    /* width: 313px; */
+}
+
+.pcalendar-dates-show-label{
+    font-size: 1em;
+    direction: rtl;
+
+}
+.pcalendar-dates-show{
+    border-radius: 1.4em;
+    margin-bottom: 1em;
+    text-align: center;
+    min-width: 22em;
+}
+.pcalendar-event-label {
+    font-size: 1em;
+    direction: rtl;
+    text-align: right;
+    padding-right: .6em;
+    min-width: 21.4em;
+}
+.pcalendar-event-label-work {
+    color: #eee;
+}
+.pcalendar-event-label-nonwork {
+    color: #e77;
+}
+
+.pcalendar-underline{
+    text-decoration: underline;
+}
+
+.pcalendar-bg-green {
+    background-color: rgba(41, 131, 16, 0.313);
+}
+.pcalendar-bg-red {
+    background-color: rgba(160, 0, 0, 0.313);
+}
+.pcalendar-bg-orange {
+    background-color: rgba(152, 61, 0, 0.313);
+}
+.pcalendar-bg-grey {
+    background-color:rgba(204, 204, 204, 0.313);
+}
+
+.pcalendar-txt-green{
+    color: #319901;
+}
+.pcalendar-txt-red {
+    color: #ff6464;
+    font-weight: bold;
+}
+.pcalendar-txt-orange {
+    color: #ff6600;
+}
+.pcalendar-txt-grey {
+    color: #cccccc;
+}
+
+.pcalendar-system-tray{
+    min-width: 1.5em;
+}
+
+.pcalendar-date-label:hover {
+    background-color: rgba(128, 128, 128, .1);
+}
+
+.pcalendar-preferences-button-icon {
+    color: #fff;
+    font-size: 2em;
+    font-weight: bold;
+    min-width:2em;
+    min-height:1em;
+}
+
+.pcalendar-preferences-button {
+    padding: 3px;
+    background-color: rgba(128, 128, 128, .110);
+    border-radius: .3em;
+}
+
+.pcalendar-preferences-button:hover {
+    background-color: rgba(128, 128, 128, .313);
+}
+
+.pcalendar-rtl {
+    direction: rtl;
+}
+
+.pcalendar-button {
+    border-radius: 0 0 0 0;
+    border: 1px solid black;
+    padding: 5px;
+    font-size: .9em;
+}
+
+.pcalendar-button.active {
+    background-color: #bbb;
+    color: #333;
+}
+
+.pcalendar-button.fromPersian {
+    border-radius: 0 3px 3px 0;
+    border-left: none;
+}
+
+.pcalendar-button.fromHijri {
+    border-radius: 3px 0 0 3px;
+    border-right: none;
+}
+
+.pcalendar-converter-box {
+    padding: 5px 0;
+}
+
+.pcalendar-converter-entry {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.pcalendar-active-day{
+    border: rgba(22, 72, 255, 0.815) 1pt solid;
+    box-shadow: 0 0 3em 3em rgba(0, 140, 255, 0.26) inset;
+}
+.pcalendar-notactive-day{
+    border: rgba(255, 255, 255, 0.41) 1pt solid;
+}
+
+
+.pcalendar-txt-pdate-color{
+    color: #ffffff;
+}
+.pcalendar-txt-pdate-color-alpha{
+    color: rgba(255, 255, 255, 0.313);
+}
+.pcalendar-pdate-day-txt {
+    direction: ltr;
+    text-align: center;
+    min-height: 1.7em;
+    min-width: 1.7em;
+    font-size: 1.3em;
+    /* background-color: #d5d6d3; */
+    margin: 0;
+    padding: 0;
+    padding-top: .3em;
+}
+
+.pcalendar-txt-hdate-color{
+    color: #b9ff99;
+}
+.pcalendar-txt-hdate-color-alpha{
+    color: rgba(185, 255, 153, 0.313);
+}
+.pcalendar-hdate-day-txt {
+    direction: ltr;
+    text-align: center;
+    min-height: 1.5em;
+    min-width: 2em;
+    font-size: .9em;
+    /* background-color: #3478ff; */
+    margin: 0;
+    padding: 0;
+}
+
+.pcalendar-txt-gdate-color{
+    color: #90d6ff;
+}
+.pcalendar-txt-gdate-color-alpha{
+    color:  rgba(144, 214, 255, 0.313);
+}
+.pcalendar-gdate-day-txt {
+    direction: ltr;
+    text-align: center;
+    min-height: 1.5em;
+    min-width: 2em;
+    font-size: .9em;
+    /* background-color: #729525; */
+    margin: 0;
+    padding: 0;
+}
+
+.pcalendar-extra-height{
+    min-height: 3.7em;/* (min-height + 2*margin + 2*padding) */
+    min-width: 4.4em;/* (min-width + 2*margin + 2*padding) */
+}
+.pcalendar-day-button {
+    direction: ltr;
+    min-height: 3.3em;
+    min-width: 4em;
+    margin: .1em;
+    padding: .1em;
+    border-radius: .3em;
+}
+.pcalendar-day-button:hover{
+    background-color: rgba(168, 168, 168, 0.357);
+}

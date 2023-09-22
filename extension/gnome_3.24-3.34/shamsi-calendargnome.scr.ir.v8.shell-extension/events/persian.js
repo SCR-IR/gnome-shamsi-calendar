@@ -1,0 +1,327 @@
+// copyright پژوهش‌های ایرانی at http://ghiasabadi.com/
+// jdf.scr.ir : Only edit structure to new events structure (without change events text)
+function persian(pdate) {
+  this._init(pdate);
+}
+
+persian.prototype = {
+  name: 'مناسبت‌های باستانی',
+  type: 'persian',
+  /* [month][day] = [title, isHoliday] */
+  events: [[], [], [], [], [], [], [], [], [], [], [], [], []],
+
+  _init: function (pdate) {
+
+    this.events[1][1] = [[
+      ['جشن نوروز']
+    ], false];
+
+    this.events[1][6] = [[
+      ['روز امید'],
+      ['روز شادباش‌نویسی']
+    ], false];
+
+    this.events[1][10] = [[
+      ['جشن آبان‌گاه']
+    ], false];
+
+    this.events[1][13] = [[
+      ['جشن سیزده‌به‌در']
+    ], false];
+
+    this.events[1][17] = [[
+      ['سروش روز، جشن سروش‌گان']
+    ], false];
+
+    this.events[1][19] = [[
+      ['فروردین روز، جشن فروردین‌گان']
+    ], false];
+
+    this.events[2][2] = [[
+      ['جشن گیاه‌آوری']
+    ], false];
+
+    this.events[2][3] = [[
+      ['اردیبهشت روز، جشن اردیبهشت‌گان']
+    ], false];
+
+    this.events[2][10] = [[
+      ['جشن چهلم نوروز']
+    ], false];
+
+    this.events[2][15] = [[
+      ['گاهنبار میدیوزَرِم، جشن میانه بهار، جشن بهاربد'],
+      ['روز پیام‌آوری زرتشت']
+    ], false];
+
+    this.events[3][1] = [[
+      ['ارغاسوان، جشن گرما']
+    ], false];
+
+    this.events[3][6] = [[
+      ['خرداد روز، جشن خردادگان']
+    ], false];
+
+    this.events[4][1] = [[
+      ['جشن آب‌پاشونک، جشن آغاز تابستان'],
+      ['سال نو در گاهشماری گاهنباری']
+    ], false];
+
+    this.events[4][6] = [[
+      ['جشن نیلوفر']
+    ], false];
+
+    this.events[4][13] = [[
+      ['تیرروز، جشن تیرگان']
+    ], false];
+
+    this.events[4][15] = [[
+      ['جشن خام‌خواری']
+    ], false];
+
+    this.events[5][7] = [[
+      ['مردادروز، جشن مردادگان']
+    ], false];
+
+    this.events[5][10] = [[
+      ['جشن چهلم تابستان']
+    ], false];
+
+    this.events[5][15] = [[
+      ['گاهنبار میدیوشِم، جشن میانه تابستان']
+    ], false];
+
+    this.events[5][18] = [[
+      ['جشن مَی‌خواره']
+    ], false];
+
+    this.events[6][1] = [[
+      ['فغدیه، جشن خنکی هوا']
+    ], false];
+
+    this.events[6][3] = [[
+      ['جشن کشمین']
+    ], false];
+
+    this.events[6][4] = [[
+      ['شهریورروز، جشن شهریورگان'],
+      ['زادروز داراب (کوروش)'],
+      ['عروج مانی']
+    ], false];
+
+    this.events[6][8] = [[
+      ['خزان جشن']
+    ], false];
+
+    this.events[6][15] = [[
+      ['بازار جشن']
+    ], false];
+
+    this.events[6][31] = [[
+      ['گاهنبار پَتیَه‌شَهیم، جشن پایان تابستان']
+    ], false];
+
+    this.events[7][1] = [[
+      ['جشن میتراکانا'],
+      ['سال نو هخامنشی']
+    ], false];
+
+    this.events[7][14] = [[
+      ['تیرروز، جشن تیرروزی']
+    ], false];
+
+    this.events[7][13] = [[
+      ['آیین قالیشویان اردهال، بازماندی از تیرگان']
+    ], false];
+
+    this.events[7][16] = [[
+      ['مهرروز، جشن مهرگان']
+    ], false];
+
+    this.events[7][21] = [[
+      ['رام روز، جشن رام روزی'],
+      ['جشن پیروزی کاوه و فریدون']
+    ], false];
+
+    this.events[8][10] = [[
+      ['آبان روز، جشن آبان‌گان']
+    ], false];
+
+    this.events[8][15] = [[
+      ['گاهنبار اَیاثرَم، جشن میانه پاییز']
+    ], false];
+
+    this.events[9][1] = [[
+      ['آذر جشن']
+    ], false];
+
+    this.events[9][9] = [[
+      ['آذر روز، جشن آذرگان']
+    ], false];
+
+    this.events[9][30] = [[
+      ['جشن شب یلدا (چله)'],
+      ['گاهنبار میدیارِم، جشن میانه سال گاهنباری و پایان پاییز']
+    ], false];
+
+    this.events[10][1] = [[
+      ['روز میلاد خورشید، جشن خرم روز'],
+      ['نخستین جشن دی‌گان']
+    ], false];
+
+    this.events[10][5] = [[
+      ['بازار جشن']
+    ], false];
+
+    this.events[10][8] = [[
+      ['دی به آذر روز، دومین جشن دی‌گان']
+    ], false];
+
+    this.events[10][14] = [[
+      ['سیر روز، جشن گیاه‌خواری']
+    ], false];
+
+    this.events[10][15] = [[
+      ['جشن پیکرتراشی'],
+      ['دی به مهر روز، سومین جشن دی‌گان']
+    ], false];
+
+    this.events[10][16] = [[
+      ['جشن درامزینان، جشن درفش‌ها']
+    ], false];
+
+    this.events[10][23] = [[
+      ['دی به دین روز، چهارمین جشن دی‌گان']
+    ], false];
+
+    this.events[11][2] = [[
+      ['بهمن روز، جشن بهمن‌گان']
+    ], false];
+
+    this.events[11][4] = [[
+      ['شهریور روز، آغاز پادشاهی داراب (کوروش)']
+    ], false];
+
+    this.events[11][5] = [[
+      ['جشن نوسَره']
+    ], false];
+
+    this.events[11][10] = [[
+      ['آبان روز، جشن سَدَه، آتش افروزی بر بام‌ها'],
+      ['نمایش بازی همگانی']
+    ], false];
+
+    this.events[11][15] = [[
+      ['جشن میانه زمستان']
+    ], false];
+
+    this.events[11][22] = [[
+      ['بادروز، جشن بادروزی']
+    ], false];
+
+    this.events[12][1] = [[
+      ['جشن اسفندی'],
+      ['جشن آبسالان، بهار جشن'],
+      ['نمایش بازی همگانی']
+    ], false];
+
+    this.events[12][5] = [[
+      ['اسفند روز، جشن اسفندگان، گرامی‌داشت زمین و بانوان'],
+      ['جشن برزگران']
+    ], false];
+
+    this.events[12][10] = [[
+      ['جشن وخشنکام']
+    ], false];
+
+    this.events[12][19] = [[
+      ['جشن نوروز رودها']
+    ], false];
+
+    this.events[12][20] = [[
+      ['جشن گلدان']
+    ], false];
+
+    this.events[12][25] = [[
+      ['پایان سرایش شاهنامه فردوسی']
+    ], false];
+
+    this.events[12][26] = [[
+      ['فروردگان']
+    ], false];
+
+    this.addSpecificEvents(pdate);
+  },
+
+  addSpecificEvents: function (pdate) {
+    let date = new Date();
+    date = pdate.gregorianToPersian(date.getFullYear(), date.getMonth() + 1, date.getDate());
+    let year = date.year;
+
+    let first_saturday_of_year,
+      first_wednesday_of_year,
+      last_day_of_year,
+      last_wednesday_of_year;
+
+    // find first saturday of the year
+    // and
+    // find first wednesday of the year
+    for (let i = 1; i <= 7; i++) {
+      let p_ts = pdate.persianToGregorian(year, 1, i);
+      p_ts = new Date(p_ts.year, p_ts.month - 1, p_ts.day, 5);
+      /* do not remove this 5 :D */
+      if (p_ts.getDay() === 3) {
+        let dummy_date = pdate.gregorianToPersian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
+        first_wednesday_of_year = dummy_date.day;
+      }
+      if (p_ts.getDay() === 6) {
+        let dummy_date = pdate.gregorianToPersian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
+        first_saturday_of_year = dummy_date.day;
+      }
+    }
+
+    // find last day of the year
+    // and
+    // find last wednesday of the year
+    let leap = ((((((year - ((year > 0) ? 474 : 473)) % 2820) + 474) + 38) * 682) % 2816) < 682;
+
+    if (!last_day_of_year) {
+      last_day_of_year = 29 + leap;
+    }
+
+    for (let i = 0; i < 6; i++) {
+      let p_ts = pdate.persianToGregorian(year, 12, 29 + leap - i);
+
+      p_ts = new Date(p_ts.year, p_ts.month - 1, p_ts.day);
+      if (p_ts.getDay() === 3) {
+        let dummy_date = pdate.gregorianToPersian(p_ts.getFullYear(), p_ts.getMonth() + 1, p_ts.getDate());
+        last_wednesday_of_year = dummy_date.day;
+        break;
+      }
+    }
+
+    this.events[1][first_saturday_of_year] = [[
+      ['جشن نخستین شنبه سال']
+    ], false];
+
+    this.events[1][first_wednesday_of_year] = [[
+      ['جشن نخستین چهارشنبه سال']
+    ], false];
+
+    this.events[12][last_day_of_year] = [[
+      ['گاهنبار هَمَسپَتمَدَم، جشن پایان زمستان'],
+      ['زادروز زرتشت'],
+      ['جشن اوشیدر (نجات بخش ایرانی) در دریاچه هامون و کوه خواجه'],
+      ['آتش افروزی بر بام‌ها در استقبال از نوروز']
+    ], false];
+
+    this.events[12][last_wednesday_of_year - 1] = [[
+      ['چهارشنبه سوری، جشن شب چهارشنبه آخر']
+    ], false];
+
+    this.events[12][last_wednesday_of_year] = [[
+      ['چهارشنبه آخر']
+    ], false];
+
+  }
+};

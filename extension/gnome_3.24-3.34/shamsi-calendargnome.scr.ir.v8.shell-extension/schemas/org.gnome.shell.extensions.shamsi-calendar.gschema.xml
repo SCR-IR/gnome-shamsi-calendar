@@ -1,0 +1,278 @@
+<schemalist gettext-domain="gnome-shell-extensions-shamsi-calendar">
+  <enum id="org.gnome.shell.extensions.shamsi-calendar.positions">
+    <value nick="left" value="0"/>
+    <value nick="center" value="1"/>
+    <value nick="right" value="2"/>
+  </enum>
+  <schema id="org.gnome.shell.extensions.shamsi-calendar" path="/org/gnome/shell/extensions/shamsi-calendar/">
+    <key name="v" type="i">
+      <default>8</default>
+    </key>
+    <key name="default-tab" type="s">
+      <default>'events'</default>
+      <summary>Default selected Tab</summary>
+    </key>
+    <key name="persian-display" type="b">
+      <default>true</default>
+      <summary>Display Persian date below the calendar</summary>
+      <description>Set to true to display Persian date.</description>
+    </key>
+    <key name="islamic-display" type="b">
+      <default>true</default>
+      <summary>Display Islamic date below the calendar</summary>
+      <description>Set to true to display Islamic date.</description>
+    </key>
+    <key name="gregorian-display" type="b">
+      <default>true</default>
+      <summary>Display Gregorian date below the calendar</summary>
+      <description>Set to true to display Gregorian date.</description>
+    </key>
+    <key name="persian-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Persian date format</summary>
+      <description>Persian date format</description>
+    </key>
+    <key name="islamic-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Islamic date format</summary>
+      <description>Islamic date format</description>
+    </key>
+    <key name="gregorian-display-format" type="s">
+      <default>'%d / %m / %Y (%MM)'</default>
+      <summary>Gregorian date format</summary>
+      <description>Gregorian date format</description>
+    </key>
+    <key name="event-iran-solar" type="b">
+      <default>true</default>
+      <summary>Display official Iranian solar events</summary>
+      <description>Display official Iranian solar events.</description>
+    </key>
+    <key name="event-iran-lunar" type="b">
+      <default>true</default>
+      <summary>Display official Iranian lunar events</summary>
+      <description>Display official Iranian lunar events.</description>
+    </key>
+    <key name="event-world" type="b">
+      <default>true</default>
+      <summary>Display official international events</summary>
+      <description>Display official international events.</description>
+    </key>
+    <key name="event-persian" type="b">
+      <default>false</default>
+      <summary>Display old Persian events</summary>
+      <description>Display old Persian events.</description>
+    </key>
+    <key name="widget-format" type="s">
+      <default>'%WW %d %MM'</default>
+      <summary>Widget date format</summary>
+      <description>Widget date format</description>
+    </key>
+    <key name="position" enum="org.gnome.shell.extensions.shamsi-calendar.positions">
+      <default>'center'</default>
+      <summary>Where to display calendar (left, center, right)</summary>
+    </key>
+    <key name="startup-notification" type="b">
+      <default>true</default>
+      <summary>Startup Notification</summary>
+      <description>Show notification on start up</description>
+    </key>
+    <key name="custom-color" type="b">
+      <default>true</default>
+      <summary>Use custom color</summary>
+      <description>Use custom color.</description>
+    </key>
+    <key name="pray-time-color" type="s">
+      <default>'#77ff77'</default>
+      <summary>Holiday custom color</summary>
+      <description>Holiday custom color.</description>
+    </key>
+    <key name="holiday-color" type="s">
+      <default>'#ddbb77'</default>
+      <summary>Holiday custom color</summary>
+      <description>Holiday custom color.</description>
+    </key>
+    <key name="not-holiday-color" type="s">
+      <default>'#77bbdd'</default>
+      <summary>Not-holiday custom color.</summary>
+      <description>Not-holiday custom color.</description>
+    </key>
+    <!--
+    <key name="custom-font" type="b">
+      <default>false</default>
+      <summary>Use custom font</summary>
+      <description>Use custom font.</description>
+    </key>
+    <key name="font" type="s">
+      <default>''</default>
+      <summary>Custom font</summary>
+      <description>Custom font.</description>
+    </key>
+    -->
+    <key name="week-start" type="s">
+      <default>'0'</default>
+      <summary>Week Start</summary>
+    </key>
+    <key name="none-work-0" type="b">
+      <default>false</default>
+      <summary>None Work Day in Week</summary>
+      <description>None Work Day in Week.</description>
+    </key>
+    <key name="none-work-1" type="b">
+      <default>false</default>
+      <summary>None Work Day in Week</summary>
+      <description>None Work Day in Week.</description>
+    </key>
+    <key name="none-work-2" type="b">
+      <default>false</default>
+      <summary>None Work Day in Week</summary>
+      <description>None Work Day in Week.</description>
+    </key>
+    <key name="none-work-3" type="b">
+      <default>false</default>
+      <summary>None Work Day in Week</summary>
+      <description>None Work Day in Week.</description>
+    </key>
+    <key name="none-work-4" type="b">
+      <default>false</default>
+      <summary>None Work Day in Week</summary>
+      <description>None Work Day in Week.</description>
+    </key>
+    <key name="none-work-5" type="b">
+      <default>false</default>
+      <summary>None Work Day in Week</summary>
+      <description>None Work Day in Week.</description>
+    </key>
+    <key name="none-work-6" type="b">
+      <default>true</default>
+      <summary>None Work Day in Week</summary>
+      <description>None Work Day in Week.</description>
+    </key>
+    <key name="reverse-direction" type="b">
+      <default>false</default>
+      <summary>Reverse Direction Table of days</summary>
+      <description>Reverse Direction Table of days.</description>
+    </key>
+    <key name="rotaton-to-vertical" type="b">
+      <default>false</default>
+      <summary>Rotation Table of days to vertical</summary>
+      <description>Rotation Table of days to vertical.</description>
+    </key>
+
+    <!-- PrayTime: -->
+    <key name="praytime-state" type="i">
+      <default>7</default>
+      <summary>State (Ostan) id</summary>
+    </key>
+    <key name="praytime-city" type="s">
+      <default>'تهران'</default>
+      <summary>City name</summary>
+    </key>
+    <key name="praytime-main-show" type="b">
+      <default>true</default>
+      <summary>Display PrayTime</summary>
+      <description>Display Pray time based on location</description>
+    </key>
+    <key name="praytime-ehtiyat-show" type="b">
+      <default>true</default>
+      <summary>praytime ehtiyat show</summary>
+    </key>
+    <key name="praytime-play-and-notify" type="b">
+      <default>false</default>
+      <summary>Play Call to prayer song (Azaan)</summary>
+      <description>Play Azan</description>
+    </key>
+    <key name="praytime-play-valume" type="d">
+      <default>0.3</default>
+      <summary>System Valume (Play Azan)</summary>
+      <description>System Valume (Play Azan)</description>
+    </key>
+    <key name="praytime-lat" type="d">
+      <default>35.70</default>
+      <summary>Latitude</summary>
+      <description>your location latitude</description>
+    </key>
+    <key name="praytime-lng" type="d">
+      <default>51.35</default>
+      <summary>Longitude</summary>
+      <description>your location longitude</description>
+    </key>
+    <!-- <key name="praytime-timezone" type="d">
+      <default>3.5</default>
+      <summary>Timezone</summary>
+      <description>Your timezone based on GMT</description>
+    </key> -->
+    <key name="praytime-calc-method-main" type="s">
+      <default>'Tehran'</default>
+      <summary>calc method main"</summary>
+    </key>
+    <key name="praytime-calc-method-ehtiyat" type="s">
+      <default>'Jafari'</default>
+      <summary>calc method ehtiyat</summary>
+    </key>
+
+    <!-- Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+      ShowTime: always|ramazan|never,
+      TextNotify: always|ramazan|never,
+      PlaySound: always|ramazan|never,
+      CalcMethod: main|ehtiyat,
+      SoundId: azan_xx|doa_xx|salawat_xx|alert_xx|_custom_
+    -->
+    <key name="praytime-imsak-setting" type="s">
+      <default>'ramazan,ramazan,ramazan,ehtiyat,doa_01'</default>
+    </key>
+    <key name="praytime-fajr-setting" type="s">
+      <default>'always,always,always,ehtiyat,azan_01'</default>
+    </key>
+    <key name="praytime-sunrise-setting" type="s">
+      <default>'always,always,always,ehtiyat,alert_01'</default>
+    </key>
+    <key name="praytime-dhuhr-setting" type="s">
+      <default>'always,always,always,ehtiyat,azan_01'</default>
+    </key>
+    <key name="praytime-asr-setting" type="s">
+      <default>'never,never,never,ehtiyat,alert_01'</default>
+    </key>
+    <key name="praytime-sunset-setting" type="s">
+      <default>'always,always,always,ehtiyat,alert_01'</default>
+    </key>
+    <key name="praytime-maghrib-setting" type="s">
+      <default>'always,always,always,ehtiyat,azan_01'</default>
+    </key>
+    <key name="praytime-isha-setting" type="s">
+      <default>'never,never,never,ehtiyat,alert_01'</default>
+    </key>
+    <key name="praytime-midnight-setting" type="s">
+      <default>'always,always,never,ehtiyat,alert_01'</default>
+    </key>
+
+    <!-- Sounds URI: -->
+    <key name="praytime-imsak-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+    <key name="praytime-fajr-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+    <key name="praytime-sunrise-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+    <key name="praytime-dhuhr-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+    <key name="praytime-asr-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+    <key name="praytime-sunset-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+    <key name="praytime-maghrib-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+    <key name="praytime-isha-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+    <key name="praytime-midnight-sound-uri" type="s">
+      <default>'Music'</default>
+    </key>
+
+  </schema>
+</schemalist>

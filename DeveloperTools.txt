@@ -27,7 +27,7 @@ ___________________________________________________________________________
 
 // glib-compile-schemas <SchemasFolderPath>
 
-glib-compile-schemas ./shamsi-calendar@gnome.scr.ir/schemas/
+glib-compile-schemas ./extension/--------------/shamsi-calendar@gnome.scr.ir/schemas/
 ___________________________________________________________________________
 
 
