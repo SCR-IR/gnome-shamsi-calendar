@@ -539,14 +539,14 @@ function disable() {
   // uninstall_fonts();
 }
 
-// function uninstall_fonts() {
-//   let isLocked = (Main.sessionMode.currentMode === 'unlock-dialog');
-//   let path = extension.dir.get_path();
-//   let dir = Gio.file_new_for_path(`${path}/../../../fonts/shamsiCalendarFonts/`);
-//   if (dir.query_exists(null) && !isLocked) {
-//     file.deleteDir(dir);
-//   }
-// }
+function uninstall_fonts() {
+  let isLocked = (Main.sessionMode.currentMode === 'unlock-dialog');
+  let path = extension.dir.get_path();
+  let dir = Gio.file_new_for_path(`${path}/../../../fonts/shamsiCalendarFonts/`);
+  if (dir.query_exists(null) && !isLocked) {
+    file.deleteDir(dir);
+  }
+}
 
 function openExtensionSetting() {
   if (typeof ExtensionUtils.openPrefs === 'function') {

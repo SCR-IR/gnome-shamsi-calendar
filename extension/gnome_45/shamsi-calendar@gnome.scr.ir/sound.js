@@ -1,10 +1,10 @@
 
 
-export var player;
+export let player = null;
 
-export var soundsDir = "sounds";// FolderName
+export const soundsDir = "sounds";// FolderName
 
-export var sounds = {
+export const sounds = {
   "azan_01": [
     'اذان ۱ ،مرحوم مؤذن‌زاده',
     'azan_01.mp3'
@@ -27,12 +27,9 @@ export var sounds = {
   // ],
 };
 
-  import Gst from 'gi://Gst';
-  import GstAudio from 'gi://GstAudio';
+import Gst from 'gi://Gst';
+import GstAudio from 'gi://GstAudio';
 try {
-
-  // import Gst from 'gi://Gst';
-  // import GstAudio from 'gi://GstAudio';
 
   Gst.init(null);
 

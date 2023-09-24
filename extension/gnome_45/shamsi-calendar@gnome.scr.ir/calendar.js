@@ -1,6 +1,3 @@
-const Lang = {
-  bind: (a, b) => b//a.bind(b)
-};
 import Clutter from 'gi://Clutter';
 import St from 'gi://St';
 import Pango from 'gi://Pango';

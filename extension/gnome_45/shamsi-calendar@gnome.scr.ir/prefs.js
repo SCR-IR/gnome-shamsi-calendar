@@ -5,13 +5,6 @@ import Gdk from 'gi://Gdk';
 import GObject from 'gi://GObject';
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const Lang = {
-  bind: (a, b) => b//a.bind(b)
-};// const Gettext = imports.gettext.domain('shamsi-calendar');
-// const _ = Gettext.gettext;
-// import * as extensionUtils from 'resource:///org/gnome/shell/Extensions/js/misc/extensionUtils.js';
-// let extension = extensionUtils.getCurrentExtension();
-
 import * as Tarikh from './Tarikh.js';
 import * as str from './strFunctions.js';
 import * as Cities from './cities.js';
@@ -22,70 +15,8 @@ const PrayTimes = _PrayTimes.prayTimes;
 
 export default class ShamsiCalendarPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window) {
-
-    // window.add(
-    buildPrefsWidget(window, this.getSettings(), this.path)
-    // );
-
-    //     const page = new Adw.PreferencesPage({
-    //       title: 'Shamsi Calendar',
-    //       icon_name: 'dialog-information-symbolic',
-    //     });
-    //     window.add(page);
-
-    //     const group = new Adw.PreferencesGroup({
-    //       title: 'Appearance',
-    //       description: 'Configure the appearance of the extension',
-    //     });
-    //     page.add(group);
-
-    //     const row = new Gtk.Label({ label: 'حالت نمایش در نوار وضعیت:\n' });
-    //     group.add(row);
-
-    // //----------------------------------------------
-
-
-    // const page2 = new Adw.PreferencesPage({
-    //   title: 'Shamsi Calendar',
-    //   icon_name: 'dialog-information-symbolic',
-    // });
-    // window.add(page2);
-
-    // const group2 = new Adw.PreferencesGroup({
-    //   title: 'Appearance',
-    //   description: 'Configure the appearance of the extension',
-    // });
-    // page2.add(group2);
-
-    // const row2 = new Gtk.Label({ label: 'وضعیتوضعیتوضعیتوضعیتوضعیتوضعیتوضعیتوضعیتوضعیت\n' });
-    // group2.add(row2);
-
-    //----------------------------------------------
-    //----------------------------------------------
-    // // Create a preferences page, with a single group
-    // const page = new Adw.PreferencesPage({
-    //   title: _('General'),
-    //   icon_name: 'dialog-information-symbolic',
-    // });
-    // window.add(page);
-
-    // const group = new Adw.PreferencesGroup({
-    //   title: _('Appearance'),
-    //   description: _('Configure the appearance of the extension'),
-    // });
-    // page.add(group);
-
-    // // Create a new preferences row
-    // const row = new Adw.SwitchRow({
-    //   title: _('Show Indicator'),
-    //   subtitle: _('Whether to show the panel indicator'),
-    // });
-    // group.add(row);
-
-    // // Create a settings object and bind the row to the `show-indicator` key
-    // window._settings = this.getSettings();
-    // window._settings.bind('show-indicator', row, 'active',
-    //   Gio.SettingsBindFlags.DEFAULT);
+    window.set_default_size(680, 570);
+    new App(window, this.getSettings(), this.path);
   }
 }
 
@@ -99,12 +30,6 @@ class App extends Adw.PreferencesPage {
     this.schema = schema;
     this.el = {};
     // this.main_hbox = new Gtk.Notebook();
-
-
-
-
-
-
 
 
 
@@ -133,13 +58,13 @@ class App extends Adw.PreferencesPage {
 
 
     [
-      ['vbox1', 'نوار وضعیت', 'dialog-information-symbolic'],
-      ['vbox2', 'نمایش', 'dialog-information-symbolic'],
-      ['vbox3', 'مناسبت‌ها', 'dialog-information-symbolic'],
-      ['vbox4', 'هفته', 'dialog-information-symbolic'],
-      ['vbox5', 'اوقات شرعی', 'dialog-information-symbolic'],
-      ['vbox6', 'بازنشانی', 'dialog-information-symbolic'],
-      ['vbox7', 'درباره', 'dialog-information-symbolic'],
+      ['vbox1', 'نوار وضعیت', 'emblem-system-symbolic'],
+      ['vbox2', 'نمایش', 'emblem-system-symbolic'],
+      ['vbox3', 'مناسبت‌ها', 'emblem-system-symbolic'],
+      ['vbox4', 'هفته', 'emblem-system-symbolic'],
+      ['vbox5', 'اوقات شرعی', 'emblem-system-symbolic'],
+      ['vbox6', 'بازنشانی', 'emblem-system-symbolic'],
+      ['vbox7', 'درباره', 'emblem-system-symbolic'],
     ].forEach((v) => {
       this['page' + v[0]] = new Adw.PreferencesPage({
         title: v[1],
@@ -148,8 +73,8 @@ class App extends Adw.PreferencesPage {
       window.add(this['page' + v[0]]);
 
       this['group' + v[0]] = new Adw.PreferencesGroup({
-        title: 'تنظیمات ' + v[1],
-        description: 'ــــــــ',
+        //title: 'تنظیمات ' + v[1],
+        //description: 'ــــــــ',
       });
       this['page' + v[0]].add(this['group' + v[0]]);
 
@@ -1255,7 +1180,6 @@ class App extends Adw.PreferencesPage {
 
       let playPauseBtn = new Gtk.Button({ label: 'پخش', margin_top: 14 });
       playPauseBtn.connect('clicked', () => {
-        print(selectedSoundUri)
         if (player === null) return;
         if (player.isPlaying()) {
           player.pause();
@@ -1574,12 +1498,4 @@ class App extends Adw.PreferencesPage {
     return '#' + this._dec2Hex(color.red) + this._dec2Hex(color.green) + this._dec2Hex(color.blue);
   }
 
-}
-
-function init() {
-}
-
-function buildPrefsWidget(window, schema, path) {
-  let widget = new App(window, schema, path);
-  // return widget.main_hbox;
 }

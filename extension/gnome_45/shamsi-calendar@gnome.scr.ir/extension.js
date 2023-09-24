@@ -3,22 +3,12 @@ import Clutter from 'gi://Clutter';
 import St from 'gi://St';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
-// import Shell from 'gi://Shell';
 
 import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js';
-
-// const MainLoop = imports.mainloop;
-const Lang = {
-  bind: (a, b) => b//a.bind(b)
-};
-// const Gettext = imports.gettext.domain('shamsi-calendar');
-// const _ = Gettext.gettext;
-// const ExtensionUtils = imports.misc.extensionUtils;
-// const extension = ExtensionUtils.getCurrentExtension();
 
 import * as Tarikh from './Tarikh.js';
 import * as Calendar from './calendar.js';
@@ -31,8 +21,7 @@ const player = sound.player;
 import * as _PrayTimes from './PrayTimes.js';
 const PrayTimes = _PrayTimes.prayTimes;
 
-
-let _mainLable, _indicator, _timer, _prayTimeIs, messageTray;
+let _mainLable, _indicator, _prayTimeIs, messageTray, _timers;
 
 function _labelSchemaName(schema, events1 = null) {
   let dateObj = new Tarikh.TarikhObject();
@@ -57,7 +46,7 @@ const Indicator = GObject.registerClass(
         y_align: Clutter.ActorAlign.CENTER
       });
 
-      this.add_actor(_mainLable);//Gnome-Shell >= 3.38
+      this.add_actor(_mainLable);
 
       // some codes for coloring label
       if (this.schema.get_boolean('custom-color')) {
@@ -149,8 +138,6 @@ const Indicator = GObject.registerClass(
       this._calendar = new Calendar.Calendar(this.schema);
       vbox.add_actor(this._calendar.actor);
 
-      //this._calendar.actor.add_style_class_name('shcalendar shcalendar' + this.themeID + ' shcalendar-font');
-
       let actionButtons = new St.BoxLayout({
         vertical: false,
         style_class: 'shcalendar shcalendar' + this.themeID + ' shcalendar-font shcalendar-bottom-menu shcalendar-bottom-menu' + this.themeID
@@ -217,7 +204,6 @@ const Indicator = GObject.registerClass(
         // }
 
         let text = str.numbersFormat(tahvil.tahvilData(dateObj.persianYear + ((dateObj.persianMonth === 1) ? 0 : 1)).text);
-        //str.numbersFormat(nowrooz) + (day_delta < 7 ? ' * ' : '') + '\n' + 
 
         tahvilText.set_text(text);
         // notify(text);
@@ -281,7 +267,25 @@ const Indicator = GObject.registerClass(
         }
       });
 
-      this.prayerTimeLoop();
+      // prayer Time Loop
+      _timers.push(GLib.timeout_add_seconds(
+        GLib.PRIORITY_DEFAULT,
+        60 - (new Date().getSeconds()),
+        () => {
+          // console.log(':::timer1')
+          _timers.push(GLib.timeout_add_seconds(
+            GLib.PRIORITY_DEFAULT,
+            60,
+            () => {
+              // console.log(':::timer2')
+              this.checkPrayTime();
+              return GLib.SOURCE_CONTINUE;
+            }
+          ))
+          this.checkPrayTime();
+          return GLib.SOURCE_REMOVE;
+        }
+      ));
     }
 
     updateDate(skip_notification = false, force = false) {
@@ -332,37 +336,6 @@ const Indicator = GObject.registerClass(
       return true;
     }
 
-    prayerTimeLoop() {
-      GLib.timeout_add_seconds(
-        GLib.PRIORITY_DEFAULT,
-        60 - (new Date().getSeconds()),
-        () => {
-          GLib.timeout_add_seconds(
-            GLib.PRIORITY_DEFAULT,
-            60,
-            () => {
-              this.checkPrayTime();
-              // print('::::::::::SOURCE_CONTINUE')
-              return GLib.SOURCE_CONTINUE;
-            }
-          )
-          // print('::::::::::SOURCE_REMOVE')
-          return GLib.SOURCE_REMOVE;
-        }
-      );
-      // setTimeout(
-      //   () => GLib.timeout_add_seconds(
-      //     GLib.PRIORITY_DEFAULT,
-      //     60,
-      //     () => {
-      //       this.checkPrayTime();
-      //       return GLib.SOURCE_CONTINUE;
-      //     }
-      //   ),
-      //   61000 - (new Date().getSeconds() * 1000)
-      // );
-    }
-
     getPrayTimeSetting(tName) {
       // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
       const [
@@ -382,10 +355,8 @@ const Indicator = GObject.registerClass(
     }
 
     checkPrayTime() {
-      print(':::1')
       let now = new Date();
       if (/*now.getSeconds() !== 0 || */!this.schema.get_boolean('praytime-play-and-notify')) return;
-      print(':::2')
       let _prayTimes = {};
       {
         let coords = [this.schema.get_double('praytime-lat'), this.schema.get_double('praytime-lng')];
@@ -395,7 +366,6 @@ const Indicator = GObject.registerClass(
         PT.setMethod(this.schema.get_string('praytime-calc-method-ehtiyat'));
         _prayTimes['ehtiyat'] = PT.getTimes(now, coords);
       }
-      print(':::3')
       let nowHM;
       {
         let [H, M] = [now.getHours(), now.getMinutes()];
@@ -403,7 +373,6 @@ const Indicator = GObject.registerClass(
         if (M < 10) M = "0" + M;
         nowHM = "" + H + ':' + M;
       }
-      print(':::4')
       let _prayTimeIs_nextValue = '';
       for (let tName in PrayTimes.persianMap) {
         const settings = this.getPrayTimeSetting(tName);
@@ -424,12 +393,9 @@ const Indicator = GObject.registerClass(
           timeStr = (timeMinutes === methodsTime[0]) ? _prayTimes['main'][tName] : _prayTimes['ehtiyat'][tName];
         }
 
-        print(':::5')
-
         if (timeStr !== nowHM) {// now: is_not pray_time
           continue;// Exit
         }
-        print(':::6')
         _prayTimeIs_nextValue = tName;// now: is pray_time
 
         if (_prayTimeIs === tName) {// now: is pray_time, But play_or_show is run
@@ -437,8 +403,6 @@ const Indicator = GObject.registerClass(
         }
 
         // now: is pray_time and play_or_show is not run
-
-        print(':::7')
 
         let islamic = Tarikh.gregorian_to_islamic(now.getFullYear(), now.getMonth() + 1, now.getDate());
         // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
@@ -451,7 +415,7 @@ const Indicator = GObject.registerClass(
             (_prayTimes['main'][tName] === timeStr) ?
               '' : ' _ احتیاط ' + str.numbersFormat(timeStr)
           )
-        ); print(':::8')
+        );
         if (
           settings.PlaySound === 'never' ||
           (settings.PlaySound === 'ramazan' && islamic[1] !== 9)
@@ -459,11 +423,10 @@ const Indicator = GObject.registerClass(
         if (settings.SoundId === '_custom_') {
           settings.SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
         } else {
-          settings.SoundUri = /* '.local/share/gnome-shell/extensions/' + this.uuid */ this.path + '/' + sound.soundsDir + '/' + sound.sounds[settings.SoundId][1];
+          settings.SoundUri = this.path + '/' + sound.soundsDir + '/' + sound.sounds[settings.SoundId][1];
         }
-        print(settings.SoundUri); print(':::9')
+
         if (player !== null) {
-          print(settings.SoundUri)
           player.setVolume(this.schema.get_double('praytime-play-valume'));
           player.setUri(settings.SoundUri);
           player.play();
@@ -501,7 +464,7 @@ export default class ShamsiCalendarExtension extends Extension {
 
 
   enable() {
-    // this.openPreferences()
+    _timers = [];
     _prayTimeIs = '';
     if (player !== null && player.isPlaying()) player.pause();
 
@@ -509,11 +472,7 @@ export default class ShamsiCalendarExtension extends Extension {
       settings: this.getSettings(),
       path: this.dir.get_path(),
       uuid: this.uuid,
-      openPreferences: () => {
-        try {
-          this.openPreferences()
-        } catch (e) { }
-      },
+      openPreferences: () => this.openPreferences(),
       restartExtension: () => {
         this.disable();
         this.enable();
@@ -529,23 +488,33 @@ export default class ShamsiCalendarExtension extends Extension {
     );
     _indicator.updateDate(_indicator.schema.get_boolean('startup-notification'), true);
 
-    _timer = GLib.timeout_add_seconds(
+    // update indicator Loop
+    _timers.push(GLib.timeout_add_seconds(
       GLib.PRIORITY_DEFAULT,
-      5,
+      60 - (new Date().getSeconds()),
       () => {
+        // console.log(':::timer3')
+        _timers.push(GLib.timeout_add_seconds(
+          GLib.PRIORITY_DEFAULT,
+          60,
+          () => {
+            // console.log(':::timer4')
+            _indicator.updateDate();
+            return GLib.SOURCE_CONTINUE;
+          }
+        ))
         _indicator.updateDate();
-        return GLib.SOURCE_CONTINUE
+        return GLib.SOURCE_REMOVE;
       }
-    );
+    ));
 
     this.install_fonts();
   }
 
   install_fonts() {
-    let path = this.dir.get_path();
-    let dst = Gio.file_new_for_path(`${path}/../../../fonts/shamsiCalendarFonts/`);
+    let dst = Gio.file_new_for_path(`${GLib.get_home_dir()}/fonts/shamsiCalendarFonts/`);
     if (!dst.query_exists(null)) {
-      let src = Gio.file_new_for_path(`${path}/fonts`);
+      let src = Gio.file_new_for_path(`${this.dir.get_path()}/fonts`);
       file.copyDir(src, dst);
     }
   }
@@ -554,23 +523,29 @@ export default class ShamsiCalendarExtension extends Extension {
     _prayTimeIs = '';
     if (player !== null && player.isPlaying()) player.pause();
 
-    _indicator.schema.disconnect(_indicator.schema_not_holiday_color_change_signal);
-    _indicator.schema.disconnect(_indicator.schema_holiday_color_change_signal);
-    _indicator.schema.disconnect(_indicator.schema_custom_color_signal);
-    _indicator.schema.disconnect(_indicator.schema_widget_format_signal);
-    _indicator.schema.disconnect(_indicator.schema_theme_id_signal);
-    _indicator.schema.disconnect(_indicator.schema_widget_position_signal);
-    _indicator.schema.disconnect(_indicator.schema_window_position_signal);
-    _indicator.destroy();
-    GLib.Source.remove(_timer);
-    _timer = null;
+    _indicator?.schema.disconnect(_indicator.schema_not_holiday_color_change_signal);
+    _indicator?.schema.disconnect(_indicator.schema_holiday_color_change_signal);
+    _indicator?.schema.disconnect(_indicator.schema_custom_color_signal);
+    _indicator?.schema.disconnect(_indicator.schema_widget_format_signal);
+    _indicator?.schema.disconnect(_indicator.schema_theme_id_signal);
+    _indicator?.schema.disconnect(_indicator.schema_widget_position_signal);
+    _indicator?.schema.disconnect(_indicator.schema_window_position_signal);
+    _indicator?.destroy();
+    for (let i in _timers) GLib.Source.remove(_timers[i]);
+    _timers = null;
     _indicator = null;
     _mainLable = null;
     _prayTimeIs = null;
     messageTray = null;
   }
 
-
+  uninstall_fonts() {
+    let isLocked = (Main.sessionMode.currentMode === 'unlock-dialog');
+    let dir = Gio.file_new_for_path(`${GLib.get_home_dir()}/fonts/shamsiCalendarFonts/`);
+    if (dir.query_exists(null) && !isLocked) {
+      file.deleteDir(dir);
+    }
+  }
 
 }
 
