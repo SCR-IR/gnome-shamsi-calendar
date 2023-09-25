@@ -2,13 +2,12 @@ import Clutter from 'gi://Clutter';
 import St from 'gi://St';
 import Pango from 'gi://Pango';
 
+import { Str, getPrayTimeSetting } from './otherFunctions.js';
+import PrayTimes from './PrayTimes.js';
 import * as Tarikh from './Tarikh.js';
-import * as str from './strFunctions.js';
 import * as Events from './Events.js';
 import * as sound from './sound.js';
 const player = sound.player;
-import * as _PrayTimes from './PrayTimes.js';
-const PrayTimes = _PrayTimes.prayTimes;
 
 export class Calendar {
 
@@ -206,10 +205,10 @@ export class Calendar {
 
 
     this._monthLabel.text = '« ' + Tarikh.mName.shamsi[this._selectedDateObj.persianMonth] + ' ' +
-      str.numbersFormat(this._selectedDateObj.persianYear) +
+      Str.numbersFormat(this._selectedDateObj.persianYear) +
       ' »\n' +
-      str.numbersFormat(
-        str.dateStrFormat(
+      Str.numbersFormat(
+        Str.dateStrFormat(
           '%MM %Y',
           this._selectedDateObj.islamicDay,
           this._selectedDateObj.islamicMonth,
@@ -219,7 +218,7 @@ export class Calendar {
         )
       ) +
       ' | ' +
-      str.dateStrFormat(
+      Str.dateStrFormat(
         '%MM %Y',
         this._selectedDateObj.gregorianDay,
         this._selectedDateObj.gregorianMonth,
@@ -273,14 +272,14 @@ export class Calendar {
       }
 
       let shamsiLabel = new St.Label({
-        text: ((dateDisplay.persian) ? str.numbersFormat(iterObj.persianDay) : ' '),
+        text: ((dateDisplay.persian) ? Str.numbersFormat(iterObj.persianDay) : ' '),
         style_class: 'shcalendar-pdate-day-txt'
       });
       if (eventStatus.persian.hasEvent) shamsiLabel.style_class += ' shcalendar-underline';
       shamsiLabel.style_class += ((eventStatus.persian.isHoliday) ? ' shcalendar-txt-bold shcalendar-txt-red' : ' shcalendar-txt-pdate-color') + alpha + this.themeID;
 
       let ghamariLabel = new St.Label({
-        text: ((dateDisplay.islamic) ? str.numbersFormat(iterObj.islamicDay) : ' '),
+        text: ((dateDisplay.islamic) ? Str.numbersFormat(iterObj.islamicDay) : ' '),
         style_class: 'shcalendar-hdate-day-txt'
       });
       if (eventStatus.islamic.hasEvent) ghamariLabel.style_class += ' shcalendar-underline';
@@ -396,8 +395,8 @@ export class Calendar {
       rooz = rooz + ' روز بعد';
     }
     let dateLabel = new St.Label({
-      text: str.numbersFormat(
-        str.dateStrFormat(
+      text: Str.numbersFormat(
+        Str.dateStrFormat(
           '%WW',
           this._selectedDateObj.persianDay,
           this._selectedDateObj.persianMonth,
@@ -416,8 +415,8 @@ export class Calendar {
     // add persian date
     if (dateDisplay.persian) {
       let dateLabel = new St.Label({
-        text: str.numbersFormat(
-          str.dateStrFormat(
+        text: Str.numbersFormat(
+          Str.dateStrFormat(
             this.schema.get_string('persian-display-format'),
             this._selectedDateObj.persianDay,
             this._selectedDateObj.persianMonth,
@@ -436,8 +435,8 @@ export class Calendar {
     // add islamic date
     if (dateDisplay.islamic) {
       let dateLabel = new St.Label({
-        text: str.numbersFormat(
-          str.dateStrFormat(
+        text: Str.numbersFormat(
+          Str.dateStrFormat(
             this.schema.get_string('islamic-display-format'),
             this._selectedDateObj.islamicDay,
             this._selectedDateObj.islamicMonth,
@@ -456,7 +455,7 @@ export class Calendar {
     // add gregorian date
     if (dateDisplay.gregorian) {
       let dateLabel = new St.Label({
-        text: str.dateStrFormat(
+        text: Str.dateStrFormat(
           this.schema.get_string('gregorian-display-format'),
           this._selectedDateObj.gregorianDay,
           this._selectedDateObj.gregorianMonth,
@@ -479,9 +478,10 @@ export class Calendar {
       this.schema.get_string('praytime-calc-method-ehtiyat'),
       this.schema.get_string('praytime-calc-method-main')
     ]
+    const NewPrayTimes = new PrayTimes();
     let _prayTimes = {};
     for (let method of azanMethods) {
-      let PT = PrayTimes;
+      let PT = NewPrayTimes;
       PT.setMethod(method);
       _prayTimes[method] = PT.getTimes(
         this._selectedDateObj.gregorian,
@@ -492,7 +492,7 @@ export class Calendar {
       );
     }
     let date = new Date();
-    let nowToMinutes = this.timeStrToMinutes(date.getHours() + ':' + date.getMinutes());
+    let nowToMinutes = Str.timeStrToMinutes(date.getHours() + ':' + date.getMinutes());
 
     //
     let isAfterSunset = false;
@@ -502,7 +502,7 @@ export class Calendar {
       for (let i in azanMethods) {
         oghat.method[i] = parseInt(i);
         oghat.timeStr[i] = _prayTimes[azanMethods[i]][tName];
-        oghat.minutes[i] = this.timeStrToMinutes(oghat.timeStr[i]);
+        oghat.minutes[i] = Str.timeStrToMinutes(oghat.timeStr[i]);
       }
       if (nowToMinutes >= Math.min(...oghat.minutes)) isAfterSunset = true;
     }
@@ -577,7 +577,7 @@ export class Calendar {
         afterSelectedDateShadiState.some((v) => v !== 0)
       ) {
         let evLabelA = new St.Label({
-          text: str.numbersFormat('یادآوری مهم‌ترین‌ها برای فردا:'),
+          text: Str.numbersFormat('یادآوری مهم‌ترین‌ها برای فردا:'),
           x_align: Clutter.ActorAlign.CENTER,
           x_expand: true,
           style_class: 'shcalendar-event-label shcalendar-txt-bold shcalendar-txt-orange' + this.themeID
@@ -589,7 +589,7 @@ export class Calendar {
         for (let evObj of afterSelectedDateEvents[0]) {
           if (evObj.shadi === 0) continue;
           let evLabel = new St.Label({
-            text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
+            text: Str.numbersFormat(evObj.symbol + ' ' + evObj.event),
             x_align: Clutter.ActorAlign.CENTER,
             x_expand: true,
             style_class: 'shcalendar-event-label ' + ((evObj.holiday) ? 'shcalendar-event-label-nonwork' + this.themeID : 'shcalendar-event-label-work' + this.themeID)
@@ -600,7 +600,7 @@ export class Calendar {
           _eventsBox.add(evLabel);
         }
         let evLabelB = new St.Label({
-          text: '-------------------------\n' + str.numbersFormat((selectedDateEvents[0].length === 0) ? 'امروز:\n          مناسبت خاصی نداشت!' : 'مناسبت‌های امروز که گذشت:'),
+          text: '-------------------------\n' + Str.numbersFormat((selectedDateEvents[0].length === 0) ? 'امروز:\n          مناسبت خاصی نداشت!' : 'مناسبت‌های امروز که گذشت:'),
           x_align: Clutter.ActorAlign.CENTER,
           x_expand: true,
           style_class: 'shcalendar-event-label shcalendar-txt-bold ' + ((selectedDateEvents[0].length === 0) ? 'shcalendar-txt-grey' : 'shcalendar-txt-green') + this.themeID
@@ -613,7 +613,7 @@ export class Calendar {
 
       for (let evObj of selectedDateEvents[0]) {
         let evLabel = new St.Label({
-          text: str.numbersFormat(evObj.symbol + ' ' + evObj.event),
+          text: Str.numbersFormat(evObj.symbol + ' ' + evObj.event),
           x_align: Clutter.ActorAlign.CENTER,
           x_expand: true,
           style_class: 'shcalendar-event-label ' + ((evObj.holiday) ? 'shcalendar-event-label-nonwork' + this.themeID : 'shcalendar-event-label-work' + this.themeID)
@@ -690,7 +690,7 @@ export class Calendar {
       _prayColumnBox = new St.BoxLayout({ x_expand: false });
       for (let tName in _prayTimes[azanMethods[0]]) {
         // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
-        const settings = this.getPrayTimeSetting(tName, this.schema);
+        const settings = getPrayTimeSetting(tName, this.schema);
         if (
           settings.ShowTime === 'never' ||
           (settings.ShowTime === 'ramazan' && this._selectedDateObj.islamicMonth !== 9)
@@ -701,7 +701,7 @@ export class Calendar {
         for (let i in azanMethods) {
           oghat.method[i] = parseInt(i);
           oghat.timeStr[i] = _prayTimes[azanMethods[i]][tName];
-          oghat.minutes[i] = this.timeStrToMinutes(oghat.timeStr[i]);
+          oghat.minutes[i] = Str.timeStrToMinutes(oghat.timeStr[i]);
         }
 
         let ehtiyat = (
@@ -714,7 +714,7 @@ export class Calendar {
         for (let i in oghat.method) {
           if (i == 0 && !ehtiyatShow) continue;
           _prayColumnBox.add(new St.Label({
-            text: str.numbersFormat((oghat.method[i] === 1 || (oghat.minutes[i] === ehtiyat && oghat.minutes[0] !== oghat.minutes[1])) ? oghat.timeStr[i] : ''),
+            text: Str.numbersFormat((oghat.method[i] === 1 || (oghat.minutes[i] === ehtiyat && oghat.minutes[0] !== oghat.minutes[1])) ? oghat.timeStr[i] : ''),
             style_class: 'shcalendar-praytimes-time ' +
               ((oghat.minutes[i] === ehtiyat) ? 'shcalendar-txt-green' + this.themeID : 'shcalendar-txt-grey' + this.themeID),
             x_expand: false,
@@ -729,7 +729,7 @@ export class Calendar {
           }
         }
         _prayColumnBox.add(new St.Label({
-          text: PrayTimes.persianMap[tName],
+          text: NewPrayTimes.persianMap[tName],
           style_class: 'shcalendar-praytimes-tname ' + prayTimeStyle,
           x_expand: false,
         }));
@@ -872,8 +872,8 @@ export class Calendar {
           // add persian date
           if (_activeConverter !== ConverterTypes.fromPersian) {
             let button = new St.Button({
-              label: str.numbersFormat(
-                str.dateStrFormat(
+              label: Str.numbersFormat(
+                Str.dateStrFormat(
                   this.schema.get_string('persian-display-format'),
                   cDateObj.persianDay,
                   cDateObj.persianMonth,
@@ -894,8 +894,8 @@ export class Calendar {
           // add islamic date
           if (_activeConverter !== ConverterTypes.fromIslamic) {
             let button = new St.Button({
-              label: str.numbersFormat(
-                str.dateStrFormat(
+              label: Str.numbersFormat(
+                Str.dateStrFormat(
                   this.schema.get_string('islamic-display-format'),
                   cDateObj.islamicDay,
                   cDateObj.islamicMonth,
@@ -917,7 +917,7 @@ export class Calendar {
           if (_activeConverter !== ConverterTypes.fromGregorian) {
             let button = new St.Button({
               label: (
-                str.dateStrFormat(
+                Str.dateStrFormat(
                   this.schema.get_string('gregorian-display-format'),
                   cDateObj.gregorianDay,
                   cDateObj.gregorianMonth,
@@ -1049,31 +1049,6 @@ export class Calendar {
 
   }
 
-  getPrayTimeSetting = (tName, Schema) => {
-    // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
-    const [
-      ShowTime,
-      TextNotify,
-      PlaySound,
-      CalcMethod,
-      SoundId
-    ] = Schema.get_string('praytime-' + tName + '-setting').split(',');
-    return {
-      ShowTime,
-      TextNotify,
-      PlaySound,
-      CalcMethod,
-      SoundId
-    };
-  }
-
-  timeStrToMinutes = (timeStr, Schema) => {
-    let [hour, min] = timeStr.split(':');
-    hour = parseInt(hour);
-    if (hour === 0) hour = 24;
-    return ((hour * 60) + parseInt(min));
-  }
-
   _rotate = (a, b, x, y, Schema) => {
     return (Schema.get_boolean('rotaton-to-vertical')) ? [7 - b, 8 - a + 1, y, x] : [a, b, x, y];
   }
@@ -1085,4 +1060,4 @@ export class Calendar {
     ) ? 6 : 0);
   }
 
-};
+}

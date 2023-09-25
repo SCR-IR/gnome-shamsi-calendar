@@ -3,15 +3,14 @@ import Gtk from 'gi://Gtk';
 import Gio from 'gi://Gio';
 import Gdk from 'gi://Gdk';
 import GObject from 'gi://GObject';
-import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
+import { Str, getPrayTimeSetting } from './otherFunctions.js';
+import PrayTimes from './PrayTimes.js';
 import * as Tarikh from './Tarikh.js';
-import * as str from './strFunctions.js';
 import * as Cities from './cities.js';
 import * as sound from './sound.js';
 const player = sound.player;
-import * as _PrayTimes from './PrayTimes.js';
-const PrayTimes = _PrayTimes.prayTimes;
 
 export default class ShamsiCalendarPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window) {
@@ -29,6 +28,8 @@ class App extends Adw.PreferencesPage {
     super();
     this.schema = schema;
     this.el = {};
+    this.NewPrayTimes = new PrayTimes();
+
     // this.main_hbox = new Gtk.Notebook();
 
 
@@ -145,8 +146,8 @@ class App extends Adw.PreferencesPage {
     this.el['widget-format'] = new Gtk.ComboBoxText();
     for (let showFormat of showFormats) this.el['widget-format'].append(
       showFormat,
-      str.numbersFormat(
-        str.dateStrFormat(
+      Str.numbersFormat(
+        Str.dateStrFormat(
           showFormat,
           _dateObj.persianDay,
           _dateObj.persianMonth,
@@ -275,8 +276,8 @@ class App extends Adw.PreferencesPage {
     this.el['persian-display-format'] = new Gtk.ComboBoxText();
     for (let showFormat of showFormats) this.el['persian-display-format'].append(
       showFormat,
-      str.numbersFormat(
-        str.dateStrFormat(
+      Str.numbersFormat(
+        Str.dateStrFormat(
           showFormat,
           _dateObj.persianDay,
           _dateObj.persianMonth,
@@ -309,8 +310,8 @@ class App extends Adw.PreferencesPage {
     this.el['islamic-display-format'] = new Gtk.ComboBoxText();
     for (let showFormat of showFormats) this.el['islamic-display-format'].append(
       showFormat,
-      str.numbersFormat(
-        str.dateStrFormat(
+      Str.numbersFormat(
+        Str.dateStrFormat(
           showFormat,
           _dateObj.islamicDay,
           _dateObj.islamicMonth,
@@ -343,8 +344,8 @@ class App extends Adw.PreferencesPage {
     this.el['gregorian-display-format'] = new Gtk.ComboBoxText();
     for (let showFormat of showFormats) this.el['gregorian-display-format'].append(
       showFormat,
-      // str.numbersFormat(
-      str.dateStrFormat(
+      // Str.numbersFormat(
+      Str.dateStrFormat(
         showFormat,
         _dateObj.gregorianDay,
         _dateObj.gregorianMonth,
@@ -602,15 +603,15 @@ class App extends Adw.PreferencesPage {
       hBoxSetting.append(vBoxShowTime);
       hBoxSetting.append(vBoxTitle);
 
-      for (let tName in PrayTimes.persianMap) {
-        const title = PrayTimes.persianMap[tName];
+      for (let tName in this.NewPrayTimes.persianMap) {
+        const title = this.NewPrayTimes.persianMap[tName];
         const {
           ShowTime,
           TextNotify,
           PlaySound,
           CalcMethod,
           SoundId
-        } = this.getPrayTimeSetting(tName);
+        } = getPrayTimeSetting(tName, this.schema);
         const SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
 
         let label = new Gtk.Button({ label: title + ': ', margin_bottom: 0/**/, has_frame: false });
@@ -860,8 +861,8 @@ class App extends Adw.PreferencesPage {
       for (let i in Cities.cities) {
         this.el['praytime-state'].append(
           i,
-          str.numbersFormat(
-            str.dateStrFormat(
+          Str.numbersFormat(
+            Str.dateStrFormat(
               Cities.cities[i][0],
               _dateObj.persianDay,
               _dateObj.persianMonth,
@@ -887,8 +888,8 @@ class App extends Adw.PreferencesPage {
           if (cities[i][3] !== undefined) centerId = i - 1;
           this.el['praytime-city_ComboBox'].append(
             cities[i][0],
-            str.numbersFormat(
-              str.dateStrFormat(
+            Str.numbersFormat(
+              Str.dateStrFormat(
                 cities[i][0],
                 _dateObj.persianDay,
                 _dateObj.persianMonth,
@@ -1313,11 +1314,11 @@ class App extends Adw.PreferencesPage {
   }
 
   _resetPrayTimesAdvanceSettings() {
-    for (let tName in PrayTimes.persianMap) {
+    for (let tName in this.NewPrayTimes.persianMap) {
       this.schema.reset('praytime-' + tName + '-setting');
       this.schema.reset('praytime-' + tName + '-sound-uri');
       if (this.el['praytime-imsak-setting_ShowTime'] === undefined) continue;
-      const settings = this.getPrayTimeSetting(tName);
+      const settings = getPrayTimeSetting(tName, this.schema);
       // this.schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
       ['ShowTime', 'TextNotify', 'PlaySound', 'CalcMethod', 'SoundId'].forEach((indexId) => {
         this.el['praytime-' + tName + '-setting_' + indexId].set_active_id(settings[indexId]);
@@ -1432,24 +1433,6 @@ class App extends Adw.PreferencesPage {
     let setting = this.schema.get_string('praytime-' + tName + '-setting').split(',');
     setting[indexIds[indexId]] = value;
     this.schema.set_string('praytime-' + tName + '-setting', setting.join(','));
-  }
-
-  getPrayTimeSetting(tName) {
-    // this.schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
-    const [
-      ShowTime,
-      TextNotify,
-      PlaySound,
-      CalcMethod,
-      SoundId
-    ] = this.schema.get_string('praytime-' + tName + '-setting').split(',');
-    return {
-      ShowTime,
-      TextNotify,
-      PlaySound,
-      CalcMethod,
-      SoundId
-    };
   }
 
   btnIconLabel(btn, label = '') {

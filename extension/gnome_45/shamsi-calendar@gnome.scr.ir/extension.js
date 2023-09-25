@@ -4,22 +4,21 @@ import St from 'gi://St';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
-import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js';
 
+import { Str, getPrayTimeSetting } from './otherFunctions.js';
+import PrayTimes from './PrayTimes.js';
 import * as Tarikh from './Tarikh.js';
 import * as Calendar from './calendar.js';
 import * as Events from './Events.js';
-import * as str from './strFunctions.js';
 import * as tahvil from './tahvil.js';
 import * as file from './file.js';
 import * as sound from './sound.js';
 const player = sound.player;
-import * as _PrayTimes from './PrayTimes.js';
-const PrayTimes = _PrayTimes.prayTimes;
 
 let _mainLable, _indicator, _prayTimeIs, messageTray, _timers;
 
@@ -38,6 +37,8 @@ const Indicator = GObject.registerClass(
       this.path = _arg.path;
       super._init(({ left: 1.0, center: 0.5, right: 0.0 }[this.schema.get_string('window-position')]), 'تقویم هجری شمسی'/*, false*/);
       this.themeID = '-thm' + this.schema.get_int('theme-id');
+      this.NewPrayTimes = new PrayTimes();
+
 
       messageTray = new MessageTray.MessageTray({ style_class: 'shcalendar-system-tray shcalendar-font' });
       _mainLable = new St.Label({
@@ -203,7 +204,7 @@ const Indicator = GObject.registerClass(
         //   nowrooz += 'نوروز سال ' + (dateObj.persianYear + 1);
         // }
 
-        let text = str.numbersFormat(tahvil.tahvilData(dateObj.persianYear + ((dateObj.persianMonth === 1) ? 0 : 1)).text);
+        let text = Str.numbersFormat(tahvil.tahvilData(dateObj.persianYear + ((dateObj.persianMonth === 1) ? 0 : 1)).text);
 
         tahvilText.set_text(text);
         // notify(text);
@@ -306,8 +307,8 @@ const Indicator = GObject.registerClass(
       }
 
       _mainLable.set_text(
-        str.numbersFormat(
-          str.dateStrFormat(
+        Str.numbersFormat(
+          Str.dateStrFormat(
             this.schema.get_string('widget-format'),
             _dateObj.persianDay,
             _dateObj.persianMonth,
@@ -321,10 +322,10 @@ const Indicator = GObject.registerClass(
       if (skip_notification) {
         let notifyTxt = "";
         for (let evObj of events[0]) {
-          notifyTxt += str.numbersFormat(evObj.symbol + ' ' + evObj.event + ((evObj.holiday) ? ' (تعطیل)' : '') + '\n');
+          notifyTxt += Str.numbersFormat(evObj.symbol + ' ' + evObj.event + ((evObj.holiday) ? ' (تعطیل)' : '') + '\n');
         }
         notify(
-          str.numbersFormat(
+          Str.numbersFormat(
             _dateObj.persianDay + ' ' +
             Tarikh.mName.shamsi[_dateObj.persianMonth] +
             ' ' + _dateObj.persianYear
@@ -336,31 +337,13 @@ const Indicator = GObject.registerClass(
       return true;
     }
 
-    getPrayTimeSetting(tName) {
-      // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
-      const [
-        ShowTime,
-        TextNotify,
-        PlaySound,
-        CalcMethod,
-        SoundId
-      ] = this.schema.get_string('praytime-' + tName + '-setting').split(',');
-      return {
-        ShowTime,
-        TextNotify,
-        PlaySound,
-        CalcMethod,
-        SoundId
-      };
-    }
-
     checkPrayTime() {
       let now = new Date();
       if (/*now.getSeconds() !== 0 || */!this.schema.get_boolean('praytime-play-and-notify')) return;
       let _prayTimes = {};
       {
         let coords = [this.schema.get_double('praytime-lat'), this.schema.get_double('praytime-lng')];
-        let PT = PrayTimes;
+        let PT = this.NewPrayTimes;
         PT.setMethod(this.schema.get_string('praytime-calc-method-main'));
         _prayTimes['main'] = PT.getTimes(now, coords);
         PT.setMethod(this.schema.get_string('praytime-calc-method-ehtiyat'));
@@ -374,15 +357,15 @@ const Indicator = GObject.registerClass(
         nowHM = "" + H + ':' + M;
       }
       let _prayTimeIs_nextValue = '';
-      for (let tName in PrayTimes.persianMap) {
-        const settings = this.getPrayTimeSetting(tName);
+      for (let tName in this.NewPrayTimes.persianMap) {
+        const settings = getPrayTimeSetting(tName, this.schema);
         let timeStr;
         if (settings.CalcMethod === 'main') {// 'main' method:
           timeStr = _prayTimes['main'][tName];
         } else {// 'ehtiyat' method:
           const methodsTime = [
-            timeStrToMinutes(_prayTimes['main'][tName]),
-            timeStrToMinutes(_prayTimes['ehtiyat'][tName])
+            Str.timeStrToMinutes(_prayTimes['main'][tName]),
+            Str.timeStrToMinutes(_prayTimes['ehtiyat'][tName])
           ];
           const timeMinutes = (
             tName === 'imsak' ||
@@ -410,10 +393,10 @@ const Indicator = GObject.registerClass(
           settings.TextNotify === 'always' ||
           (settings.ShowTime === 'ramazan' && islamic[1] === 9)
         ) notify(
-          PrayTimes.persianMap[tName] + ' به اُفق ' + this.schema.get_string('praytime-city') +
-          ' / ساعت ' + str.numbersFormat(_prayTimes['main'][tName]) + (
+          this.NewPrayTimes.persianMap[tName] + ' به اُفق ' + this.schema.get_string('praytime-city') +
+          ' / ساعت ' + Str.numbersFormat(_prayTimes['main'][tName]) + (
             (_prayTimes['main'][tName] === timeStr) ?
-              '' : ' _ احتیاط ' + str.numbersFormat(timeStr)
+              '' : ' _ احتیاط ' + Str.numbersFormat(timeStr)
           )
         );
         if (
@@ -449,7 +432,8 @@ const Indicator = GObject.registerClass(
 
     }
 
-  });
+  }
+);
 
 function notify(msg, details = '', icon = 'x-office-calendar') {
   let source = new MessageTray.Source('تقویم', icon);
@@ -460,8 +444,6 @@ function notify(msg, details = '', icon = 'x-office-calendar') {
 }
 
 export default class ShamsiCalendarExtension extends Extension {
-
-
 
   enable() {
     _timers = [];
@@ -537,6 +519,8 @@ export default class ShamsiCalendarExtension extends Extension {
     _mainLable = null;
     _prayTimeIs = null;
     messageTray = null;
+
+    this.uninstall_fonts();
   }
 
   uninstall_fonts() {
@@ -548,11 +532,3 @@ export default class ShamsiCalendarExtension extends Extension {
   }
 
 }
-
-function timeStrToMinutes(timeStr) {
-  let [hour, min] = timeStr.split(':');
-  hour = parseInt(hour);
-  if (hour === 0) hour = 24;
-  return ((hour * 60) + parseInt(min));
-}
-

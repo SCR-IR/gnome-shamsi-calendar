@@ -60,7 +60,7 @@ http://praytimes.org/calculation
 //----------------------- PrayTimes Class ------------------------
 
 
-export function PrayTimes(method) {
+export default function PrayTimes(method) {
 
 
   //------------------------ Constants --------------------------
@@ -560,7 +560,7 @@ export function PrayTimes(method) {
 //---------------------- Degree-Based Math Class -----------------------
 
 
-var DMath = {
+const DMath = {
 
   dtr: function (d) { return (d * Math.PI) / 180.0; },
   rtd: function (r) { return (r * 180.0) / Math.PI; },
@@ -584,11 +584,3 @@ var DMath = {
     return (a < 0) ? a + b : a;
   }
 }
-
-
-//---------------------- Init Object -----------------------
-
-
-export const prayTimes = new PrayTimes();
-
-
