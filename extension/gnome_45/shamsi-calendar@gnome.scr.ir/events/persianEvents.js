@@ -77,6 +77,7 @@ export default class evList {
 
     this.events[2][1] = [[
       ['روز بزرگداشت سعدی', false, 0],
+      ['روز نثر فارسی', false, 0],
       ['روز شهدای ورزشکار (همزمان با روز تولد شهید ابراهیم هادی)', false, 0],
     ], false];
 
@@ -225,6 +226,8 @@ export default class evList {
 
     this.events[4][10] = [[
       ['روز صنعت و معدن', false, 0],
+      ['روز دیپلماسی فرهنگی و تعامل با جهان', false, 0],
+      ['یادروز ورود امام رضا علیه‌السلام به نیشابور و نقل حدیث سلسلة‌الذهب', false, 0],
       ['روز آزادسازی شهر مهران', false, 0],
       ['روز بزرگداشت صائب تبریزی', false, 0],
     ], false];
@@ -290,6 +293,7 @@ export default class evList {
     this.events[5][5] = [[
       ['سالروز عملیات افتخار‌آفرین مرصاد (۱۳۶۷ ه‍.ش)', false, 0],
       ['روز مقاومت و پایداری', false, 0],
+      ['اقامه‌ی اوّلین نماز جمعه با حکم امام خمینی (ره) (۱۳۵۸ ه‍.ش)', false, 0],
     ], false];
 
     this.events[5][6] = [[
@@ -362,6 +366,7 @@ export default class evList {
     this.events[6][1] = [[
       ['روز بزرگداشت ابوعلی سینا', false, 0],
       ['روز پزشک', false, 0],
+      ['روز همدان', false, 0],
     ], false];
 
     this.events[6][2] = [[
@@ -465,6 +470,10 @@ export default class evList {
       ['روز همبستگی و همدردی با کودکان و نوجوانان فلسطینی', false, 0],
     ], false];
 
+    this.events[7][10] = [[
+      ['روز نخبگان', false, 0],
+    ], false];
+
     this.events[7][13] = [[
       ['هجرت حضرت امام خمینی (رحمة‌اللّه علیه) از عراق به پاریس (۱۳۵۷ ه‍.ش)', false, 0],
       ['روز نیروی انتظامی', false, 0],
@@ -541,12 +550,17 @@ export default class evList {
       ['روز بزرگداشت آیت‌اللّه علامه سیدمحمّدحسین طباطبایی (۱۳۶۰ ه‍.ش)', false, 0],
     ], false];
 
-    this.events[8][26] = [[
+    this.events[8][25] = [[
       ['روز اصفهان', false, 0],
     ], false];
 
     this.events[8][26] = [[
       ['سالروز آزادسازی سوسنگرد (۱۳۵۹ ه‍.ش)', false, 0],
+    ], false];
+
+    this.events[8][30] = [[
+      ['روز قهرمان ملّی', false, 0],
+      ['روز بزرگداشت ابونصر فارابی - روز حکمت و فلسفه', false, 0],
     ], false];
 
     this.events[9][5] = [[
@@ -613,7 +627,7 @@ export default class evList {
     ], false];
 
     this.events[9][30] = [[
-      ['شب یلدا', false, 1],
+      ['شب یلدا - ترویج فرهنگ میهمانی و پیوند با خویشان', false, 1],
     ], false];
 
     this.events[10][3] = [[
@@ -747,11 +761,13 @@ export default class evList {
 
     this.events[12][15] = [[
       ['روز درختکاری', false, 0],
+      ['روز آموزش همگانی حفظ محیط زیست', false, 0],
     ], false];
 
     this.events[12][18] = [[
       ['روز بزرگداشت سید‌جمال‌الدّین اسدآبادی', false, 0],
       ['سالروز تأسیس کانون‌های فرهنگی‌و‌هنری مساجد کشور', false, 0],
+      ['روز بوشهر', false, 0],
     ], false];
 
     this.events[12][20] = [[
@@ -784,7 +800,8 @@ export default class evList {
   addSpecificEvents() {
 
     this.events[12][this.Tarikh.julianDay_to_persian(this.Tarikh.lastNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, 12, 4))[2] - 1] = [[
-      ['شب چهارشنبه سوری : احتیاط کنیم!', false, 1]
+      ['روز تکریم همسایگان', false, 0],
+      ['شب چهارشنبه سوری : احتیاط کنیم!', false, 1],
     ], false];
 
   }

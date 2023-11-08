@@ -16,6 +16,10 @@ export default class evList {
       ['روز شعر و ادبیات آیینی - روز بزرگداشت محتشم کاشانی', false, 0],
     ], false];
 
+    this.events[1][2] = [[
+      ['روز امر به معروف و نهی از منکر', false, 0],
+    ], false];
+
     this.events[1][9] = [[
       ['تاسوعای حسینی', true, -1],
     ], true];
@@ -34,6 +38,7 @@ export default class evList {
 
     this.events[1][25] = [[
       ['شهادت حضرت امام زین‌العابدین علیه‌السلام :به روایتی (۹۵ ه‍.ق)', false, -1],
+      ['یادروز قیام مردم سیستان به خون‌خواهی شهدای کربلا (۶۲ ه‍.ق)', false, 0],
     ], false];
 
     this.events[2][7] = [[
@@ -278,17 +283,17 @@ export default class evList {
 
     //آخرین روز ماه صَفَر 
     this.events[2][this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 2)] = [[
-      ['شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1]
+      ['شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1],
     ], true];
 
     //آخرین روز ماه ذیقعده 
     this.events[11][this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 11)] = [[
-      ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1]
+      ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1],
     ], false];
 
     //آخرین جمعه‌ی قطعی ماه رمضان = روز قدس
     this.events[9][29 - ((29 + this.Tarikh.islamic_to_dayOfWeek_in_monthStart(this.todayObj.islamicYear, 9)) % 7)] = [[
-      ['روز قدس', false, 0]
+      ['روز قدس', false, 0],
     ], false];
 
   }

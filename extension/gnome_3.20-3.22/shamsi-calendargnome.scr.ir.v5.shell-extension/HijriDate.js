@@ -70,15 +70,14 @@ function miladi_to_julianDate(gy, gm, gd) {
 }
 
 // Private
-// https://github.com/ilius/starcal/blob/master/scal3/cal_types/hijri-monthes.json
 const ghamariMonths = {
-  startYear: 1427,/* =dim:firstYear */
-  startJulianDate: 2453766.5,/* =islamicA_to_julianDate(startYear,1,1) */
+  startYear: 1427,/* =iDoM:firstYear */
+  startJD: 2453767,/* =islamicA_to_julianDay(startYear,1,1) */
 
-  endYear: 1443,/* =dim:lastYear */
-  endJulianDate: 2459789.5,/* =islamicA_to_julianDate(endYear+1,1,1)-1 */
+  endYear: 1464,/* =iDoM:lastYear */
+  endJD: 2467232,/* =islamicA_to_julianDay(endYear+1,1,1)-1 */
 
-  dim: {
+  iDoM: {//islamicYear: [Sum, m1, ..., m12],
     1427: [355, 30, 29, 29, 30, 29, 30, 30, 30, 30, 29, 29, 30],
     1428: [354, 29, 30, 29, 29, 29, 30, 30, 29, 30, 30, 30, 29],
     1429: [354, 30, 29, 30, 29, 29, 29, 30, 30, 29, 30, 30, 29],
@@ -95,25 +94,46 @@ const ghamariMonths = {
     1440: [355, 30, 29, 30, 30, 30, 29, 30, 30, 29, 29, 30, 29],
     1441: [355, 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30],
     1442: [354, 29, 29, 30, 29, 30, 29, 30, 30, 29, 30, 30, 29],
-    1443: [354/*|355*/, 29, 30, 30, 29, 29, 30, 29, 29, 30, 30, 30, 29/*|30 :خنثی‌سازی اختلاف مجموع کل*/]
+    1443: [354, 29, 30, 30, 29, 29, 30, 29, 30, 30, 29, 30, 29],
+    1444: [354, 30, 30, 29, 30, 29, 29, 30, 29, 30, 29, 30, 29],
+    1445: [354, 30, 30, 30, 29, 30, 29, 29, 30, 29, 30, 29, 29],
+    1446: [355, 30, 30, 30, 29, 30, 30, 29, 30 /* :1403_Official_Iranian_Calendar and Temporary_1404: */, 29, 29, 30, 29],
+    1447: [355, 29, 30, 29, 30, 30, 30, 29, 30, 30, 29, 29, 30],
+    1448: [354, 29, 29, 30, 29, 30, 30, 29, 30, 30, 30, 29, 29],
+    1449: [355, 30, 29, 29, 30, 29, 30, 29, 30, 30, 30, 29, 30],
+    1450: [354, 29, 30, 29, 29, 30, 29, 30, 29, 30, 30, 30, 29],
+    1451: [354, 30, 29, 30, 29, 29, 30, 29, 30, 29, 30, 30, 29],
+    1452: [354, 30, 30, 29, 30, 29, 29, 30, 29, 30, 29, 30, 29],
+    1453: [355, 30, 30, 29, 30, 29, 30, 30, 29, 29, 30, 29, 30],
+    1454: [354, 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 29],
+    1455: [355, 30, 29, 30, 29, 30, 29, 30, 30, 29, 30, 30, 29],
+    1456: [355, 29, 30, 29, 29, 30, 29, 30, 30, 29, 30, 30, 30],
+    1457: [354, 29, 29, 30, 29, 29, 30, 29, 30, 29, 30, 30, 30],
+    1458: [354, 30, 29, 29, 30, 29, 29, 30, 29, 30, 29, 30, 30],
+    1459: [354, 30, 29, 30, 29, 30, 29, 29, 30, 29, 30, 29, 30],
+    1460: [354, 30, 29, 30, 30, 29, 30, 29, 29, 30, 29, 30, 29],
+    1461: [355, 30, 29, 30, 30, 29, 30, 30, 29, 29, 30, 29, 30],
+    1462: [354, 29, 30, 29, 30, 29, 30, 30, 29, 30, 29, 30, 29],
+    1463: [355, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30, 29, 30],
+    1464: [354/* : 355|354 <- Sum <- */, 30, 29, 29, 30, 29, 29, 30, 29, 30, 30, 29, 30/*: 30|29 -> verify -> true */],
     /*
-      اختلاف = endJd - islamicA_to_julianDate(endYear,12,29)
+      verify = ( (endJD - islamicA_to_julianDay(endYear,12,iDoM[endYear][12])) === 0 );
     */
   }
 };
 
 function julianDate_to_ghamari(julianDate) {
-  if (julianDate < ghamariMonths.startJulianDate || julianDate > ghamariMonths.endJulianDate) {
+  if (julianDate < ghamariMonths.startJD || julianDate > ghamariMonths.endJD) {
     return this.julianDate_to_ghamari_1(julianDate);
   } else {
     let iy, im;
-    let id = julianDate - ghamariMonths.startJulianDate + 1;
-    for (iy in ghamariMonths.dim) {
-      if (id > ghamariMonths.dim[iy][0]) {
-        id -= ghamariMonths.dim[iy][0];
+    let id = julianDate - ghamariMonths.startJD + 1;
+    for (iy in ghamariMonths.iDoM) {
+      if (id > ghamariMonths.iDoM[iy][0]) {
+        id -= ghamariMonths.iDoM[iy][0];
       } else {
-        for (im = 1; im < 13, id > ghamariMonths.dim[iy][im]; im++) {
-          id -= ghamariMonths.dim[iy][im];
+        for (im = 1; im < 13, id > ghamariMonths.iDoM[iy][im]; im++) {
+          id -= ghamariMonths.iDoM[iy][im];
         }
         break;
       }
@@ -126,12 +146,12 @@ function ghamari_to_julianDate(iy, im, id) {
   if (iy < ghamariMonths.startYear || iy > ghamariMonths.endYear) {
     return this.ghamari_to_julianDate_1(iy, im, id);
   } else {
-    let julianDate = ghamariMonths.startJulianDate - 1 + id;
-    for (let y in ghamariMonths.dim) {
+    let julianDate = ghamariMonths.startJD - 1 + id;
+    for (let y in ghamariMonths.iDoM) {
       if (y < iy) {
-        julianDate += ghamariMonths.dim[y][0];
+        julianDate += ghamariMonths.iDoM[y][0];
       } else {
-        for (let m = 1; m < im; m++)julianDate += ghamariMonths.dim[iy][m];
+        for (let m = 1; m < im; m++)julianDate += ghamariMonths.iDoM[iy][m];
         break;
       }
     }

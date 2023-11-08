@@ -104,10 +104,6 @@ export default class evList {
       ['روز جهانی علم در خدمت صلح و توسعه', false, 0],
     ], false];
 
-    this.events[11][21] = [[
-      ['روز حکمت و فلسفه - روز بزرگداشت ابونصر فارابی', false, 0],
-    ], false];
-
     this.events[12][1] = [[
       ['روز جهانی مبارزه با ایدز', false, 0],
     ], false];
