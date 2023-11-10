@@ -292,7 +292,6 @@ export default class evList {
 
     this.events[5][5] = [[
       ['سالروز عملیات افتخار‌آفرین مرصاد (۱۳۶۷ ه‍.ش)', false, 0],
-      ['روز مقاومت و پایداری', false, 0],
       ['اقامه‌ی اوّلین نماز جمعه با حکم امام خمینی (ره) (۱۳۵۸ ه‍.ش)', false, 0],
     ], false];
 
@@ -385,7 +384,7 @@ export default class evList {
     this.events[6][5] = [[
       ['روز بزرگداشت محمّدبن زکریای رازی', false, 0],
       ['روز داروسازی', false, 0],
-      ['روز کشتی', false, 0],
+      ['روز کُشتی', false, 0],
     ], false];
 
     this.events[6][8] = [[
@@ -620,6 +619,7 @@ export default class evList {
     this.events[9][27] = [[
       ['شهادت آیت‌اللّه دکتر محمّد مفتّح (۱۳۵۸ ه‍.ش)', false, 0],
       ['روز وحدت حوزه و دانشگاه', false, 0],
+      ['روز جهان عاری از خشونت و افراطی‌گری', false, 0],
     ], false];
 
     this.events[9][29] = [[
@@ -703,7 +703,8 @@ export default class evList {
     ], false];
 
     this.events[11][12] = [[
-      ['سالروز بازگشت حضرت امام خمینی (رحمة‌اللّه علیه) به ایران و آغاز دهه‌ی مبارک فجر انقلاب اسلامی', false, 1],
+      ['سالروز بازگشت حضرت امام خمینی (رحمة‌اللّه علیه) به ایران (۱۳۵۷ ه‍.ش)', false, 1],
+      ['آغاز دهه‌ی مبارک فجر انقلاب اسلامی', false, 1],
     ], false];
 
     this.events[11][14] = [[
@@ -783,6 +784,7 @@ export default class evList {
     ], false];
 
     this.events[12][25] = [[
+      ['روز بزرگداشت پروین اعتصامی', false, 0],
       ['بمباران شیمیایی حلبچه به دست ارتش بعث عراق (۱۳۶۶ ه‍.ش)', false, 0],
     ], false];
 
@@ -799,9 +801,15 @@ export default class evList {
 
   addSpecificEvents() {
 
+    //آخرین سه‌شنبه‌ی (و شب قبل آخرین چهارشنبه‌ی) اسفند
     this.events[12][this.Tarikh.julianDay_to_persian(this.Tarikh.lastNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, 12, 4))[2] - 1] = [[
       ['روز تکریم همسایگان', false, 0],
       ['شب چهارشنبه سوری : احتیاط کنیم!', false, 1],
+    ], false];
+
+    //دومین جمعه‌ی مهر
+    this.events[7][this.Tarikh.julianDay_to_persian(this.Tarikh.firstNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, 7, 6))[2] + 7] = [[
+      ['آیین مذهبی قالیشویان مشهد اردهال و بزرگداشت امامزاده علی بن محمد باقر علیه‌السلام', false, 0],
     ], false];
 
   }
