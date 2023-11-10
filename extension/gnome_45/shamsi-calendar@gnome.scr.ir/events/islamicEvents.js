@@ -293,7 +293,7 @@ export default class evList {
     this.events[tmpM][tmpD] = [
       [
         ...this.events[tmpM][tmpD][0],
-        ['شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1],
+        ['(آخر صفر): شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1],
       ],
       true/* =(true || this.events[tmpM][tmpD][1]) */
     ];
@@ -305,7 +305,7 @@ export default class evList {
     this.events[tmpM][tmpD] = [
       [
         ...this.events[tmpM][tmpD][0],
-        ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1],
+        ['(آخر ذی‌القعده): شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1],
       ],
       this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
     ];
@@ -317,7 +317,7 @@ export default class evList {
     this.events[tmpM][tmpD] = [
       [
         ...this.events[tmpM][tmpD][0],
-        ['روز قدس', false, 0],
+        ['روز قدس (هم‌زمان با آخرین جمعه‌ی قطعی ماه مبارک رمضان)', false, 0],
       ],
       this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
     ];

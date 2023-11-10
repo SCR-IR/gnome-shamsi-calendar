@@ -809,7 +809,7 @@ export default class evList {
     this.events[tmpM][tmpD] = [
       [
         ...this.events[tmpM][tmpD][0],
-        ['روز تکریم همسایگان', false, 0],
+        ['روز تکریم همسایگان (آخرین سه‌شنبه‌ی سال)', false, 0],
         ['شب چهارشنبه سوری : احتیاط کنیم!', false, 1],
       ],
       this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
@@ -822,7 +822,7 @@ export default class evList {
     this.events[tmpM][tmpD] = [
       [
         ...this.events[tmpM][tmpD][0],
-        ['آیین مذهبی قالیشویان مشهد اردهال و بزرگداشت امامزاده علی بن محمد باقر علیه‌السلام', false, 0],
+        ['آیین مذهبی قالیشویان مشهد اردهال و بزرگداشت امامزاده علی بن محمد باقر علیه‌السلام (دومین جمعه‌ی مهر)', false, 0],
       ],
       this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
     ];

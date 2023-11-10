@@ -289,37 +289,37 @@ evList.prototype = {
   addSpecificEvents: function () {
 
     //آخرین روز ماه صَفَر
-    tmpM = 12;
-    tmpD = this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 2);
+    tmpM = 2;
+    tmpD = this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, tmpM);
     if (this.events[tmpM][tmpD] === undefined) this.events[tmpM][tmpD] = [[], false];
     this.events[tmpM][tmpD] = [
       [
         ...this.events[tmpM][tmpD][0],
-        ['شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1],
+        ['(آخر صفر): شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1],
       ],
       true/* =(true || this.events[tmpM][tmpD][1]) */
     ];
 
     //آخرین روز ماه ذیقعده
     tmpM = 11;
-    tmpD = this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 11);
+    tmpD = this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, tmpM);
     if (this.events[tmpM][tmpD] === undefined) this.events[tmpM][tmpD] = [[], false];
     this.events[tmpM][tmpD] = [
       [
         ...this.events[tmpM][tmpD][0],
-        ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1],
+        ['(آخر ذی‌القعده): شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1],
       ],
       this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
     ];
 
     //آخرین جمعه‌ی قطعی ماه رمضان = روز قدس
     tmpM = 9;
-    tmpD = 29 - ((29 + this.Tarikh.islamic_to_dayOfWeek_in_monthStart(this.todayObj.islamicYear, 9)) % 7);
+    tmpD = 29 - ((29 + this.Tarikh.islamic_to_dayOfWeek_in_monthStart(this.todayObj.islamicYear, tmpM)) % 7);
     if (this.events[tmpM][tmpD] === undefined) this.events[tmpM][tmpD] = [[], false];
     this.events[tmpM][tmpD] = [
       [
         ...this.events[tmpM][tmpD][0],
-        ['روز قدس', false, 0],
+        ['روز قدس (هم‌زمان با آخرین جمعه‌ی قطعی ماه مبارک رمضان)', false, 0],
       ],
       this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
     ];
