@@ -288,20 +288,41 @@ evList.prototype = {
 
   addSpecificEvents: function () {
 
-    //آخرین روز ماه صَفَر 
-    this.events[2][this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 2)] = [[
-      ['شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1],
-    ], true];
+    //آخرین روز ماه صَفَر
+    tmpM = 12;
+    tmpD = this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 2);
+    if (this.events[tmpM][tmpD] === undefined) this.events[tmpM][tmpD] = [[], false];
+    this.events[tmpM][tmpD] = [
+      [
+        ...this.events[tmpM][tmpD][0],
+        ['شهادت حضرت امام رضا علیه‌السلام (۲۰۳ ه‍.ق)', true, -1],
+      ],
+      true/* =(true || this.events[tmpM][tmpD][1]) */
+    ];
 
-    //آخرین روز ماه ذیقعده 
-    this.events[11][this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 11)] = [[
-      ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1],
-    ], false];
+    //آخرین روز ماه ذیقعده
+    tmpM = 11;
+    tmpD = this.Tarikh.daysOfMonth_islamic(this.todayObj.islamicYear, 11);
+    if (this.events[tmpM][tmpD] === undefined) this.events[tmpM][tmpD] = [[], false];
+    this.events[tmpM][tmpD] = [
+      [
+        ...this.events[tmpM][tmpD][0],
+        ['شهادت حضرت امام محمد تقی علیه‌السلام «جوادالائمه» (۲۲۰ ه‍.ق)', false, -1],
+      ],
+      this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
+    ];
 
     //آخرین جمعه‌ی قطعی ماه رمضان = روز قدس
-    this.events[9][29 - ((29 + this.Tarikh.islamic_to_dayOfWeek_in_monthStart(this.todayObj.islamicYear, 9)) % 7)] = [[
-      ['روز قدس', false, 0],
-    ], false];
+    tmpM = 9;
+    tmpD = 29 - ((29 + this.Tarikh.islamic_to_dayOfWeek_in_monthStart(this.todayObj.islamicYear, 9)) % 7);
+    if (this.events[tmpM][tmpD] === undefined) this.events[tmpM][tmpD] = [[], false];
+    this.events[tmpM][tmpD] = [
+      [
+        ...this.events[tmpM][tmpD][0],
+        ['روز قدس', false, 0],
+      ],
+      this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
+    ];
 
   }
 };

@@ -805,15 +805,29 @@ evList.prototype = {
   addSpecificEvents: function () {
 
     //آخرین سه‌شنبه‌ی (و شب قبل آخرین چهارشنبه‌ی) اسفند
-    this.events[12][this.Tarikh.julianDay_to_persian(this.Tarikh.lastNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, 12, 4))[2] - 1] = [[
-      ['روز تکریم همسایگان', false, 0],
-      ['شب چهارشنبه سوری : احتیاط کنیم!', false, 1],
-    ], false];
+    tmpM = 12;
+    tmpD = this.Tarikh.julianDay_to_persian(this.Tarikh.lastNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, tmpM, 4))[2] - 1;
+    if (this.events[tmpM][tmpD] === undefined) this.events[tmpM][tmpD] = [[], false];
+    this.events[tmpM][tmpD] = [
+      [
+        ...this.events[tmpM][tmpD][0],
+        ['روز تکریم همسایگان', false, 0],
+        ['شب چهارشنبه سوری : احتیاط کنیم!', false, 1],
+      ],
+      this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
+    ];
 
     //دومین جمعه‌ی مهر
-    this.events[7][this.Tarikh.julianDay_to_persian(this.Tarikh.firstNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, 7, 6))[2] + 7] = [[
-      ['آیین مذهبی قالیشویان مشهد اردهال و بزرگداشت امامزاده علی بن محمد باقر علیه‌السلام', false, 0],
-    ], false];
+    tmpM = 7;
+    tmpD = this.Tarikh.julianDay_to_persian(this.Tarikh.firstNthDayOfWeek_in_persianMonth(this.todayObj.persianYear, tmpM, 6))[2] + 7;
+    if (this.events[tmpM][tmpD] === undefined) this.events[tmpM][tmpD] = [[], false];
+    this.events[tmpM][tmpD] = [
+      [
+        ...this.events[tmpM][tmpD][0],
+        ['آیین مذهبی قالیشویان مشهد اردهال و بزرگداشت امامزاده علی بن محمد باقر علیه‌السلام', false, 0],
+      ],
+      this.events[tmpM][tmpD][1]/* =(false || this.events[tmpM][tmpD][1]) */
+    ];
 
   }
 };
