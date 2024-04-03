@@ -9,5 +9,6 @@
  |   gnome_3.28-3.34  |    14     | 3.28 - 40   | Play Azan           |
  |   gnome_3.36-44    |    34     | 3.36 - 44   | Play Azan + Themes  |
  |   gnome_45         |    35     | 45          | Play Azan + Themes  |
+ |   gnome_46         |    36     | 46          | Play Azan + Themes  |
  |____________________|___________|_____________|_____________________|
  

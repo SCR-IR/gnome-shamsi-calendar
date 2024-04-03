@@ -76,6 +76,10 @@ evList.prototype = {
       ['آغاز هفته‌ی وحدت', false, 0],
     ], false];
 
+    this.events[3][14] = [[
+      ['روز سیستان و بلوچستان', false, 0],
+    ], false];
+
     this.events[3][16] = [[
       ['روز وقف', false, 0],
     ], false];
