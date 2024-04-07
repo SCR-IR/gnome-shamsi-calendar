@@ -3,7 +3,7 @@ import Gtk from 'gi://Gtk';
 import Gio from 'gi://Gio';
 import Gdk from 'gi://Gdk';
 import GObject from 'gi://GObject';
-import { یت } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 import { Str, getPrayTimeSetting } from './otherFunctions.js';
 import PrayTimes from './PrayTimes.js';
