@@ -8,7 +8,7 @@
  |   gnome_3.24-3.26  |     8     | 3.24 - 3.38 | Setting + PrayTimes |
  |   gnome_3.28-3.34  |    14     | 3.28 - 40   | Play Azan           |
  |   gnome_3.36-44    |    36     | 3.36 - 44   | Play Azan + Themes  |
- |   gnome_45         |    37     | 45          | Play Azan + Themes  |
+ |   gnome_45         |    39     | 45          | Play Azan + Themes  |
  |   gnome_46         |    38     | 46          | Play Azan + Themes  |
  |____________________|___________|_____________|_____________________|
  
