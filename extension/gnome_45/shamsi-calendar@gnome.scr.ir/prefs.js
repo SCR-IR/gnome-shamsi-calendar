@@ -3,7 +3,7 @@ import Gtk from 'gi://Gtk';
 import Gio from 'gi://Gio';
 import Gdk from 'gi://Gdk';
 import GObject from 'gi://GObject';
-import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { یت } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 import { Str, getPrayTimeSetting } from './otherFunctions.js';
 import PrayTimes from './PrayTimes.js';
@@ -1308,7 +1308,7 @@ class App extends Adw.PreferencesPage {
     this.vbox6.append(resetBtn);
 
     this.vbox7.append(new Gtk.Label({
-      label: 'افزونه‌ی تقویم هجری شمسی، قمری و میلادی برای میز‌کار گنوم لینوکس\n\nتوسعه‌دهنده:\n<a href="https://jdf.scr.ir/gnome_shamsi_calendar">https://jdf.scr.ir/gnome_shamsi_calendar</a>\n\nحمایت مالی:\n<a href="https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar">https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar</a>\n\nنصب:\n<a href="https://extensions.gnome.org/extension/3618/">https://extensions.gnome.org/extension/3618</a>\n\nکد منبع:\n<a href="https://github.com/scr-ir/gnome-shamsi-calendar/">https://github.com/scr-ir/gnome-shamsi-calendar</a>',
+      label: 'افزونه‌ی تقویم هجری شمسی، قمری و میلادی برای میز‌کار گنوم لینوکس\n\nصفحه‌ی رسمی (دریافت آخرین نسخه):\n<a href="https://jdf.scr.ir/gnome_shamsi_calendar">https://jdf.scr.ir/gnome_shamsi_calendar</a>\n\nحمایت مالی:\n<a href="https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar">https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar</a>\n\nصفحه‌ی گنوم:\n<a href="https://extensions.gnome.org/extension/3618/">https://extensions.gnome.org/extension/3618</a>\n\nکد منبع:\n<a href="https://github.com/scr-ir/gnome-shamsi-calendar/">https://github.com/scr-ir/gnome-shamsi-calendar</a>',
       use_markup: true
     }));
   }

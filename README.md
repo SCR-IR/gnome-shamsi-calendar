@@ -9,21 +9,11 @@
 ![Screenshot](https://github.com/SCR-IR/gnome-shamsi-calendar/blob/main/Screenshot.gif?raw=true)
 
 #### Install , نصب:
-> * Clone the repository (Download) , دریافت مخزن
-> * Go to the cloned directory , رفتن به پوشه‌ی آن
-> 
-> * ```chmod +x 1-install.sh 2-install.sh```
->
-> * 1- run: ```./1-install.sh``` :اجرای
-> 
-> * 2- Restart gnome-shell , اجرای مجدّد گنوم:\
-> xorg => (Alt+F2 -> r -> Enter)\
-> xorg or wayland => (logout + login)
-> 
-> * 3- run: ```./2-install.sh``` :اجرای
-> * OK , کار تمام است
+* https://github.com/SCR-IR/gnome-shamsi-calendar/releases
 
-#### Links:
-* :octocat: https://github.com/scr-ir/gnome-shamsi-calendar
-* :link: https://extensions.gnome.org/extension/3618/
+#### Check last version , بررسی آخرین نسخه:
+* https://jdf.scr.ir/gnome_shamsi_calendar
 
+#### Other links , سایر پیوندها:
+* https://extensions.gnome.org/extension/3618/
+* https://github.com/scr-ir/gnome-shamsi-calendar

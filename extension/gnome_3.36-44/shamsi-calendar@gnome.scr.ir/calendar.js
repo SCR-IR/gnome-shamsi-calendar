@@ -243,8 +243,8 @@ var Calendar = class {
     let row = 2;
 
     let selectedMonthEvents = [];
-    let selectedDateEvents;
-    let afterSelectedDateEvents;
+    let selectedDateEvents = [[], false];
+    let afterSelectedDateEvents = [[], false];
 
     while (true) {
       // find events and holidays

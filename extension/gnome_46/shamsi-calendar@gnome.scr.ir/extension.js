@@ -460,10 +460,6 @@ function notify(title, body = '', iconName = 'x-office-calendar') {
   source.addNotification(notification);
 }
 
-
-
-
-
 export default class ShamsiCalendarExtension extends Extension {
 
   enable() {
