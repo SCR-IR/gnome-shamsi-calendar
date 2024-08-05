@@ -27,7 +27,7 @@ elif [ "`echo "${gnomeVersion} >= 3.20" | bc`" -eq 1 -a "`echo "${gnomeVersion} 
 then
 	dirName="gnome_3.20-3.22"
 else
-	echo "Gnome $gnomeVersion not support! Please Update extension"
+	echo "Gnome $gnomeVersion is not supported! Please update the extension"
 fi
 
 if [ "$dirName" != "" ]
