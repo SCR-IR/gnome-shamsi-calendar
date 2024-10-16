@@ -11,6 +11,6 @@ gnome-shell-extension-tool -e $extName >/dev/null 2>&1
 
 
 echo ""
-echo "Extension is Enable"
+echo "Extension is Enabled"
 echo ""
 
