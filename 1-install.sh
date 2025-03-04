@@ -37,8 +37,8 @@ then
     cd ./extension/$dirName/$uuid
     
     ## After Change & Develop:
-    glib-compile-schemas ./schemas/
-    zip -qrD9 ../$dirName.zip ./
+    glib-compile-schemas ./schemas/ 2>&1
+    zip -qrD9 ../$dirName.zip ./ 2>&1
     
     ## Install Extension:
     extDir=$HOME/.local/share/gnome-shell/extensions/$uuid/
