@@ -157,7 +157,7 @@ const Indicator = GObject.registerClass(
 
       // Add preferences button
       let icon = new St.Icon({
-        icon_name: 'emblem-system-symbolic',
+        icon_name: 'preferences-system-symbolic',
         icon_size: 25,
         style: 'color: #3af'
       });
@@ -176,7 +176,7 @@ const Indicator = GObject.registerClass(
 
       // Add Nowrooz button
       icon = new St.Icon({
-        icon_name: 'emblem-favorite-symbolic',
+        icon_name: 'starred-symbolic',
         icon_size: 25,
         style: 'color: #c55'
       });

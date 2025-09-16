@@ -59,13 +59,13 @@ class App extends Adw.PreferencesPage {
 
 
     [
-      ['vbox1', 'نوار وضعیت', 'emblem-system-symbolic'],
+      ['vbox1', 'نوار وضعیت', 'user-home-symbolic'],
       ['vbox2', 'نمایش', 'emblem-system-symbolic'],
-      ['vbox3', 'مناسبت‌ها', 'emblem-system-symbolic'],
-      ['vbox4', 'هفته', 'emblem-system-symbolic'],
-      ['vbox5', 'اوقات شرعی', 'emblem-system-symbolic'],
-      ['vbox6', 'بازنشانی', 'emblem-system-symbolic'],
-      ['vbox7', 'درباره', 'emblem-system-symbolic'],
+      ['vbox3', 'مناسبت‌ها', 'view-list-symbolic'],
+      ['vbox4', 'هفته', 'x-office-calendar-symbolic'],
+      ['vbox5', 'اوقات شرعی', 'audio-speakers-symbolic'],
+      ['vbox6', 'بازنشانی', 'view-refresh-symbolic'],
+      ['vbox7', 'درباره', 'help-about-symbolic'],
     ].forEach((v) => {
       this['page' + v[0]] = new Adw.PreferencesPage({
         title: v[1],
