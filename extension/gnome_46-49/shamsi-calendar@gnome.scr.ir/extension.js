@@ -18,7 +18,6 @@ import * as Events from './Events.js';
 import * as tahvil from './tahvil.js';
 import * as file from './file.js';
 import * as sound from './sound.js';
-const player = sound.player;
 
 let _mainLable, _indicator, _prayTimeIs, messageTray, _timers;
 
@@ -36,8 +35,26 @@ const Indicator = GObject.registerClass(
       this.uuid = _arg.uuid;
       this.path = _arg.path;
       super._init(({ left: 1.0, center: 0.5, right: 0.0 }[this.schema.get_string('window-position')]), 'تقویم هجری شمسی'/*, false*/);
-      this.themeID = '-thm' + this.schema.get_int('theme-id');
       this.NewPrayTimes = new PrayTimes();
+      this._cssThemeID;
+      this.interface_schema = new Gio.Settings({ schema: 'org.gnome.desktop.interface' });//Gnome Settings for check: dark theme
+
+      let onChangeTheme = () => {
+        this._cssThemeID = '-thm' + (
+          (isDarkGnomeTheme(this.interface_schema)) ?
+            this.schema.get_int('dark-theme-id') : this.schema.get_int('light-theme-id')
+        );
+      };
+
+      onChangeTheme();
+
+      this.interface_schema_gnome_theme_change_signal = this.interface_schema.connect('changed', () => {
+        onChangeTheme();
+        _arg.restartExtension();
+      });
+
+
+
 
 
       messageTray = new MessageTray.MessageTray({ style_class: 'shcalendar-system-tray shcalendar-font' });
@@ -57,41 +74,40 @@ const Indicator = GObject.registerClass(
       let dateObj = new Tarikh.TarikhObject();
       let isHoliday = new Events.Events(dateObj, this.schema).getEvents()[1];
       let that = this;
-      this.schema_not_holiday_color_change_signal = this.schema.connect('changed::not-holiday-color', () => {
-        if (this.schema.get_boolean('custom-color') && !isHoliday) {
-          _mainLable.set_style('color: ' + this.schema.get_string('not-holiday-color'));
-        }
-      }
-      );
-      this.schema_holiday_color_change_signal = this.schema.connect('changed::holiday-color', () => {
-        if (this.schema.get_boolean('custom-color') && isHoliday) {
-          _mainLable.set_style('color: ' + this.schema.get_string('holiday-color'));
-        }
-      }
-      );
 
-      this.schema_custom_color_signal = this.schema.connect('changed::custom-color', () => {
-        if (this.schema.get_boolean('custom-color')) {
-          _mainLable.set_style('color: ' + this.schema.get_string(_labelSchemaName(this.schema)));
-        } else {
-          _mainLable.set_style('');
-        }
-      }
-      );
-
-      this.schema_widget_format_signal = this.schema.connect('changed::widget-format', () => {
-        this.updateDate(true, true)
-      }
-      );
-
-      this.schema_theme_id_signal = this.schema.connect('changed::theme-id', _arg.restartExtension
-      );
-
-      this.schema_widget_position_signal = this.schema.connect('changed::widget-position', _arg.restartExtension
-      );
-
-      this.schema_window_position_signal = this.schema.connect('changed::window-position', _arg.restartExtension
-      );
+      this.schema_all_change_signals = [
+        this.schema.connect('changed::not-holiday-color', () => {
+          if (this.schema.get_boolean('custom-color') && !isHoliday) {
+            _mainLable.set_style('color: ' + this.schema.get_string('not-holiday-color'));
+          }
+        })
+        ,
+        this.schema.connect('changed::holiday-color', () => {
+          if (this.schema.get_boolean('custom-color') && isHoliday) {
+            _mainLable.set_style('color: ' + this.schema.get_string('holiday-color'));
+          }
+        })
+        ,
+        this.schema.connect('changed::custom-color', () => {
+          if (this.schema.get_boolean('custom-color')) {
+            _mainLable.set_style('color: ' + this.schema.get_string(_labelSchemaName(this.schema)));
+          } else {
+            _mainLable.set_style('');
+          }
+        })
+        ,
+        this.schema.connect('changed::widget-format', () => {
+          this.updateDate(true, true);
+        })
+        ,
+        this.schema.connect('changed::dark-theme-id', _arg.restartExtension)
+        ,
+        this.schema.connect('changed::light-theme-id', _arg.restartExtension)
+        ,
+        this.schema.connect('changed::widget-position', _arg.restartExtension)
+        ,
+        this.schema.connect('changed::window-position', _arg.restartExtension)
+      ];
 
       // /////////////////////////////
       // // some codes for fonts
@@ -101,26 +117,26 @@ const Indicator = GObject.registerClass(
       // if (this.schema.get_boolean('custom-font')) {
       //   _mainLable.set_style('font-family: ' + font);
       // }
-      // this.schema.connect('changed::font', (schema, key) => {
-      //     if (this.schema.get_boolean('custom-font')) {
-      //       let font = this.schema.get_string('font-name').split(' ');
-      //       font.pop(); // remove size
-      //       font = font.join(' ');
-      //       _mainLable.set_style('font-family: ' + font);
-      //     }
+      // this.schema_all_change_signals.push(this.schema.connect('changed::font', (schema, key) => {
+      //   if (this.schema.get_boolean('custom-font')) {
+      //     let font = this.schema.get_string('font-name').split(' ');
+      //     font.pop(); // remove size
+      //     font = font.join(' ');
+      //     _mainLable.set_style('font-family: ' + font);
       //   }
-      // );
-      // this.schema.connect('changed::custom-font', (schema, key) => {
-      //     if (this.schema.get_boolean('custom-font')) {
-      //       let font = this.schema.get_string('font-name').split(' ');
-      //       font.pop(); // remove size
-      //       font = font.join(' ');
-      //       _mainLable.set_style('font-family: ' + font);
-      //     } else {
-      //       _mainLable.set_style('font-family: ');
-      //     }
+      // }
+      // ));
+      // this.schema_all_change_signals.push(this.schema.connect('changed::custom-font', (schema, key) => {
+      //   if (this.schema.get_boolean('custom-font')) {
+      //     let font = this.schema.get_string('font-name').split(' ');
+      //     font.pop(); // remove size
+      //     font = font.join(' ');
+      //     _mainLable.set_style('font-family: ' + font);
+      //   } else {
+      //     _mainLable.set_style('font-family: ');
       //   }
-      // );
+      // }
+      // ));
       // /////////////////////////////
 
       this._todayJD = '';
@@ -136,12 +152,13 @@ const Indicator = GObject.registerClass(
 
       this.menu.addMenuItem(calendar);
 
-      this._calendar = new Calendar.Calendar(this.schema);
+
+      this._calendar = new Calendar.Calendar(this.schema, this._cssThemeID);
       vbox.add_child(this._calendar.actor);
 
       let actionButtons = new St.BoxLayout({
         vertical: false,
-        style_class: 'shcalendar shcalendar' + this.themeID + ' shcalendar-font shcalendar-bottom-menu shcalendar-bottom-menu' + this.themeID
+        style_class: 'shcalendar shcalendar' + this._cssThemeID + ' shcalendar-font shcalendar-bottom-menu shcalendar-bottom-menu' + this._cssThemeID
       });
       vbox.add_child(actionButtons);
 
@@ -149,8 +166,9 @@ const Indicator = GObject.registerClass(
         text: '',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
-        style_class: 'shcalendar-month-heading shcalendar-month-heading' + this.themeID + ' shcalendar-txt-bold shcalendar-txt-green' + this.themeID
+        style_class: 'shcalendar-month-heading shcalendar-month-heading' + this._cssThemeID + ' shcalendar-txt-bold shcalendar-txt-green' + this._cssThemeID
       });
+
 
 
 
@@ -165,7 +183,7 @@ const Indicator = GObject.registerClass(
         child: icon,
         reactive: true,
         can_focus: true,
-        style_class: 'shcalendar-options-button shcalendar-options-button' + this.themeID
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this._cssThemeID
       });
       preferencesIcon.connect('clicked', _arg.openPreferences);
       actionButtons.add_child(preferencesIcon);
@@ -185,10 +203,9 @@ const Indicator = GObject.registerClass(
         child: icon,
         reactive: true,
         can_focus: true,
-        style_class: 'shcalendar-options-button shcalendar-options-button' + this.themeID
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this._cssThemeID
       });
       nowroozIcon.connect('clicked', function () {
-
         // let month_delta = 12 - dateObj.persianMonth;
         // let day_delta, nowrooz = '';
         // if (month_delta >= 6) {
@@ -196,9 +213,7 @@ const Indicator = GObject.registerClass(
         // } else {
         //   day_delta = 30 - dateObj.persianDay;
         // }
-
         // if (dateObj.persianMonth !== 12) nowrooz += month_delta + ' ماه و ';
-
         // if (day_delta !== 0) {
         //   nowrooz += day_delta + ' روز مانده به ';
         //   nowrooz += 'نوروز سال ' + (dateObj.persianYear + 1);
@@ -215,7 +230,7 @@ const Indicator = GObject.registerClass(
 
 
 
-
+      // Add Theme button
       let icon4 = new St.Icon({
         icon_name: 'night-light-symbolic',
         icon_size: 25,
@@ -225,10 +240,13 @@ const Indicator = GObject.registerClass(
         child: icon4,
         reactive: true,
         can_focus: true,
-        style_class: 'shcalendar-options-button shcalendar-options-button' + this.themeID
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this._cssThemeID
       });
       themeIcon.connect('clicked', () => {
-        this.schema.set_int('theme-id', (this.themeID === '-thm0') ? 1 : 0);
+        this.schema.set_int(
+          (isDarkGnomeTheme(this.interface_schema)) ? 'dark-theme-id' : 'light-theme-id',
+          (this._cssThemeID === '-thm1') ? 0 : 1
+        );
       });
       actionButtons.add_child(themeIcon);
 
@@ -236,6 +254,7 @@ const Indicator = GObject.registerClass(
 
 
 
+      // Add refresh button
       let icon3 = new St.Icon({
         icon_name: 'view-refresh-symbolic',
         icon_size: 25,
@@ -245,7 +264,7 @@ const Indicator = GObject.registerClass(
         child: icon3,
         reactive: true,
         can_focus: true,
-        style_class: 'shcalendar-options-button shcalendar-options-button' + this.themeID
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this._cssThemeID
       });
       todayIcon.connect('clicked', function () {
         that._calendar._selectedDateObj.setNow();
@@ -273,12 +292,10 @@ const Indicator = GObject.registerClass(
         GLib.PRIORITY_DEFAULT,
         60 - (new Date().getSeconds()),
         () => {
-          // console.log(':::timer1')
           _timers.push(GLib.timeout_add_seconds(
             GLib.PRIORITY_DEFAULT,
             60,
             () => {
-              // console.log(':::timer2')
               this.checkPrayTime();
               return GLib.SOURCE_CONTINUE;
             }
@@ -288,6 +305,8 @@ const Indicator = GObject.registerClass(
         }
       ));
     }
+
+
 
     updateDate(skip_notification = false, force = false) {
 
@@ -387,11 +406,42 @@ const Indicator = GObject.registerClass(
 
         // now: is pray_time and play_or_show is not run
 
+        let notifyIsEnable = false;
         let islamic = Tarikh.gregorian_to_islamic(now.getFullYear(), now.getMonth() + 1, now.getDate());
-        // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+        // Schema Times settings value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
         if (
           settings.TextNotify === 'always' ||
           (settings.ShowTime === 'ramazan' && islamic[1] === 9)
+        ) {
+          notifyIsEnable = true;
+          notify(
+            this.NewPrayTimes.persianMap[tName] + ' به اُفق ' + this.schema.get_string('praytime-city') +
+            ' / ساعت ' + Str.numbersFormat(_prayTimes['main'][tName]) + (
+              (_prayTimes['main'][tName] === timeStr) ?
+                '' : ' _ احتیاط ' + Str.numbersFormat(timeStr)
+            )
+          );
+        }
+
+        if (
+          settings.PlaySound === 'never' ||
+          (settings.PlaySound === 'ramazan' && islamic[1] !== 9)
+        ) continue;
+
+        if (settings.SoundId === '_custom_') {
+          settings.SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
+        } else {
+          settings.SoundUri = this.path + '/' + sound.soundsDir + '/' + sound.sounds[settings.SoundId][1];
+        }
+
+        // if (player !== null) {
+        //   // player.setVolume(this.schema.get_double('praytime-play-valume')); // this option removed!
+        //   player.setUri({ ...settings.SoundUri});
+        //   player.play();
+        // }
+        if (
+          !sound.player(settings.SoundUri, this.NewPrayTimes.persianMap[tName] + ' به اُفق ' + this.schema.get_string('praytime-city')) &&
+          !notifyIsEnable
         ) notify(
           this.NewPrayTimes.persianMap[tName] + ' به اُفق ' + this.schema.get_string('praytime-city') +
           ' / ساعت ' + Str.numbersFormat(_prayTimes['main'][tName]) + (
@@ -399,21 +449,8 @@ const Indicator = GObject.registerClass(
               '' : ' _ احتیاط ' + Str.numbersFormat(timeStr)
           )
         );
-        if (
-          settings.PlaySound === 'never' ||
-          (settings.PlaySound === 'ramazan' && islamic[1] !== 9)
-        ) continue;
-        if (settings.SoundId === '_custom_') {
-          settings.SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
-        } else {
-          settings.SoundUri = this.path + '/' + sound.soundsDir + '/' + sound.sounds[settings.SoundId][1];
-        }
 
-        if (player !== null) {
-          player.setVolume(this.schema.get_double('praytime-play-valume'));
-          player.setUri(settings.SoundUri);
-          player.play();
-        }
+
         if (this.schema.get_boolean('custom-color')) {
           _mainLable.set_style('color: ' + this.schema.get_string('pray-time-color'));
         }
@@ -423,7 +460,7 @@ const Indicator = GObject.registerClass(
 
       _prayTimeIs = _prayTimeIs_nextValue;
 
-      if (_prayTimeIs === '' && (player !== null && !player.isPlaying())) {
+      if (_prayTimeIs === '' /* && (player !== null && !player.isPlaying())*/) {
         if (this.schema.get_boolean('custom-color')) {
           _mainLable.set_style('color: ' + this.schema.get_string(_labelSchemaName(this.schema)));
         }
@@ -432,16 +469,10 @@ const Indicator = GObject.registerClass(
 
     }
 
+
+
   }
 );
-
-// function notify(msg, details = '', icon = 'x-office-calendar') {
-//   let source = new MessageTray.Source('تقویم', icon);
-//   Main.messageTray.add_child(source);
-//   let notification = new MessageTray.Notification(source, msg, details);
-//   notification.setTransient(true);
-//   source.showNotification(notification);// new method
-// }
 
 function notify(title, body = '', iconName = 'x-office-calendar') {
   const source = new MessageTray.getSystemSource();
@@ -460,18 +491,38 @@ function notify(title, body = '', iconName = 'x-office-calendar') {
   source.addNotification(notification);
 }
 
+function isDarkGnomeTheme(interface_schema) {
+  // log(interface_schema.get_string('color-scheme'))
+  // log(interface_schema.get_string('gtk-theme'))
+
+  // Prefer color-scheme when available (GNOME 42+): 'prefer-dark' means dark
+  try {
+    const cs = interface_schema.get_string('color-scheme');
+    if (cs.includes('dark')) return true;
+  } catch (e) { }
+
+  // Fallback to gtk-theme name ending with '-dark' (older GNOME)
+  try {
+    const gt = interface_schema.get_string('gtk-theme');
+    if (gt && gt.toLowerCase().endsWith('-dark')) return true;
+  } catch (e) { }
+
+  return false;
+}
+
 export default class ShamsiCalendarExtension extends Extension {
 
   enable() {
     _timers = [];
     _prayTimeIs = '';
-    if (player !== null && player.isPlaying()) player.pause();
+    // if (player !== null && player.isPlaying()) player.pause();
 
     _indicator = new Indicator({
       settings: this.getSettings(),
       path: this.dir.get_path(),
       uuid: this.uuid,
-      openPreferences: () => this.openPreferences(),
+      openPreferences: () => this.openPreferences()
+      ,
       restartExtension: () => {
         this.disable();
         this.enable();
@@ -492,12 +543,10 @@ export default class ShamsiCalendarExtension extends Extension {
       GLib.PRIORITY_DEFAULT,
       60 - (new Date().getSeconds()),
       () => {
-        // console.log(':::timer3')
         _timers.push(GLib.timeout_add_seconds(
           GLib.PRIORITY_DEFAULT,
           60,
           () => {
-            // console.log(':::timer4')
             _indicator.updateDate();
             return GLib.SOURCE_CONTINUE;
           }
@@ -520,22 +569,22 @@ export default class ShamsiCalendarExtension extends Extension {
 
   disable() {
     _prayTimeIs = '';
-    if (player !== null && player.isPlaying()) player.pause();
+    // if (player !== null && player.isPlaying()) player.pause();
 
-    _indicator?.schema.disconnect(_indicator.schema_not_holiday_color_change_signal);
-    _indicator?.schema.disconnect(_indicator.schema_holiday_color_change_signal);
-    _indicator?.schema.disconnect(_indicator.schema_custom_color_signal);
-    _indicator?.schema.disconnect(_indicator.schema_widget_format_signal);
-    _indicator?.schema.disconnect(_indicator.schema_theme_id_signal);
-    _indicator?.schema.disconnect(_indicator.schema_widget_position_signal);
-    _indicator?.schema.disconnect(_indicator.schema_window_position_signal);
+    _indicator?.interface_schema.disconnect(_indicator.interface_schema_gnome_theme_change_signal);
+
+    _indicator?.schema_all_change_signals.forEach(change_signal => {
+      _indicator.schema.disconnect(change_signal);
+    });
     _indicator?.destroy();
+
     for (let i in _timers) GLib.Source.remove(_timers[i]);
-    _timers = null;
-    _indicator = null;
+
     _mainLable = null;
+    _indicator = null;
     _prayTimeIs = null;
     messageTray = null;
+    _timers = null;
 
     this.uninstall_fonts();
   }

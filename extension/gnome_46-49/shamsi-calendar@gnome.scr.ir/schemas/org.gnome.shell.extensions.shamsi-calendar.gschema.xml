@@ -1,7 +1,7 @@
 <schemalist gettext-domain="gnome-shell-extensions-shamsi-calendar">
   <schema id="org.gnome.shell.extensions.shamsi-calendar" path="/org/gnome/shell/extensions/shamsi-calendar/">
     <key name="schema-version" type="i">
-      <default>17</default>
+      <default>41</default>
     </key>
 
     <!-- view -->
@@ -17,12 +17,16 @@
       <default>'fa_IR.UTF-8'</default>
       <summary>Numbers language</summary>
     </key>
-    <key name="theme-id" type="i">
+    <key name="dark-theme-id" type="i">
       <default>0</default>
-      <summary>Theme ID (0:Dark, 1:Light)</summary>
+      <summary>Theme ID</summary>
+    </key>
+    <key name="light-theme-id" type="i">
+      <default>1</default>
+      <summary>Theme ID</summary>
     </key>
     <key name="theme-change" type="s">      <!-- for later -->
-      <default>'manual'</default>
+      <default>'auto'</default>
       <summary>Theme auto change or ...</summary>
     </key>
     <key name="show-mode" type="s">      <!-- for later -->
@@ -263,7 +267,7 @@
       <summary>Play Call to prayer song (Azaan)</summary>
       <description>Play Azan</description>
     </key>
-    <key name="praytime-play-valume" type="d">
+    <key name="praytime-play-valume" type="d">      <!-- old option -->
       <default>0.3</default>
       <summary>System Valume (Play Azan)</summary>
       <description>System Valume (Play Azan)</description>

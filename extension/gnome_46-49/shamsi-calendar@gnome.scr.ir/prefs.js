@@ -10,7 +10,6 @@ import PrayTimes from './PrayTimes.js';
 import * as Tarikh from './Tarikh.js';
 import * as Cities from './cities.js';
 import * as sound from './sound.js';
-const player = sound.player;
 
 export default class ShamsiCalendarPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window) {
@@ -29,13 +28,9 @@ class App extends Adw.PreferencesPage {
     this.schema = schema;
     this.el = {};
     this.NewPrayTimes = new PrayTimes();
-
-    // this.main_hbox = new Gtk.Notebook();
-
-
-
     let _dateObj = new Tarikh.TarikhObject();
-    let sensitiveFunc, hbox, tmp;
+    let sensitiveFunc, hbox;
+
     const showFormats = [
       '%WW',
       '%d',
@@ -56,11 +51,10 @@ class App extends Adw.PreferencesPage {
       '%d / %m / %Y (%MM)',
     ];
 
-
-
+    // icons list: https://github.com/StorageB/icons/blob/main/GNOME48Adwaita/icons.md
     [
-      ['vbox1', 'نوار وضعیت', 'user-home-symbolic'],
-      ['vbox2', 'نمایش', 'emblem-system-symbolic'],
+      ['vbox1', 'ابزارک نوار', 'user-home-symbolic'],
+      ['vbox2', 'پنجره تقویم', 'preferences-desktop-appearance-symbolic'],
       ['vbox3', 'مناسبت‌ها', 'view-list-symbolic'],
       ['vbox4', 'هفته', 'x-office-calendar-symbolic'],
       ['vbox5', 'اوقات شرعی', 'audio-speakers-symbolic'],
@@ -85,12 +79,19 @@ class App extends Adw.PreferencesPage {
 
 
 
-    // COLOR
-    this.vbox1.append(new Gtk.Label({ label: 'حالت نمایش در نوار وضعیت:\n' }));
+
+
+
+
+
+
+
+    // Top bar Panel
+    this.vbox1.append(new Gtk.Label({ label: 'تنظیم متن نمایشی ابزارک تاریخ در تابلوی نوار اصلی گنوم:\n' }));
 
     this.el['widget-position'] = new Gtk.ComboBoxText();
     this.el['widget-position'].append('left', 'سمت چپ');
-    this.el['widget-position'].append('center', 'وسط');
+    this.el['widget-position'].append('center', 'وسط نوار');
     this.el['widget-position'].append('right', 'سمت راست');
     this.el['widget-position'].set_active(this.schema.get_string('widget-position'));
     this.schema.bind('widget-position', this.el['widget-position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
@@ -129,7 +130,6 @@ class App extends Adw.PreferencesPage {
     colorsGrid.append(this.el['not-holiday-color']);
     colorsGrid.append(new Gtk.Label({ label: ' روز عادی:' }));
 
-
     sensitiveFunc = () => {
       let els = ['pray-time-color', 'not-holiday-color', 'holiday-color'];
       let active = this.schema.get_boolean('custom-color');
@@ -137,9 +137,6 @@ class App extends Adw.PreferencesPage {
     }
     sensitiveFunc();
     this.schema.connect('changed::custom-color', sensitiveFunc);
-
-
-
 
 
 
@@ -162,12 +159,9 @@ class App extends Adw.PreferencesPage {
 
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 6 });
     hbox.append(this.el['widget-format']);
-    hbox.append(new Gtk.Label({ label: '' }));
-    hbox.append(new Gtk.Label({ label: ' قالب: ' }));
-    hbox.append(new Gtk.Label({ label: '' }));
+    hbox.append(new Gtk.Label({ label: '      قالب: ' }));
     hbox.append(this.el['widget-position']);
-    hbox.append(new Gtk.Label({ label: 'موقعیت: ' }));
-    hbox.append(new Gtk.Label({ label: '' }));
+    hbox.append(new Gtk.Label({ label: 'موقعیت ابزارک تاریخ: ' }));
     this.vbox1.append(hbox);
 
     this.vbox1.append(new Gtk.Label({ label: '' }));
@@ -178,13 +172,14 @@ class App extends Adw.PreferencesPage {
     this.vbox1.append(hbox);
 
 
-    this.vbox1.append(new Gtk.Label({ label: '\n' }));
 
-    this.el['startup-notification'] = new Gtk.CheckButton({ label: 'اعلان متنی هنگام راه‌اندازی' });
+    this.vbox1.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 32, margin_bottom: 8 }));
+
+
+    this.el['startup-notification'] = new Gtk.CheckButton({ label: 'همیشه یک اعلان متنی هنگام راه‌اندازی (هنگام ورود به میزکار یا بازنشانی افزونه)' });
     this.vbox1.append(this.el['startup-notification']);
     this.schema.bind('startup-notification', this.el['startup-notification'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
-    this.vbox1.append(new Gtk.Label({ label: '\n' }));
 
     // FONT
     /* item = new Gtk.CheckButton({label: 'Use custom font'})
@@ -215,42 +210,36 @@ class App extends Adw.PreferencesPage {
 
 
 
-
-
-
-
-
-
-    // TAB and DATES FORMAT
-    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
-
-    this.el['window-position'] = new Gtk.ComboBoxText();
-    this.el['window-position'].append('left', 'سمت چپ');
-    this.el['window-position'].append('center', 'وسط');
-    this.el['window-position'].append('right', 'سمت راست');
-    this.el['window-position'].set_active(this.schema.get_string('window-position'));
-    this.schema.bind('window-position', this.el['window-position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
-    hbox.append(new Gtk.Label({ label: '' }));
-    hbox.append(this.el['window-position']);
-    hbox.append(new Gtk.Label({ label: 'مکان پنجره: ' }));
-
+    // View Window, Dates format
+    this.vbox2.append(new Gtk.Label({ label: 'قالب پنجره تقویم:\n' }));
 
     let themes = {
-      0: "تاریک",
-      1: "روشن"
+      0: "خاکستری",
+      1: "سفید"
     };
-    this.el['theme-id'] = new Gtk.ComboBoxText();
-    for (let i in themes) this.el['theme-id'].append(i, themes[i]);
-    this.el['theme-id'].set_active(this.schema.get_int('theme-id'));
-    this.schema.bind('theme-id', this.el['theme-id'], 'active', Gio.SettingsBindFlags.DEFAULT);
-    hbox.append(new Gtk.Label({ label: '' }));
-    hbox.append(this.el['theme-id']);
-    hbox.append(new Gtk.Label({ label: 'قالب پنجره‌ی تقویم: ' }));
+    this.el['dark-theme-id'] = new Gtk.ComboBoxText();
+    this.el['light-theme-id'] = new Gtk.ComboBoxText();
+    for (let i in themes) {
+      this.el['dark-theme-id'].append(i, themes[i]);
+      this.el['light-theme-id'].append(i, themes[i]);
+    }
+    this.el['dark-theme-id'].set_active(this.schema.get_int('dark-theme-id'));
+    this.el['light-theme-id'].set_active(this.schema.get_int('light-theme-id'));
+    this.schema.bind('dark-theme-id', this.el['dark-theme-id'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    this.schema.bind('light-theme-id', this.el['light-theme-id'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
+    hbox.append(this.el['dark-theme-id']);
+    hbox.append(new Gtk.Label({ label: '        در حالت تاریک: ' }));
+    hbox.append(this.el['light-theme-id']);
+    hbox.append(new Gtk.Label({ label: 'در حالت روشن: ' }));
 
     this.vbox2.append(hbox);
 
-    this.vbox2.append(new Gtk.Label({ label: '\n' }));
 
+    this.vbox2.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
+
+
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
 
     let tabs = {
       dateConvert: "تبدیل تاریخ",
@@ -264,12 +253,25 @@ class App extends Adw.PreferencesPage {
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['default-tab']);
-    hbox.append(new Gtk.Label({ label: 'زبانه‌ی فعّال پیشفرض: ' }));
+    hbox.append(new Gtk.Label({ label: '     زبانه‌ی فعّال پیشفرض: ' }));
+
+    this.el['window-position'] = new Gtk.ComboBoxText();
+    this.el['window-position'].append('left', 'سمت چپ');
+    this.el['window-position'].append('center', 'وسط');
+    this.el['window-position'].append('right', 'سمت راست');
+    this.el['window-position'].set_active(this.schema.get_string('window-position'));
+    this.schema.bind('window-position', this.el['window-position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
+    hbox.append(new Gtk.Label({ label: '' }));
+    hbox.append(this.el['window-position']);
+    hbox.append(new Gtk.Label({ label: 'مکان پنجره: ' }));
+
     this.vbox2.append(hbox);
 
 
+    this.vbox2.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
 
-    this.vbox2.append(new Gtk.Label({ label: '\n\nنمایش تاریخ‌ها:\n' }));
+
+    this.vbox2.append(new Gtk.Label({ label: 'فعال بودن و نمایش تاریخ‌ها:\n' }));
 
     this.el['persian-display'] = new Gtk.CheckButton({ label: 'هجری شمسی' });
     this.schema.bind('persian-display', this.el['persian-display'], 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -297,7 +299,7 @@ class App extends Adw.PreferencesPage {
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['persian-display-format']);
-    hbox.append(new Gtk.Label({ label: 'قالب: ' }));
+    hbox.append(new Gtk.Label({ label: '   قالب: ' }));
     hbox.append(this.el['persian-display']);
     this.vbox2.append(hbox);
 
@@ -331,7 +333,7 @@ class App extends Adw.PreferencesPage {
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['islamic-display-format']);
-    hbox.append(new Gtk.Label({ label: 'قالب: ' }));
+    hbox.append(new Gtk.Label({ label: '   قالب: ' }));
     hbox.append(this.el['islamic-display']);
     this.vbox2.append(hbox);
 
@@ -365,13 +367,9 @@ class App extends Adw.PreferencesPage {
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['gregorian-display-format']);
-    hbox.append(new Gtk.Label({ label: 'قالب: ' }));
+    hbox.append(new Gtk.Label({ label: '   قالب: ' }));
     hbox.append(this.el['gregorian-display']);
     this.vbox2.append(hbox);
-
-
-
-    this.vbox2.append(new Gtk.Label({ label: '\n' }));
 
 
 
@@ -388,6 +386,8 @@ class App extends Adw.PreferencesPage {
       use_markup: true
     }));
 
+    this.vbox3.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
+
     this.el['show-persian-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های رسمی کشور: هجری‌شمسی' });
     this.vbox3.append(this.el['show-persian-events']);
     this.schema.bind('show-persian-events', this.el['show-persian-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -403,8 +403,6 @@ class App extends Adw.PreferencesPage {
     this.el['show-old-events'] = new Gtk.CheckButton({ label: 'مناسبت‌های غیر رسمی در ایران باستان' });
     this.vbox3.append(this.el['show-old-events']);
     this.schema.bind('show-old-events', this.el['show-old-events'], 'active', Gio.SettingsBindFlags.DEFAULT);
-
-    this.vbox3.append(new Gtk.Label({ label: '\n\n\n' }));
 
 
 
@@ -431,18 +429,16 @@ class App extends Adw.PreferencesPage {
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['week-start']);
     hbox.append(new Gtk.Label({ label: 'آغاز هفته: ' }));
-    hbox.append(new Gtk.Label({ label: '' }));
-    hbox.append(new Gtk.Label({ label: '' }));
     this.vbox4.append(hbox);
 
 
+    this.vbox4.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
+
+
     this.vbox4.append(new Gtk.Label({
-      label: '\n\n\nروزهای تعطیل در هفته:',
+      label: 'روزهای تعطیل در هفته:',
       use_markup: true
     }));
-    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
-    tmp.border_width = 1;
-    this.vbox4.append(tmp);
 
     this.el['none-work-0'] = new Gtk.CheckButton({ label: 'شنبه' });
     this.schema.bind('none-work-0', this.el['none-work-0'], 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -477,24 +473,25 @@ class App extends Adw.PreferencesPage {
     hbox.append(new Gtk.Label({ label: '' }));
     this.vbox4.append(hbox);
 
-    this.vbox4.append(new Gtk.Label({ label: '\n\n' }));
 
+    this.vbox4.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
 
-    this.el['reverse-direction'] = new Gtk.CheckButton({ label: 'ترتیب چیدمان برعکس' });
-    this.schema.bind('reverse-direction', this.el['reverse-direction'], 'active', Gio.SettingsBindFlags.DEFAULT);
-
-    this.el['rotaton-to-vertical'] = new Gtk.CheckButton({ label: 'عمودی‌شدن جدول تقویم' });
-    this.schema.bind('rotaton-to-vertical', this.el['rotaton-to-vertical'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
-    hbox.append(new Gtk.Label({ label: '' }));
+    this.el['reverse-direction'] = new Gtk.CheckButton({ label: 'ترتیب چیدمان برعکس' });
+    this.schema.bind('reverse-direction', this.el['reverse-direction'], 'active', Gio.SettingsBindFlags.DEFAULT);
     hbox.append(this.el['reverse-direction']);
-    hbox.append(new Gtk.Label({ label: '' }));
-    hbox.append(this.el['rotaton-to-vertical']);
-    hbox.append(new Gtk.Label({ label: '' }));
     this.vbox4.append(hbox);
 
-    this.vbox4.append(new Gtk.Label({ label: '\n' }));
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
+    this.el['rotaton-to-vertical'] = new Gtk.CheckButton({ label: 'عمودی‌شدن جدول تقویم' });
+    this.schema.bind('rotaton-to-vertical', this.el['rotaton-to-vertical'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    hbox.append(this.el['rotaton-to-vertical']);
+    this.vbox4.append(hbox);
+
+
+
+
 
 
 
@@ -503,9 +500,9 @@ class App extends Adw.PreferencesPage {
 
     //PrayTimes
     this.vbox5.append(new Gtk.Label({ label: 'تذکّر: حتماً نتایج نرم‌افزار را با اذان محلّی شهرتان مطابقت دهید و همیشه جوانب احتیاط را رعایت فرمایید!' }));
-    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
-    tmp.border_width = 1;
-    this.vbox5.append(tmp);
+
+
+    this.vbox5.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
 
 
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3, margin_top: 6 });
@@ -519,13 +516,6 @@ class App extends Adw.PreferencesPage {
         '_custom_'
       ],
     };
-
-
-
-
-
-
-
 
 
     const ptCalcMethods = {
@@ -577,33 +567,33 @@ class App extends Adw.PreferencesPage {
 
       dialog.add_button('بازنشانی تنظیمات این بخش', 1);
 
-      let hBoxSetting = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0, margin_top: 14, margin_bottom: 14, margin_start: 14, margin_end: 14 });
-      hBoxSetting.border_width = 14;
-      let vBoxSoundUri = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxSoundUri.append(new Gtk.Label({ label: 'فایل' }));
-      let vBoxSoundId = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxSoundId.append(new Gtk.Label({ label: 'صدای اذان' }));
-      let vBoxCalcMethod = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxCalcMethod.append(new Gtk.Label({ label: 'طبق روش' }));
-      let vBoxPlaySound = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxPlaySound.append(new Gtk.Label({ label: 'پخش صدا' }));
-      let vBoxTextNotify = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxTextNotify.append(new Gtk.Label({ label: 'اعلان متنی' }));
-      let vBoxShowTime = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      vBoxShowTime.append(new Gtk.Label({ label: 'نمایش' }));
-      let vBoxTitle = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-      //vBoxTitle.append(new Gtk.Button({ label: ' ', margin_bottom: 0, has_frame: false, sensitive: false }));
-      vBoxTitle.append(new Gtk.Label({ label: '↴ وقت' }));
 
-      hBoxSetting.append(vBoxSoundUri);
-      hBoxSetting.append(vBoxSoundId);
-      hBoxSetting.append(vBoxCalcMethod);
-      hBoxSetting.append(vBoxPlaySound);
-      hBoxSetting.append(vBoxTextNotify);
-      hBoxSetting.append(vBoxShowTime);
-      hBoxSetting.append(vBoxTitle);
 
+      let gridAzanAdvanceSettings = new Gtk.Grid({
+        row_spacing: 4,
+        column_spacing: 1,
+        margin_top: 14,
+        margin_bottom: 14,
+        margin_start: 14,
+        margin_end: 14
+      });
+
+      [
+        '(*.ogg) فایل',
+        'صدای اذان',
+        'طبق روش',
+        'پخش صدا',
+        'اعلان متنی',
+        'نمایش',
+        '↴ وقت'
+      ].forEach((title, col) => {
+        gridAzanAdvanceSettings.attach(new Gtk.Label({ use_markup: true, label: '<span foreground="#05c" weight="bold">' + title + '</span>' }), col, 0, 1, 1);
+      });
+
+
+      let row = 0;
       for (let tName in this.NewPrayTimes.persianMap) {
+        row++;
         const title = this.NewPrayTimes.persianMap[tName];
         const {
           ShowTime,
@@ -613,8 +603,6 @@ class App extends Adw.PreferencesPage {
           SoundId
         } = getPrayTimeSetting(tName, this.schema);
         const SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
-
-        let label = new Gtk.Button({ label: title + ': ', margin_bottom: 0/**/, has_frame: false });
 
         // SoundUri
         this.el['praytime-' + tName + '-sound-uri'] = new Gtk.Button({ label: '  →  غیرفعال  ', sensitive: (SoundId === '_custom_'), margin_bottom: 0/**/ });
@@ -629,7 +617,7 @@ class App extends Adw.PreferencesPage {
           });
           {
             let audioFilter = new Gtk.FileFilter;
-            audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
+            audioFilter.add_mime_type('audio/ogg');// 'audio/*' 'audio/mpeg'
             fChNative.set_filter(audioFilter);
           }
           fChNative.connect('response', (native, response) => {
@@ -755,23 +743,28 @@ class App extends Adw.PreferencesPage {
           this.setPrayTimeSetting(tName, 'ShowTime', this.el['praytime-' + tName + '-setting_ShowTime'].get_active_id());
         });
 
-        vBoxSoundUri.append(this.el['praytime-' + tName + '-sound-uri']);
-        vBoxSoundId.append(this.el['praytime-' + tName + '-setting_SoundId']);
-        vBoxCalcMethod.append(this.el['praytime-' + tName + '-setting_CalcMethod']);
-        vBoxPlaySound.append(this.el['praytime-' + tName + '-setting_PlaySound']);
-        vBoxTextNotify.append(this.el['praytime-' + tName + '-setting_TextNotify']);
-        vBoxShowTime.append(this.el['praytime-' + tName + '-setting_ShowTime']);
-        vBoxTitle.append(label);
+        // Label
+        let label = new Gtk.Label({ use_markup: true, label: '<span foreground="#080" weight="bold">' + title + ': ' + '</span>' })
+
+
+
+        gridAzanAdvanceSettings.attach(this.el['praytime-' + tName + '-sound-uri'], 0, row, 1, 1);
+        gridAzanAdvanceSettings.attach(this.el['praytime-' + tName + '-setting_SoundId'], 1, row, 1, 1);
+        gridAzanAdvanceSettings.attach(this.el['praytime-' + tName + '-setting_CalcMethod'], 2, row, 1, 1);
+        gridAzanAdvanceSettings.attach(this.el['praytime-' + tName + '-setting_PlaySound'], 3, row, 1, 1);
+        gridAzanAdvanceSettings.attach(this.el['praytime-' + tName + '-setting_TextNotify'], 4, row, 1, 1);
+        gridAzanAdvanceSettings.attach(this.el['praytime-' + tName + '-setting_ShowTime'], 5, row, 1, 1);
+        gridAzanAdvanceSettings.attach(label, 6, row, 1, 1);
 
       }
 
-      dialog.get_content_area().append(hBoxSetting);
+      dialog.get_content_area().append(gridAzanAdvanceSettings);
 
       dialog.connect('response', (dialog, id) => {
         if (id == 1) {
           this._resetPrayTimesAdvanceSettings();
         } else {
-          //dialog.get_content_area().remove(hBoxSetting);
+          //dialog.get_content_area().remove(gridAzanAdvanceSettings);
           //dialog.destroy();
         }
         return;
@@ -793,9 +786,7 @@ class App extends Adw.PreferencesPage {
     this.vbox5.append(hbox);
 
 
-    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
-    tmp.border_width = 3;
-    this.vbox5.append(tmp);
+    this.vbox5.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
 
 
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3 });
@@ -858,6 +849,8 @@ class App extends Adw.PreferencesPage {
       this.el['praytime-state'] = new Gtk.ComboBoxText();
       this.el['praytime-city_ComboBox'] = new Gtk.ComboBoxText();
 
+      let stateAndCitySubmit = new Gtk.Button({ label: '\nذخیره\n', margin_top: 14 });
+
       for (let i in Cities.cities) {
         this.el['praytime-state'].append(
           i,
@@ -874,8 +867,6 @@ class App extends Adw.PreferencesPage {
         );
       }
       if (Cities.cities[_stateId] !== undefined) this.el['praytime-state'].set_active(_stateId);
-
-
 
       const changeStateAndCity = (stateId, cityName = null) => {
         this.el['praytime-city_ComboBox'].remove_all();
@@ -908,12 +899,16 @@ class App extends Adw.PreferencesPage {
 
       this.el['praytime-city_ComboBox'].connect('changed', () => {
         _cityData = Cities.cities[_stateId][this.el['praytime-city_ComboBox'].get_active() + 1];
+        stateAndCitySubmit.label = "ذخیره";
+        stateAndCitySubmit.set_sensitive(true);
       });
 
       changeStateAndCity(_stateId, _cityData[0]);
       this.el['praytime-state'].connect('changed', () => {
         _stateId = this.el['praytime-state'].get_active();
         changeStateAndCity(_stateId, _cityData[0]);
+        stateAndCitySubmit.label = "ذخیره";
+        stateAndCitySubmit.set_sensitive(true);
       });
 
 
@@ -929,7 +924,6 @@ class App extends Adw.PreferencesPage {
       boxH.append(new Gtk.Label({ label: 'استان: ' }));
       box.append(boxH);
 
-      let stateAndCitySubmit = new Gtk.Button({ label: '\nذخیره\n', margin_top: 14 });
       box.append(stateAndCitySubmit);
 
       box.append(new Gtk.Label({
@@ -944,6 +938,8 @@ class App extends Adw.PreferencesPage {
         this.schema.set_int('praytime-state', _stateId);
         // this.el['praytime-timezone'].set_active(18);//index 18: Asia/Tehran
         // this.schema.set_double('praytime-timezone', 3.5);//TZ 3.5: Asia/Tehran
+        stateAndCitySubmit.label = _cityData[0] + " :: مختصات جغرافیایی = [عرض:" + _cityData[1] + " , طول:" + _cityData[2] + "]";
+        stateAndCitySubmit.set_sensitive(false);
       });
 
       dialog.connect('response', (dialog, id) => {
@@ -1049,9 +1045,9 @@ class App extends Adw.PreferencesPage {
 
     this.vbox5.append(hbox);
 
-    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
-    tmp.border_width = 3;
-    this.vbox5.append(tmp);
+
+    this.vbox5.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
+
 
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3 });
     hbox.border_width = 3;
@@ -1074,6 +1070,7 @@ class App extends Adw.PreferencesPage {
       let selectedSoundUri = '';
       let selectedSoundFileName = '';
 
+      let mStream;
 
       let btnFCh = new Gtk.Button({ label: '  →  غیرفعال  ', sensitive: false });
 
@@ -1089,7 +1086,7 @@ class App extends Adw.PreferencesPage {
         });
         {
           let audioFilter = new Gtk.FileFilter;
-          audioFilter.add_mime_type('audio/*');// 'audio/mpeg'
+          audioFilter.add_mime_type('audio/ogg');// 'audio/*' 'audio/mpeg'
           this.el['play-sound-file-test'].set_filter(audioFilter);
         }
 
@@ -1126,19 +1123,22 @@ class App extends Adw.PreferencesPage {
         selectedSound = this.el['play-sound-test'].get_active_id();
         if (selectedSound === '_custom_') {
           btnFCh.set_sensitive(true);
-          if (selectedSoundUri === '') {
-            this.btnIconLabel(btnFCh, '');
-          } else {
-            this.btnIconLabel(btnFCh, selectedSoundFileName);
-          }
+          // if (selectedSoundUri === '') {
+          this.btnIconLabel(btnFCh, '');
+          // } else {
+          //   this.btnIconLabel(btnFCh, selectedSoundFileName);
+          // }
         } else {
           selectedSoundUri = soundsUri + sounds[selectedSound][1];
           btnFCh.set_sensitive(false);
           btnFCh.set_label('  →  غیرفعال  ');
         }
-        if (player !== null && player.isPlaying()) {
-          player.pause();
-          playPauseBtn.label = 'پخش';
+        if (mStream && mStream.playing) {
+          mStream.clear();
+          mStream = null;
+          if (playPauseBtn && playPauseBtn.label) {
+            playPauseBtn.label = 'پخش';
+          }
         }
       });
 
@@ -1154,6 +1154,8 @@ class App extends Adw.PreferencesPage {
 
 
 
+      /*
+      // this option removed!
       let valume = this.schema.get_double('praytime-play-valume');
       let testValume = new Gtk.Scale;
       testValume.set_size_request(293, 14);
@@ -1176,32 +1178,39 @@ class App extends Adw.PreferencesPage {
       boxH.append(testValume);
       boxH.append(new Gtk.Label({ label: 'شدّت صدا:' }));
       box.append(boxH);
+      */
 
 
 
       let playPauseBtn = new Gtk.Button({ label: 'پخش', margin_top: 14 });
       playPauseBtn.connect('clicked', () => {
-        if (player === null) return;
-        if (player.isPlaying()) {
-          player.pause();
-          testValume.set_sensitive(true);
+        if (mStream && mStream.playing) {
+          mStream.clear();
+          mStream = null;
           playPauseBtn.label = 'پخش';
         } else if (selectedSoundUri !== '') {
-          player.setVolume(valume);
-          player.setUri(selectedSoundUri);
-          player.play();
-          player.onEnd = () => {
-            testValume.set_sensitive(true);
-            playPauseBtn.label = 'پخش';
-          }
-          testValume.set_sensitive(false);
-          playPauseBtn.label = 'توقّف';
+          let file = Gio.File.new_for_uri('file://' + selectedSoundUri);
+          mStream = Gtk.MediaFile.new_for_file(file);
+          if (!file || !mStream) return;
+          mStream.connect("notify::prepared", () => {
+            if (mStream.has_audio) {
+              mStream.play();
+              playPauseBtn.label = 'توقّف';
+            }
+          });
+          mStream.connect("notify::ended", () => {
+            if (mStream.ended) {
+              mStream.clear();
+              mStream = null;
+              playPauseBtn.label = 'پخش';
+            }
+          });
         }
       });
       box.append(playPauseBtn);
 
       box.append(new Gtk.Label({
-        label: '<span size="medium" color="#999">\nاین صفحه فقط برای شنیدن و آزمایش صداهاست.\nتغییر موارد بالا، هرگز در تنظیمات ذخیره نمی‌شود.</span>',
+        label: '<span size="large" color="#060">\nفایل‌های صوتی با پسوند ogg. پشتیبانی می‌شوند.</span>\n\n<span size="medium" color="#999">\nاین صفحه فقط برای شنیدن و آزمایش صداهاست.\nتغییر موارد بالا، هرگز در تنظیمات ذخیره نمی‌شود.</span>',
         use_markup: true
       }));
 
@@ -1209,7 +1218,10 @@ class App extends Adw.PreferencesPage {
 
       dialog.connect('response', (dialog, id) => {
         if (id != 1) {
-          if (player !== null && player.isPlaying()) player.pause();
+          if (mStream && mStream.playing) {
+            mStream.clear();
+            mStream = null;
+          }
           //dialog.get_content_area().remove(box);
           //dialog.destroy();
         }
@@ -1223,6 +1235,8 @@ class App extends Adw.PreferencesPage {
 
 
 
+    /*
+    // this option removed!
     this.el['praytime-play-valume'] = new Gtk.Scale;
     this.el['praytime-play-valume'].set_size_request(220, 14);
     this.el['praytime-play-valume'].set_range(0.0, 1.0);
@@ -1241,50 +1255,60 @@ class App extends Adw.PreferencesPage {
       this.schema.set_double('praytime-play-valume', this.el['praytime-play-valume'].get_value());
     });
     this.el['label_praytime-play-valume'] = new Gtk.Label({ label: 'شدّت صدا:' });
+    */
 
     this.el['praytime-play-and-notify'] = new Gtk.CheckButton({ label: 'اعلان و پخش اذان' });
     this.schema.bind('praytime-play-and-notify', this.el['praytime-play-and-notify'], 'active', Gio.SettingsBindFlags.DEFAULT);
 
-    if (player !== null) {
-      hbox.append(playSounds);
-      hbox.append(this.el['praytime-play-valume']);
-      hbox.append(this.el['label_praytime-play-valume']);
-      hbox.append(this.el['praytime-play-and-notify']);
-    } else {
-      hbox.append(new Gtk.Label({
-        label: '<span size="medium" color="#f66">برای پخش اذان، باید کتابخانه‌ی gir1.2-gst-plugins-base-1.0 را نصب نمایید:\n</span><span size="large" color="#66f">sudo apt install gir1.2-gst-plugins-base-1.0</span>',
-        use_markup: true
-      }));
-    }
+    hbox.append(new Gtk.Label({
+      label: '<span color="#888">\nفایل‌های صوتی با پسوند ogg. پشتیبانی می‌شوند.</span>',
+      use_markup: true
+    }));
+    hbox.append(playSounds);
+    hbox.append(this.el['praytime-play-and-notify']);
+    // hbox.append(this.el['praytime-play-valume']); // this option removed!
+    // hbox.append(this.el['label_praytime-play-valume']); // this option removed!
+
     this.vbox5.append(hbox);
 
+    this.vbox5.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
+
+    this.vbox5.append(new Gtk.Label({
+      label: '<span color="#888">توجه: برای اینکه صداهای اوقات شرعی شنیده شوند، حتماً لازم است در بخش تنظیمات گنوم لینوکس (Settings) ، بخش Sound ، قسمت مربوط به Sounds ، هردو گزینه‌ی Volume Levels و Alert Sound را بررسی نمایید و مطمئن شوید که میزان شدت صدا (در Volume Levels) به مقدار کافی تنظیم شده باشد (ساکت نباشد) و همچنین صدای هشدار (در Alert Sound) نیز غیرفعال (none) نباشد.</span>',
+      use_markup: true,
+      wrap: true
+    }));
 
 
 
-    this.vbox6.set_spacing(1);
+
+
+
+
 
     // Reset Settings
+    this.vbox6.set_spacing(1);
+
     this.vbox6.append(new Gtk.Label({
       label: 'با انجام عمل بازنشانی، تنظیمات این افزونه به حالت پیشفرض اوّلیه باز خواهد گردید.',
       use_markup: true
     }));
-    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
-    tmp.border_width = 1;
-    this.vbox6.append(tmp);
 
-    let resetBtn = new Gtk.Button({ label: 'بازنشانی تنظیمات «نوار وضعیت»' });
+    this.vbox6.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
+
+    let resetBtn = new Gtk.Button({ label: 'بازنشانی تنظیمات بخش «ابزارک نوار»' });
     resetBtn.connect('clicked', () => this._resetConfig(['vbox1']));
     this.vbox6.append(resetBtn);
 
-    resetBtn = new Gtk.Button({ label: 'بازنشانی تنظیمات «نمایش»' });
+    resetBtn = new Gtk.Button({ label: 'بازنشانی تنظیمات بخش «پنجره تقویم»' });
     resetBtn.connect('clicked', () => this._resetConfig(['vbox2']));
     this.vbox6.append(resetBtn);
 
-    resetBtn = new Gtk.Button({ label: 'بازنشانی تنظیمات «مناسبت‌ها»' });
+    resetBtn = new Gtk.Button({ label: 'بازنشانی تنظیمات بخش «مناسبت‌ها»' });
     resetBtn.connect('clicked', () => this._resetConfig(['vbox3']));
     this.vbox6.append(resetBtn);
 
-    resetBtn = new Gtk.Button({ label: 'بازنشانی تنظیمات «هفته»' });
+    resetBtn = new Gtk.Button({ label: 'بازنشانی تنظیمات بخش «هفته»' });
     resetBtn.connect('clicked', () => this._resetConfig(['vbox4']));
     this.vbox6.append(resetBtn);
 
@@ -1296,9 +1320,7 @@ class App extends Adw.PreferencesPage {
     resetBtn.connect('clicked', () => this._resetPrayTimesAdvanceSettings());
     this.vbox6.append(resetBtn);
 
-    tmp = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
-    tmp.border_width = 1;
-    this.vbox6.append(tmp);
+    this.vbox6.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
 
     resetBtn = new Gtk.Button({ label: '\nبازنشانی همه‌ی تنظیمات بالا به‌صورت یکجا\n' });
     resetBtn.connect('clicked', () => {
@@ -1307,10 +1329,30 @@ class App extends Adw.PreferencesPage {
     });
     this.vbox6.append(resetBtn);
 
+
+
+
+
+
+
+
+
+
+    // About
     this.vbox7.append(new Gtk.Label({
-      label: 'افزونه‌ی تقویم هجری شمسی، قمری و میلادی برای میز‌کار گنوم لینوکس\n\nصفحه‌ی رسمی (دریافت آخرین نسخه):\n<a href="https://jdf.scr.ir/gnome_shamsi_calendar">https://jdf.scr.ir/gnome_shamsi_calendar</a>\n\nحمایت مالی:\n<a href="https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar">https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar</a>\n\nصفحه‌ی گنوم:\n<a href="https://extensions.gnome.org/extension/3618/">https://extensions.gnome.org/extension/3618</a>\n\nکد منبع:\n<a href="https://github.com/scr-ir/gnome-shamsi-calendar/">https://github.com/scr-ir/gnome-shamsi-calendar</a>',
+      label: 'افزونه‌ی تقویم هجری شمسی، قمری و میلادی برای میز‌کار گنوم لینوکس',
       use_markup: true
     }));
+
+    this.vbox7.append(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 8, margin_bottom: 8 }));
+
+    this.vbox7.append(new Gtk.Label({
+      label: 'صفحه‌ی رسمی (دریافت آخرین نسخه):\n<a href="https://jdf.scr.ir/gnome_shamsi_calendar">https://jdf.scr.ir/gnome_shamsi_calendar</a>\n\nحمایت مالی:\n<a href="https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar">https://scr.ir/pardakht/?hemayat=gnome_shamsi_calendar</a>\n\nصفحه‌ی گنوم:\n<a href="https://extensions.gnome.org/extension/3618/">https://extensions.gnome.org/extension/3618</a>\n\nکد منبع:\n<a href="https://github.com/scr-ir/gnome-shamsi-calendar/">https://github.com/scr-ir/gnome-shamsi-calendar</a>',
+      use_markup: true
+    }));
+
+
+
   }
 
   _resetPrayTimesAdvanceSettings() {
@@ -1352,7 +1394,8 @@ class App extends Adw.PreferencesPage {
       },
       vbox2: {
         'window-position': 'ComboBoxText',
-        'theme-id': 'CheckButton',// <- i <- ComboBoxText
+        'dark-theme-id': 'CheckButton',// <- i <- ComboBoxText
+        'light-theme-id': 'CheckButton',// <- i <- ComboBoxText
         'default-tab': 'ComboBoxText',
         'persian-display-format': 'ComboBoxText',
         'persian-display': 'CheckButton',
@@ -1387,7 +1430,7 @@ class App extends Adw.PreferencesPage {
         'praytime-lng': 'Entry-Double',
         'praytime-city': 'Entry-String',
         'praytime-state': '_only_reset_schema_',
-        'praytime-play-valume': 'Scale',
+        // 'praytime-play-valume': 'Scale', // this option removed!
         'praytime-play-and-notify': 'CheckButton'
       }
     };

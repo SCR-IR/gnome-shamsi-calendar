@@ -8,7 +8,7 @@ gnomeVersion=$( gnome-shell --version | sed -Ee 's/GNOME Shell (([0-9]{1,2}).([0
 
 dirName=""
 
-if [ "`echo "${gnomeVersion} >= 46" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 49" | bc`" -eq 1 ]
+if [ "`echo "${gnomeVersion} >= 46" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 50" | bc`" -eq 1 ]
 then
 	dirName="gnome_46-48"
 elif [ "`echo "${gnomeVersion} >= 45" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 46" | bc`" -eq 1 ]

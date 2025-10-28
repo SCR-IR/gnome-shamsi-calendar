@@ -2,12 +2,15 @@
   border-radius: 1em;
   padding: 0;
 }
+
 .shcalendar-thm0 {
   background-color: #303232;
 }
+
 .shcalendar-thm1 {
   background-color: #ffffff;
 }
+
 .shcalendar-font {
   font-family: Vazirmatn, Vazir, sans-serif;
 }
@@ -15,14 +18,17 @@
 .shcalendar-actor-right {
   margin: 1em 1em 0.5em 0;
 }
+
 .shcalendar-actor-left {
   text-align: center;
   border-radius: 1.4em;
   margin: 1em 1em 0.5em 1em;
 }
+
 .shcalendar-actor-left-thm0 {
   border: #999 1pt solid;
 }
+
 .shcalendar-actor-left-thm1 {
   border: #868686 1pt solid;
 }
@@ -30,13 +36,16 @@
 .shcalendar-top-div {
   border-radius: 1em 1em 0 0;
 }
+
 .shcalendar-bottom-menu {
   border-radius: 0 0 1em 1em;
   padding: 0.5em 1em;
 }
+
 .shcalendar-bottom-menu-thm0 {
   border-top: 3px #282828 solid;
 }
+
 .shcalendar-bottom-menu-thm1 {
   border-top: 3px #535353 solid;
 }
@@ -46,17 +55,21 @@
   padding: 0.5em;
   border-radius: 0.3em;
 }
+
 .shcalendar-options-button-thm0 {
   background-color: rgba(110, 110, 110, 0.313);
   border: 1px solid #868686;
 }
+
 .shcalendar-options-button-thm0:hover {
   background-color: rgba(141, 141, 141, 0.313);
 }
+
 .shcalendar-options-button-thm1 {
   background-color: rgba(141, 141, 141, 0.313);
   border: 1px solid #868686;
 }
+
 .shcalendar-options-button-thm1:hover {
   background-color: rgba(110, 110, 110, 0.313);
 }
@@ -69,19 +82,23 @@
   margin-bottom: 0.1em;
   font-size: 2.2em;
 }
+
 .shcalendar-top-button-thm0 {
   background-color: rgba(114, 114, 114, 0.357);
   border: rgba(192, 192, 192, 0.575) 1pt solid;
   color: #eeeeee;
 }
+
 .shcalendar-top-button-thm0:hover {
   background-color: rgba(168, 168, 168, 0.357);
 }
+
 .shcalendar-top-button-thm1 {
   background-color: rgba(168, 168, 168, 0.357);
   border: rgba(153, 153, 153, 0.575) 1pt solid;
   color: #2c2c2c;
 }
+
 .shcalendar-top-button-thm1:hover {
   background-color: rgba(100, 100, 100, 0.357);
 }
@@ -89,9 +106,11 @@
 .shcalendar-other-month-day-thm0 {
   border: rgba(192, 192, 192, 0.42) 1pt solid;
 }
+
 .shcalendar-other-month-day-thm1 {
   border: rgba(0, 0, 0, 0.42) 1pt solid;
 }
+
 /* .shcalendar-other-month-nonwork-day-thm0 {
   border: rgba(255, 255, 255, 0.41) 1pt solid;
 }
@@ -104,12 +123,15 @@
   font-size: 1em;
   font-weight: bold;
 }
+
 .shcalendar-month-label-thm0 {
   color: #eeeeee;
 }
+
 .shcalendar-month-label-thm1 {
   color: #2a2a2a;
 }
+
 .shcalendar-day-heading {
   font-size: 1em;
   font-weight: bold;
@@ -117,9 +139,11 @@
   min-width: 4em;
   text-align: center;
 }
+
 .shcalendar-day-heading-thm0 {
   color: #9c9c84;
 }
+
 .shcalendar-day-heading-thm1 {
   color: #24241e;
 }
@@ -128,16 +152,19 @@
   font-size: 1em;
   direction: rtl;
 }
+
 .shcalendar-dates-show {
   border-radius: 1.4em 1.4em 0 0;
   margin-bottom: 1px;
   text-align: center;
   min-width: 22em;
 }
+
 .shcalendar-events-scrollable {
   width: 22em;
   max-height: 19em;
 }
+
 .shcalendar-event-label {
   font-size: 1em;
   direction: rtl;
@@ -145,15 +172,19 @@
   padding-right: 1em;
   min-width: 21em;
 }
+
 .shcalendar-event-label-work-thm0 {
   color: #eeeeee;
 }
+
 .shcalendar-event-label-work-thm1 {
   color: #111111;
 }
+
 .shcalendar-event-label-nonwork-thm0 {
   color: #e77;
 }
+
 .shcalendar-event-label-nonwork-thm1 {
   color: #cc0000;
 }
@@ -162,26 +193,33 @@
   border-radius: 3pt 3pt 0 0;
   padding: 3px 5px;
 }
+
 .shcalendar-tab-thm0 {
   color: #ccc;
   border: #000 1px solid;
 }
+
 .shcalendar-tab-thm0:hover {
   background-color: #3a3a3a;
 }
+
 .shcalendar-tab-thm1 {
   color: #242424;
   border: #acacac 1px solid;
 }
+
 .shcalendar-tab-thm1:hover {
   background-color: #e6e6e6;
 }
+
 .shcalendar-tab-space-thm0 {
   border: 1px solid #000;
 }
+
 .shcalendar-tab-space-thm1 {
   border: 1px solid #acacac;
 }
+
 /* next */
 .shcalendar-tab-space {
   border-left: 0;
@@ -192,9 +230,11 @@
 .shcalendar-selected-tab-thm0 {
   color: #ffffff;
 }
+
 .shcalendar-selected-tab-thm1 {
   color: #000000;
 }
+
 /* next */
 .shcalendar-selected-tab {
   border-bottom: 0;
@@ -207,12 +247,15 @@
 .shcalendar-bg-green-thm0 {
   background-color: rgba(41, 131, 16, 0.313);
 }
+
 .shcalendar-bg-red-thm0 {
   background-color: rgba(160, 0, 0, 0.313);
 }
+
 .shcalendar-bg-orange-thm0 {
   background-color: rgba(152, 61, 0, 0.313);
 }
+
 .shcalendar-bg-grey-thm0 {
   background-color: rgba(204, 204, 204, 0.313);
 }
@@ -220,12 +263,15 @@
 .shcalendar-bg-green-thm1 {
   background-color: rgba(41, 190, 0, 0.313);
 }
+
 .shcalendar-bg-red-thm1 {
   background-color: rgba(255, 41, 0, 0.313);
 }
+
 .shcalendar-bg-orange-thm1 {
   background-color: rgba(152, 61, 0, 0.313);
 }
+
 .shcalendar-bg-grey-thm1 {
   background-color: rgba(220, 220, 220, 0.313);
 }
@@ -233,19 +279,24 @@
 .shcalendar-txt-color-thm0 {
   color: #ffffff;
 }
+
 .shcalendar-txt-blue-thm0 {
   color: #0086ff;
 }
+
 .shcalendar-txt-green-thm0 {
   color: #319901;
 }
+
 .shcalendar-txt-red-thm0 {
   color: #ff6464;
   font-weight: bold;
 }
+
 .shcalendar-txt-orange-thm0 {
   color: #ff6600;
 }
+
 .shcalendar-txt-grey-thm0 {
   color: #b9b9b9;
 }
@@ -253,18 +304,23 @@
 .shcalendar-txt-color-thm1 {
   color: #000000;
 }
+
 .shcalendar-txt-blue-thm1 {
   color: #0026ff;
 }
+
 .shcalendar-txt-green-thm1 {
   color: #287e00;
 }
+
 .shcalendar-txt-red-thm1 {
   color: #c60000;
 }
+
 .shcalendar-txt-orange-thm1 {
   color: #e66008;
 }
+
 .shcalendar-txt-grey-thm1 {
   color: #686868;
 }
@@ -298,6 +354,7 @@
 .shcalendar-rtl {
   direction: rtl;
 }
+
 .shcalendar-ltr {
   direction: ltr;
 }
@@ -307,18 +364,22 @@
   padding: 5px;
   font-size: 0.9em;
 }
+
 .shcalendar-converter-button-thm0 {
   background-color: #626262;
   border: 1px solid #000000;
 }
+
 .shcalendar-converter-button-thm0.active {
   background-color: #097200;
   color: #ffffff;
 }
+
 .shcalendar-converter-button-thm1 {
   background-color: #626262;
   border: 1px solid #000000;
 }
+
 .shcalendar-converter-button-thm1.active {
   background-color: #097200;
   color: #ffffff;
@@ -347,11 +408,13 @@
   text-align: center;
   direction: ltr;
 }
+
 .shcalendar-converter-entry-thm0 {
   background-color: #5a5a5a;
   color: #ffffff;
   caret-color: #e9da0a;
 }
+
 .shcalendar-converter-entry-thm1 {
   background-color: #959595;
   color: #000000;
@@ -362,13 +425,16 @@
   border: rgba(22, 72, 255, 0.815) 1pt solid;
   box-shadow: 0 0 3em 3em rgba(0, 140, 255, 0.26) inset;
 }
+
 .shcalendar-active-day-thm1 {
   border: rgba(22, 72, 255, 0.815) 1pt solid;
   box-shadow: 0 0 3em 3em rgba(0, 140, 255, 0.26) inset;
 }
+
 .shcalendar-notactive-day-thm0 {
   border: rgba(255, 255, 255, 0.41) 1pt solid;
 }
+
 .shcalendar-notactive-day-thm1 {
   border: rgba(0, 0, 0, 0.41) 1pt solid;
 }
@@ -376,15 +442,19 @@
 .shcalendar-txt-pdate-color-thm0 {
   color: #ffffff;
 }
+
 .shcalendar-txt-pdate-color-thm1 {
   color: #111111;
 }
+
 .shcalendar-txt-pdate-color-alpha-thm0 {
   color: rgba(255, 255, 255, 0.313);
 }
+
 .shcalendar-txt-pdate-color-alpha-thm1 {
   color: rgba(0, 0, 0, 0.313);
 }
+
 .shcalendar-pdate-day-txt {
   direction: ltr;
   text-align: center;
@@ -399,15 +469,19 @@
 .shcalendar-txt-hdate-color-thm0 {
   color: #b9ff99;
 }
+
 .shcalendar-txt-hdate-color-thm1 {
   color: #236e00;
 }
+
 .shcalendar-txt-hdate-color-alpha-thm0 {
   color: rgba(185, 255, 153, 0.313);
 }
+
 .shcalendar-txt-hdate-color-alpha-thm1 {
   color: rgba(29, 90, 0, 0.313);
 }
+
 .shcalendar-hdate-day-txt {
   direction: ltr;
   text-align: center;
@@ -421,15 +495,19 @@
 .shcalendar-txt-gdate-color-thm0 {
   color: #90d6ff;
 }
+
 .shcalendar-txt-gdate-color-thm1 {
   color: #00319c;
 }
+
 .shcalendar-txt-gdate-color-alpha-thm0 {
   color: rgba(144, 214, 255, 0.313);
 }
+
 .shcalendar-txt-gdate-color-alpha-thm1 {
   color: rgba(0, 49, 156, 0.313);
 }
+
 .shcalendar-gdate-day-txt {
   direction: ltr;
   text-align: center;
@@ -441,9 +519,12 @@
 }
 
 .shcalendar-extra-height {
-  min-height: 3.7em; /* (min-height + 2*margin + 2*padding) */
-  min-width: 4.4em; /* (min-width + 2*margin + 2*padding) */
+  min-height: 3.7em;
+  /* (min-height + 2*margin + 2*padding) */
+  min-width: 4.4em;
+  /* (min-width + 2*margin + 2*padding) */
 }
+
 .shcalendar-day-button {
   direction: ltr;
   min-height: 3.3em;
@@ -452,9 +533,11 @@
   padding: 0.1em;
   border-radius: 0.3em;
 }
+
 .shcalendar-day-button-thm0:hover {
   background-color: rgba(168, 168, 168, 0.357);
 }
+
 .shcalendar-day-button-thm1:hover {
   background-color: rgba(100, 100, 100, 0.357);
 }
@@ -463,17 +546,21 @@
   padding: 6px;
   border-radius: 1.4em;
 }
+
 .shcalendar-custom-btn-thm0 {
   background-color: #005e99;
   border: #1f1f1f 1pt solid;
 }
+
 .shcalendar-custom-btn-thm0:hover {
   background-color: #005081;
 }
+
 .shcalendar-custom-btn-thm1 {
   background-color: #005e99;
   border: #1f1f1f 1pt solid;
 }
+
 .shcalendar-custom-btn-thm1:hover {
   background-color: #005081;
 }
@@ -482,11 +569,13 @@
   padding: 0 3px;
   text-align: center;
 }
+
 .shcalendar-praytimes-tname {
   padding: 0 5px;
   text-align: right;
   min-width: 100px;
 }
+
 .shcalendar-praytimes-time {
   padding: 0 5px;
   text-align: left;
@@ -497,17 +586,21 @@
   padding: 6px;
   border-radius: 1.4em;
 }
+
 .shcalendar-praytimes-azan-thm0 {
   background-color: #903;
   border: #1f1f1f 1pt solid;
 }
+
 .shcalendar-praytimes-azan-thm0:hover {
   background-color: #690125;
 }
+
 .shcalendar-praytimes-azan-thm1 {
   background-color: #903;
   border: #1f1f1f 1pt solid;
 }
+
 .shcalendar-praytimes-azan-thm1:hover {
   background-color: #690125;
 }
