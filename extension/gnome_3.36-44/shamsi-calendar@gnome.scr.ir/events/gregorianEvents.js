@@ -30,6 +30,10 @@ evList.prototype = {
       ['روز جهانی هواشناسی', false, 0],
     ], false];
 
+    this.events[4][5] = [[
+      ['روز جهانی کودک فلسطینی', false, 0],
+    ], false];
+
     this.events[5][1] = [[
       ['روز جهانی کار و کارگر', false, 0],
     ], false];
@@ -81,6 +85,10 @@ evList.prototype = {
 
     this.events[10][1] = [[
       ['روز جهانی سالمندان', false, 0],
+    ], false];
+
+    this.events[10][7] = [[
+      ['روز جهانی حماسه فلسطین، طوفان الأقصی', false, 0],
     ], false];
 
     this.events[10][8] = [[
