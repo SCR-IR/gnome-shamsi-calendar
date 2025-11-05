@@ -90,9 +90,9 @@ class App extends Adw.PreferencesPage {
     this.vbox1.append(new Gtk.Label({ label: 'تنظیم متن نمایشی ابزارک تاریخ در تابلوی نوار اصلی گنوم:\n' }));
 
     this.el['widget-position'] = new Gtk.ComboBoxText();
-    this.el['widget-position'].append('left', 'سمت چپ');
-    this.el['widget-position'].append('center', 'وسط نوار');
     this.el['widget-position'].append('right', 'سمت راست');
+    this.el['widget-position'].append('center', 'وسط نوار');
+    this.el['widget-position'].append('left', 'سمت چپ');
     this.el['widget-position'].set_active(this.schema.get_string('widget-position'));
     this.schema.bind('widget-position', this.el['widget-position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
 
@@ -242,9 +242,9 @@ class App extends Adw.PreferencesPage {
     hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
 
     let tabs = {
-      dateConvert: "تبدیل تاریخ",
+      events: "مناسبت‌ها",
       prayTimes: "اوقات شرعی",
-      events: "مناسبت‌ها"
+      dateConvert: "تبدیل تاریخ"
     };
     this.el['default-tab'] = new Gtk.ComboBoxText();
     for (let i in tabs) this.el['default-tab'].append(i, tabs[i]);
@@ -256,14 +256,22 @@ class App extends Adw.PreferencesPage {
     hbox.append(new Gtk.Label({ label: '     زبانه‌ی فعّال پیشفرض: ' }));
 
     this.el['window-position'] = new Gtk.ComboBoxText();
-    this.el['window-position'].append('left', 'سمت چپ');
-    this.el['window-position'].append('center', 'وسط');
     this.el['window-position'].append('right', 'سمت راست');
+    this.el['window-position'].append('center', 'وسط');
+    this.el['window-position'].append('left', 'سمت چپ');
     this.el['window-position'].set_active(this.schema.get_string('window-position'));
     this.schema.bind('window-position', this.el['window-position'], 'active-id', Gio.SettingsBindFlags.DEFAULT);
     hbox.append(new Gtk.Label({ label: '' }));
     hbox.append(this.el['window-position']);
     hbox.append(new Gtk.Label({ label: 'مکان پنجره: ' }));
+
+    this.vbox2.append(hbox);
+
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
+
+    this.el['bottom-bar-text'] = new Gtk.CheckButton({ label: 'نمایش برخی موارد و متون خاص در پایین پنجره تقویم' });
+    this.schema.bind('bottom-bar-text', this.el['bottom-bar-text'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    hbox.append(this.el['bottom-bar-text']);
 
     this.vbox2.append(hbox);
 
@@ -304,7 +312,7 @@ class App extends Adw.PreferencesPage {
     this.vbox2.append(hbox);
 
 
-    this.vbox2.append(new Gtk.Label({ label: '' }));
+    // this.vbox2.append(new Gtk.Label({ label: '' }));
 
 
     this.el['islamic-display'] = new Gtk.CheckButton({ label: 'هجری قمری' });
@@ -338,7 +346,7 @@ class App extends Adw.PreferencesPage {
     this.vbox2.append(hbox);
 
 
-    this.vbox2.append(new Gtk.Label({ label: '' }));
+    // this.vbox2.append(new Gtk.Label({ label: '' }));
 
 
     this.el['gregorian-display'] = new Gtk.CheckButton({ label: 'میلادی' });
@@ -517,21 +525,10 @@ class App extends Adw.PreferencesPage {
       ],
     };
 
-
-    const ptCalcMethods = {
-      Tehran: "انجمن ژئوفیزیک، دانشگاه تهران ☫",
-      Jafari: "انجمن لواء، قم",
-      MWL: "اتّحادیه‌ی جهانی اسلام، عربستان سعودی",
-      ISNA: "جامعه‌ی اسلامی آمریکای شمالی",
-      Egypt: "مرجع عمومی تحقیقات مصر",
-      Makkah: "دانشگاه امّ‌القریٰ، مکّه",
-      Karachi: "دانشگاه علوم اسلامی، کراچی"
-    };
-
     // MainCalcMethod:
     this.el['praytime-calc-method-main'] = new Gtk.ComboBoxText();
-    for (let i in ptCalcMethods) {
-      this.el['praytime-calc-method-main'].append(i, ptCalcMethods[i]);
+    for (let i in this.NewPrayTimes.methods) {
+      this.el['praytime-calc-method-main'].append(i, this.NewPrayTimes.methods[i].faTitle);
     }
     this.el['praytime-calc-method-main'].set_active_id(this.schema.get_string('praytime-calc-method-main'));
     this.el['praytime-calc-method-main'].connect('changed', () => {
@@ -540,8 +537,8 @@ class App extends Adw.PreferencesPage {
 
     // EhtyiatCalcMethod:
     this.el['praytime-calc-method-ehtiyat'] = new Gtk.ComboBoxText();
-    for (let i in ptCalcMethods) {
-      this.el['praytime-calc-method-ehtiyat'].append(i, ptCalcMethods[i]);
+    for (let i in this.NewPrayTimes.methods) {
+      this.el['praytime-calc-method-ehtiyat'].append(i, this.NewPrayTimes.methods[i].faTitle);
     }
     this.el['praytime-calc-method-ehtiyat'].set_active_id(this.schema.get_string('praytime-calc-method-ehtiyat'));
     this.el['praytime-calc-method-ehtiyat'].connect('changed', () => {
@@ -1397,6 +1394,7 @@ class App extends Adw.PreferencesPage {
         'dark-theme-id': 'CheckButton',// <- i <- ComboBoxText
         'light-theme-id': 'CheckButton',// <- i <- ComboBoxText
         'default-tab': 'ComboBoxText',
+        'bottom-bar-text': 'CheckButton',
         'persian-display-format': 'ComboBoxText',
         'persian-display': 'CheckButton',
         'islamic-display-format': 'ComboBoxText',

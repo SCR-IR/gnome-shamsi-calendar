@@ -1,7 +1,7 @@
 <schemalist gettext-domain="gnome-shell-extensions-shamsi-calendar">
   <schema id="org.gnome.shell.extensions.shamsi-calendar" path="/org/gnome/shell/extensions/shamsi-calendar/">
     <key name="schema-version" type="i">
-      <default>41</default>
+      <default>44</default>
     </key>
 
     <!-- view -->
@@ -40,6 +40,11 @@
     <key name="default-tab" type="s">
       <default>'events'</default>
       <summary>Default selected Tab</summary>
+    </key>
+    <key name="bottom-bar-text" type="b">
+      <default>true</default>
+      <summary>bottom bar text</summary>
+      <description>Show text in bottom bar</description>
     </key>
     <key name="window-position" type="s">
       <default>'center'</default>

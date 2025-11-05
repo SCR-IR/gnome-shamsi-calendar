@@ -11,9 +11,10 @@ import * as Events from './Events.js';
 
 export class Calendar {
 
-  constructor(Schema, cssThemeID) {
+  constructor(Schema, cssThemeID, setBottomBarText = (text = '') => { }) {
     this.schema = Schema;
     this.cssThemeID = cssThemeID;
+    this.setBottomBarText = setBottomBarText;
 
     this.actorRight = new St.Widget({
       style_class: 'shcalendar-actor-right',
@@ -206,7 +207,7 @@ export class Calendar {
 
     this._monthLabel.text = '« ' + Tarikh.mName.shamsi[this._selectedDateObj.persianMonth] + ' ' +
       Str.numbersFormat(this._selectedDateObj.persianYear) +
-      ' »\n' +
+      " »\n" +
       Str.numbersFormat(
         Str.dateStrFormat(
           '%MM %Y',
@@ -564,6 +565,8 @@ export class Calendar {
       style_class: 'shcalendar-events-scrollable'
     });
     this.actorLeft.layout_manager.attach(_scrollBox, 0, ++evTopPosition, 1, 1);
+    let ehtiyatShow = this.schema.get_boolean('praytime-ehtiyat-show');
+
     if (this._selectedTab === 'events') {
 
 
@@ -600,7 +603,7 @@ export class Calendar {
           _eventsBox.add_child(evLabel);
         }
         let evLabelB = new St.Label({
-          text: '-------------------------\n' + Str.numbersFormat((selectedDateEvents[0].length === 0) ? 'امروز:\n          مناسبت خاصی نداشت!' : 'مناسبت‌های امروز که گذشت:'),
+          text: "-------------------------\n" + Str.numbersFormat((selectedDateEvents[0].length === 0) ? 'امروز:\n          مناسبت خاصی نداشت!' : 'مناسبت‌های امروز که گذشت:'),
           x_align: Clutter.ActorAlign.CENTER,
           x_expand: true,
           style_class: 'shcalendar-event-label shcalendar-txt-bold ' + ((selectedDateEvents[0].length === 0) ? 'shcalendar-txt-grey' : 'shcalendar-txt-green') + this.cssThemeID
@@ -668,7 +671,6 @@ export class Calendar {
       }
 
 
-      let ehtiyatShow = this.schema.get_boolean('praytime-ehtiyat-show');
       if (ehtiyatShow) _prayColumnBox.add_child(new St.Label({
         text: 'احتیاط',
         style_class: 'shcalendar-praytimes-time shcalendar-txt-grey' + this.cssThemeID + ' shcalendar-underline',
@@ -686,6 +688,8 @@ export class Calendar {
         x_expand: false,
       }));
       _prayBox_v.add_child(_prayColumnBox);
+
+      // let bottomBarText = '';
 
       _prayColumnBox = new St.BoxLayout({ x_expand: false });
       for (let tName in _prayTimes[azanMethods[0]]) {
@@ -721,12 +725,16 @@ export class Calendar {
           }));
         }
 
-        let prayTimeStyle = 'shcalendar-txt-color' + this.cssThemeID, prayTimeSymbol = ' ';
+        let prayTimeStyle = 'shcalendar-txt-color' + this.cssThemeID;
+        let prayTimeSymbol = ' ';
         if (nowObj.julianDay === this._selectedDateObj.julianDay) {
           if (nowToMinutes >= ehtiyat) {
             prayTimeSymbol = '✓';
-            if (nowToMinutes === ehtiyat) prayTimeStyle = 'shcalendar-txt-green' + this.cssThemeID;
+            if (nowToMinutes === ehtiyat) {
+              prayTimeStyle = 'shcalendar-txt-green' + this.cssThemeID;
+            }
           }
+          // //bottomBarText
         }
         _prayColumnBox.add_child(new St.Label({
           text: NewPrayTimes.persianMap[tName],
@@ -742,8 +750,11 @@ export class Calendar {
           _prayBox_v.add_child(_prayColumnBox);
           _prayColumnBox = new St.BoxLayout({ x_expand: false });
         }
+
+
       }
 
+      // this.setBottomBarText(bottomBarText);
 
       _scrollBox.add_child(_prayBox_v);
 
@@ -1049,7 +1060,52 @@ export class Calendar {
         }
     */
 
+    if (this.schema.get_boolean('bottom-bar-text') && this._selectedTab !== 'prayTimes') {
+      let bottomBarText = '';
+
+      for (let tName in _prayTimes[azanMethods[0]]) {
+        // Schema Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
+        const settings = getPrayTimeSetting(tName, this.schema);
+        if (
+          settings.ShowTime === 'never' ||
+          (settings.ShowTime === 'ramazan' && this._selectedDateObj.islamicMonth !== 9)
+        ) continue;
+        // settings.SoundUri = this.schema.get_string('praytime-' + tName + '-sound-uri');
+
+        let oghat = { method: [], timeStr: [], minutes: [] };
+        for (let i in azanMethods) {
+          oghat.method[i] = parseInt(i);
+          oghat.timeStr[i] = _prayTimes[azanMethods[i]][tName];
+          oghat.minutes[i] = Str.timeStrToMinutes(oghat.timeStr[i]);
+        }
+
+        let ehtiyat = (
+          tName === 'imsak' ||
+          tName === 'sunrise' ||
+          tName === 'sunset' ||
+          tName === 'midnight'
+        ) ? Math.min(...oghat.minutes) : Math.max(...oghat.minutes);
+
+        if (nowObj.julianDay === this._selectedDateObj.julianDay) {
+          if (bottomBarText == '' && nowToMinutes <= ehtiyat) {
+            bottomBarText += ((nowToMinutes >= ehtiyat) ? '✓' : ' ') +
+              NewPrayTimes.persianMap[tName] + ' => ساعت: ' +
+              Str.numbersFormat(oghat.timeStr[1]) +
+              ((!ehtiyatShow || oghat.minutes[1] === ehtiyat) ?
+                '' : ' ، احتیاط: ' + Str.numbersFormat(oghat.timeStr[0]))
+              + ' (به اُفق ' + this.schema.get_string('praytime-city') + ')';
+          }
+        }
+      }
+
+      this.setBottomBarText(bottomBarText);
+    } else {
+      this.setBottomBarText('');
+    }
+
   }
+
+
 
   _rotate = (a, b, x, y, Schema) => {
     return (Schema.get_boolean('rotaton-to-vertical')) ? [7 - b, 8 - a + 1, y, x] : [a, b, x, y];

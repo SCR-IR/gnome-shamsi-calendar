@@ -1,33 +1,33 @@
 //--------------------- Copyright Block ----------------------
-/* 
+/*
 
-PrayTimes.js: Prayer Times Calculator (ver 2.3)
-Copyright (C) 2007-2011 PrayTimes.org
+PrayTimes.js: Prayer Times Calculator (ver 2.5 e:) + Edited by jdf.scr.ir for IranianShamsiCalendar Gnome Extension (update: 2025-11-04 = 1404-08-13)
+Copyright (C) 2007-2017 PrayTimes.org
 
 Developer: Hamid Zarrabi-Zadeh
 License: GNU LGPL v3.0
 
 TERMS OF USE:
-  Permission is granted to use this code, with or 
-  without modification, in any website or application 
-  provided that credit is given to the original work 
+  Permission is granted to use this code, with or
+  without modification, in any website or application
+  provided that credit is given to the original work
   with a link back to PrayTimes.org.
 
-This program is distributed in the hope that it will 
-be useful, but WITHOUT ANY WARRANTY. 
+This program is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY.
 
 PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
- 
+
 */
 
 
 //--------------------- Help and Manual ----------------------
 /*
 
-User's Manual: 
+User's Manual:
 http://praytimes.org/manual
 
-Calculation Formulas: 
+Calculation Formulas:
 http://praytimes.org/calculation
 
 
@@ -35,13 +35,13 @@ http://praytimes.org/calculation
 //------------------------ User Interface -------------------------
 
 
-  getTimes (date, coordinates [, timeZone [, dst [, timeFormat]]]) 
-	
-  setMethod (method)       // set calculation method 
-  adjust (parameters)      // adjust calculation parameters	
-  tune (offsets)           // tune times by given offsets 
+  getTimes (date, coordinates [, timeZone [, dst [, timeFormat]]])
 
-  getMethod ()             // get calculation method 
+  setMethod (method)       // set calculation method
+  adjust (parameters)      // adjust calculation parameters
+  tune (offsets)           // tune times by given offsets
+
+  getMethod ()             // get calculation method
   getSetting ()            // get current calculation parameters
   getOffsets ()            // get current time offsets
 
@@ -60,7 +60,7 @@ http://praytimes.org/calculation
 //----------------------- PrayTimes Class ------------------------
 
 
-export default function PrayTimes(method) {
+export default function PrayTimes(method) {// Edit (export default)
 
 
   //------------------------ Constants --------------------------
@@ -80,35 +80,57 @@ export default function PrayTimes(method) {
     },
 
     // Calculation Methods
-    methods = {
-      MWL: {
-        name: 'Muslim World League',
-        params: { fajr: 18, isha: 17 }
-      },
-      ISNA: {
-        name: 'Islamic Society of North America (ISNA)',
-        params: { fajr: 15, isha: 15 }
-      },
-      Egypt: {
-        name: 'Egyptian General Authority of Survey',
-        params: { fajr: 19.5, isha: 17.5 }
-      },
-      Makkah: {
-        name: 'Umm Al-Qura University, Makkah',
-        params: { fajr: 18.5, isha: '90 min' }
-      },  // fajr was 19 degrees before 1430 hijri
-      Karachi: {
-        name: 'University of Islamic Sciences, Karachi',
-        params: { fajr: 18, isha: 18 }
-      },
+    methods = {// Edit (add faTitle and France,Russia,Singapore)
       Tehran: {
+        faTitle: 'انجمن ژئوفیزیک، دانشگاه تهران ☫',
         name: 'Institute of Geophysics, University of Tehran',
         params: { fajr: 17.7, isha: 14, maghrib: 4.5, midnight: 'Jafari' }
       },  // isha is not explicitly specified in this method
       Jafari: {
+        faTitle: 'انجمن لواء، قم',
         name: 'Shia Ithna-Ashari, Leva Institute, Qum',
         params: { fajr: 16, isha: 14, maghrib: 4, midnight: 'Jafari' }
-      }
+      },
+      MWL: {
+        faTitle: 'اتّحادیه‌ی جهانی اسلام، عربستان سعودی',
+        name: 'Muslim World League',
+        params: { fajr: 18, isha: 17 }
+      },
+      ISNA: {
+        faTitle: '"جامعه‌ی اسلامی آمریکای شمالی',
+        name: 'Islamic Society of North America (ISNA)',
+        params: { fajr: 15, isha: 15 }
+      },
+      Egypt: {
+        faTitle: 'مرجع عمومی تحقیقات مصر',
+        name: 'Egyptian General Authority of Survey',
+        params: { fajr: 19.5, isha: 17.5 }
+      },
+      Makkah: {
+        faTitle: 'دانشگاه امّ‌القریٰ، مکّه',
+        name: 'Umm Al-Qura University, Makkah',
+        params: { fajr: 18.5, isha: '90 min' }
+      },  // fajr was 19 degrees before 1430 hijri
+      Karachi: {
+        faTitle: 'دانشگاه علوم اسلامی، کراچی',
+        name: 'University of Islamic Sciences, Karachi',
+        params: { fajr: 18, isha: 18 }
+      },
+      France: {
+        faTitle: 'انجمن مسلمانان فرانسه',
+        name: 'Muslims of France',
+        params: { fajr: 12, isha: 12 }
+      },
+      Russia: {
+        faTitle: 'سازمان دینی مسلمانان روسیه',
+        name: 'Spiritual Administration of Muslims of Russia',
+        params: { fajr: 16, isha: 15 }
+      },
+      Singapore: {
+        faTitle: 'شورای مذهبی اسلامی سنگاپور',
+        name: 'Islamic Religious Council of Singapore',
+        params: { fajr: 20, isha: 18 }
+      },
     },
 
 
@@ -120,43 +142,44 @@ export default function PrayTimes(method) {
 
     //----------------------- Parameter Values ----------------------
     /*
-
-        // Asr Juristic Methods
-        asrJuristics = [
-            'Standard',    // Shafi`i, Maliki, Ja`fari, Hanbali
-            'Hanafi'       // Hanafi
-        ],
-
-
-        // Midnight Mode
-        midnightMethods = [
-            'Standard',    // Mid Sunset to Sunrise
-            'Jafari'       // Mid Sunset to Fajr
-        ],
-
-
-        // Adjust Methods for Higher Latitudes
-        highLatMethods = [
-            'NightMiddle', // middle of night
-            'AngleBased',  // angle/60th of night
-            'OneSeventh',  // 1/7th of night
-            'None'         // No adjustment
-        ],
-
-
-        // Time Formats
-        timeFormats = [
-            '24h',         // 24-hour format
-            '12h',         // 12-hour format
-            '12hNS',       // 12-hour format with no suffix
-            'Float'        // floating point number
-        ],
-        */
+  
+    // Asr Juristic Methods
+    asrJuristics = [
+      'Standard',    // Shafi`i, Maliki, Ja`fari, Hanbali
+      'Hanafi'       // Hanafi
+    ],
+  
+  
+    // Midnight Mode
+    midnightMethods = [
+      'Standard',    // Mid Sunset to Sunrise
+      'Jafari'       // Mid Sunset to Fajr
+    ],
+  
+  
+    // Adjust Methods for Higher Latitudes
+    highLatMethods = [
+      'NightMiddle', // middle of night
+      'AngleBased',  // angle/60th of night
+      'OneSeventh',  // 1/7th of night
+      'None'         // No adjustment
+    ],
+  
+  
+    // Time Formats
+    timeFormats = [
+      '24h',         // 24-hour format
+      '12h',         // 12-hour format
+      '12hNS',       // 12-hour format with no suffix
+      'Float',       // floating point number
+      'Timestamp'    // Unix timestamp
+    ],
+    */
 
 
     //---------------------- Default Settings --------------------
 
-    calcMethod = 'Makkah',
+    calcMethod = 'Tehran',// Edit (Change)
 
     // do not change anything here; use adjust method instead
     setting = {
@@ -177,7 +200,8 @@ export default function PrayTimes(method) {
     //----------------------- Local Variables ---------------------
 
     lat, lng, elv,       // coordinates
-    timeZone, jDate;     // time variables
+    timeZone, 			 // time zone
+    timestamp, jDate;    // date variables
 
 
   //---------------------- Initialization -----------------------
@@ -207,7 +231,7 @@ export default function PrayTimes(method) {
   //----------------------- Public Functions ------------------------
   return {
 
-    persianMap: {
+    persianMap: {// Edit (add)
       imsak: 'اِمساک(نخوردن)',
       fajr: 'اَذان صبح',
       sunrise: 'طلوع آفتاب',
@@ -218,6 +242,9 @@ export default function PrayTimes(method) {
       isha: 'عشاء',
       midnight: 'نیمه‌شب شرعی'
     },
+
+    methods,// Edit (add)
+
     // set calculation method
     setMethod: function (method) {
       if (methods[method]) {
@@ -256,9 +283,9 @@ export default function PrayTimes(method) {
 
     // return prayer times for a given date
     getTimes: function (date, coords, timezone, dst, format) {
-      lat = 1 * coords[0];
-      lng = 1 * coords[1];
-      elv = coords[2] ? 1 * coords[2] : 0;
+      lat = +coords[0];
+      lng = +coords[1];
+      elv = coords[2] ? +coords[2] : 0;
       timeFormat = format || timeFormat;
       if (date.constructor === Date)
         date = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
@@ -266,8 +293,9 @@ export default function PrayTimes(method) {
         timezone = this.getTimeZone(date);
       if (typeof (dst) == 'undefined' || dst == 'auto')
         dst = this.getDst(date);
-      timeZone = 1 * timezone + (1 * dst ? 1 : 0);
-      jDate = this.julian(date[0], date[1], date[2]) - lng / (15 * 24);
+      timeZone = +timezone + (+dst ? 1 : 0);
+      timestamp = (new Date(Date.UTC(date[0], date[1] - 1, date[2]))).getTime();
+      jDate = this.julian(date[0], date[1], date[2]) - lng / 360;
 
       return this.computeTimes();
     },
@@ -277,7 +305,10 @@ export default function PrayTimes(method) {
     getFormattedTime: function (time, format, suffixes) {
       if (isNaN(time))
         return invalidTime;
-      if (format == 'Float') return time;
+      if (format == 'Float')
+        return time;
+      if (format == 'Timestamp')
+        return timestamp + Math.floor((time - timeZone) * 60 * 60 * 1000);
       suffixes = suffixes || timeSuffixes;
 
       time = DMath.fixHour(time + 0.5 / 60);  // add 0.5 minutes to round
@@ -347,7 +378,8 @@ export default function PrayTimes(method) {
       var A = Math.floor(year / 100);
       var B = 2 - A + Math.floor(A / 4);
 
-      var JD = Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+      var JD = Math.floor(365.25 * (year + 4716)) +
+        Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
       return JD;
     },
 
@@ -360,14 +392,14 @@ export default function PrayTimes(method) {
       times = this.dayPortion(times);
       var params = setting;
 
-      var imsak = this.sunAngleTime(this.eval(params.imsak), times.imsak, 'ccw');
-      var fajr = this.sunAngleTime(this.eval(params.fajr), times.fajr, 'ccw');
+      var imsak = this.sunAngleTime(this.value(params.imsak), times.imsak, 'ccw');
+      var fajr = this.sunAngleTime(this.value(params.fajr), times.fajr, 'ccw');
       var sunrise = this.sunAngleTime(this.riseSetAngle(), times.sunrise, 'ccw');
       var dhuhr = this.midDay(times.dhuhr);
       var asr = this.asrTime(this.asrFactor(params.asr), times.asr);
       var sunset = this.sunAngleTime(this.riseSetAngle(), times.sunset);;
-      var maghrib = this.sunAngleTime(this.eval(params.maghrib), times.maghrib);
-      var isha = this.sunAngleTime(this.eval(params.isha), times.isha);
+      var maghrib = this.sunAngleTime(this.value(params.maghrib), times.maghrib);
+      var isha = this.sunAngleTime(this.value(params.isha), times.isha);
 
       return {
         imsak: imsak, fajr: fajr, sunrise: sunrise, dhuhr: dhuhr,
@@ -392,8 +424,8 @@ export default function PrayTimes(method) {
 
       // add midnight time
       times.midnight = (setting.midnight == 'Jafari') ?
-        times.sunset + this.timeDiff(times.sunset, times.fajr) / 2 :
-        times.sunset + this.timeDiff(times.sunset, times.sunrise) / 2;
+        times.sunset + this.timeDiff(times.sunset, times.fajr + 24) / 2 :
+        times.sunset + this.timeDiff(times.sunset, times.sunrise + 24) / 2;
 
       times = this.tuneTimes(times);
       return this.modifyFormats(times);
@@ -410,12 +442,12 @@ export default function PrayTimes(method) {
         times = this.adjustHighLats(times);
 
       if (this.isMin(params.imsak))
-        times.imsak = times.fajr - this.eval(params.imsak) / 60;
+        times.imsak = times.fajr - this.value(params.imsak) / 60;
       if (this.isMin(params.maghrib))
-        times.maghrib = times.sunset + this.eval(params.maghrib) / 60;
+        times.maghrib = times.sunset + this.value(params.maghrib) / 60;
       if (this.isMin(params.isha))
-        times.isha = times.maghrib + this.eval(params.isha) / 60;
-      times.dhuhr += this.eval(params.dhuhr) / 60;
+        times.isha = times.maghrib + this.value(params.isha) / 60;
+      times.dhuhr += this.value(params.dhuhr) / 60;
 
       return times;
     },
@@ -424,7 +456,7 @@ export default function PrayTimes(method) {
     // get asr shadow factor
     asrFactor: function (asrParam) {
       var factor = { Standard: 1, Hanafi: 2 }[asrParam];
-      return factor || this.eval(asrParam);
+      return factor || this.value(asrParam);
     },
 
 
@@ -458,10 +490,10 @@ export default function PrayTimes(method) {
       var params = setting;
       var nightTime = this.timeDiff(times.sunset, times.sunrise);
 
-      times.imsak = this.adjustHLTime(times.imsak, times.sunrise, this.eval(params.imsak), nightTime, 'ccw');
-      times.fajr = this.adjustHLTime(times.fajr, times.sunrise, this.eval(params.fajr), nightTime, 'ccw');
-      times.isha = this.adjustHLTime(times.isha, times.sunset, this.eval(params.isha), nightTime);
-      times.maghrib = this.adjustHLTime(times.maghrib, times.sunset, this.eval(params.maghrib), nightTime);
+      times.imsak = this.adjustHLTime(times.imsak, times.sunrise, this.value(params.imsak), nightTime, 'ccw');
+      times.fajr = this.adjustHLTime(times.fajr, times.sunrise, this.value(params.fajr), nightTime, 'ccw');
+      times.isha = this.adjustHLTime(times.isha, times.sunset, this.value(params.isha), nightTime);
+      times.maghrib = this.adjustHLTime(times.maghrib, times.sunset, this.value(params.maghrib), nightTime);
 
       return times;
     },
@@ -530,7 +562,7 @@ export default function PrayTimes(method) {
     //---------------------- Misc Functions -----------------------
 
     // convert given string into a number
-    eval: function (str) {
+    value: function (str) {
       return 1 * (str + '').split(/[^0-9.+-]/)[0];
     },
 
@@ -580,7 +612,13 @@ const DMath = {
   fixHour: function (a) { return this.fix(a, 24); },
 
   fix: function (a, b) {
-    a = a - b * (Math.floor(a / b));
+    a = a - b * Math.floor(a / b);
     return (a < 0) ? a + b : a;
   }
 }
+
+
+// //---------------------- Init Object -----------------------
+
+
+// var prayTimes = new PrayTimes(); // Edit (remove)

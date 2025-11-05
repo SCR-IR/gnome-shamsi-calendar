@@ -12,5 +12,5 @@
   "url": "https://github.com/scr-ir/gnome-shamsi-calendar",
   "uuid": "shamsi-calendar@gnome.scr.ir",
   "settings-schema": "org.gnome.shell.extensions.shamsi-calendar",
-  "version": 43
+  "version": 44
 }

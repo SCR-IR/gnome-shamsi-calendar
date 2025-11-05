@@ -139,6 +139,14 @@ const Indicator = GObject.registerClass(
       // ));
       // /////////////////////////////
 
+      let bottomBarLabel = new St.Label({
+        text: '',
+        x_align: Clutter.ActorAlign.END,
+        y_align: Clutter.ActorAlign.CENTER,
+        x_expand: true,
+        style_class: 'shcalendar-month-heading shcalendar-month-heading' + this._cssThemeID + ' shcalendar-txt-orange' + this._cssThemeID
+      });
+
       this._todayJD = '';
 
       let vbox = new St.BoxLayout({ vertical: true, style_class: 'shcalendar-font' });
@@ -153,7 +161,7 @@ const Indicator = GObject.registerClass(
       this.menu.addMenuItem(calendar);
 
 
-      this._calendar = new Calendar.Calendar(this.schema, this._cssThemeID);
+      this._calendar = new Calendar.Calendar(this.schema, this._cssThemeID, (text = '') => { bottomBarLabel.set_text(text); });
       vbox.add_child(this._calendar.actor);
 
       let actionButtons = new St.BoxLayout({
@@ -162,12 +170,6 @@ const Indicator = GObject.registerClass(
       });
       vbox.add_child(actionButtons);
 
-      let tahvilText = new St.Label({
-        text: '',
-        x_align: Clutter.ActorAlign.CENTER,
-        x_expand: true,
-        style_class: 'shcalendar-month-heading shcalendar-month-heading' + this._cssThemeID + ' shcalendar-txt-bold shcalendar-txt-green' + this._cssThemeID
-      });
 
 
 
@@ -221,7 +223,7 @@ const Indicator = GObject.registerClass(
 
         let text = Str.numbersFormat(tahvil.tahvilData(dateObj.persianYear + ((dateObj.persianMonth === 1) ? 0 : 1)).text);
 
-        tahvilText.set_text(text);
+        bottomBarLabel.set_text(text);
         // notify(text);
       });
       actionButtons.add_child(nowroozIcon);
@@ -274,7 +276,7 @@ const Indicator = GObject.registerClass(
 
 
 
-      actionButtons.add_child(tahvilText);
+      actionButtons.add_child(bottomBarLabel);
 
 
 
@@ -341,7 +343,7 @@ const Indicator = GObject.registerClass(
       if (skip_notification) {
         let notifyTxt = "";
         for (let evObj of events[0]) {
-          notifyTxt += Str.numbersFormat(evObj.symbol + ' ' + evObj.event + ((evObj.holiday) ? ' (تعطیل)' : '') + '\n');
+          notifyTxt += Str.numbersFormat(evObj.symbol + ' ' + evObj.event + ((evObj.holiday) ? ' (تعطیل)' : '') + "\n");
         }
         notify(
           Str.numbersFormat(
