@@ -497,7 +497,7 @@ export class Calendar {
     //
     let isAfterSunset = false;
     for (let tName in _prayTimes[azanMethods[0]]) {
-      if (tName !== 'sunset') continue
+      if (tName !== 'sunset' || date.getHours() == 0) continue
       let oghat = { method: [], timeStr: [], minutes: [] };
       for (let i in azanMethods) {
         oghat.method[i] = parseInt(i);

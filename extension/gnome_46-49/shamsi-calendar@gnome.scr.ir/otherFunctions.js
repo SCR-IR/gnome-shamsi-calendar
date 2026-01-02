@@ -43,10 +43,10 @@ export const Str = {
     return replaceStr(find, replaceArr, format);
   },
 
-  timeStrToMinutes: (timeStr) => {
+  timeStrToMinutes: (timeStr, convertH0toH24 = true) => {
     let [hour, min] = timeStr.split(':');
     hour = parseInt(hour);
-    if (hour === 0) hour = 24;
+    if (convertH0toH24 && hour === 0) hour = 24; // fix midnight bug:0<23
     return ((hour * 60) + parseInt(min));
   }
 
