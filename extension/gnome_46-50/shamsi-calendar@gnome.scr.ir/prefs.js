@@ -924,7 +924,7 @@ class App extends Adw.PreferencesPage {
       box.append(stateAndCitySubmit);
 
       box.append(new Gtk.Label({
-        label: '<span size="small">\nاگر مکان شما در فهرست بالا نیست و یا مختصات آن اشتباه است،\nمی‌توانید در صفحه‌ی اصلی، اطّلاعات را به‌صورت دستی وارد نمایید.</span>',
+        label: '<span size="small">\nاگر مکان شما در فهرست بالا نیست و یا مختصات آن اشتباه است،\nمی‌توانید در صفحه‌ی اصلی، اطلاعات را به‌صورت دستی وارد نمایید.</span>',
         use_markup: true
       }));
 

@@ -504,7 +504,7 @@ const App = class ShamsiCalendarApp {
     const ptCalcMethods = {
       Tehran: "انجمن ژئوفیزیک، دانشگاه تهران ☫",
       Jafari: "انجمن لواء، قم",
-      MWL: "اتّحادیه‌ی جهانی اسلام، عربستان سعودی",
+      MWL: "اتّحادیه‌ی جهانی اسلامی، عربستان سعودی",
       ISNA: "جامعه‌ی اسلامی آمریکای شمالی",
       Egypt: "مرجع عمومی تحقیقات مصر",
       Makkah: "دانشگاه امّ‌القریٰ، مکّه",
@@ -903,7 +903,7 @@ const App = class ShamsiCalendarApp {
       box.append(stateAndCitySubmit);
 
       box.append(new Gtk.Label({
-        label: '<span size="small">\nاگر مکان شما در فهرست بالا نیست و یا مختصات آن اشتباه است،\nمی‌توانید در صفحه‌ی اصلی، اطّلاعات را به‌صورت دستی وارد نمایید.</span>',
+        label: '<span size="small">\nاگر مکان شما در فهرست بالا نیست و یا مختصات آن اشتباه است،\nمی‌توانید در صفحه‌ی اصلی، اطلاعات را به‌صورت دستی وارد نمایید.</span>',
         use_markup: true
       }));
 

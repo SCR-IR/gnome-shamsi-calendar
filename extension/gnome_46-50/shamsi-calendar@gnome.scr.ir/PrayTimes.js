@@ -92,12 +92,12 @@ export default function PrayTimes(method) {// Edit (export default)
         params: { fajr: 16, isha: 14, maghrib: 4, midnight: 'Jafari' }
       },
       MWL: {
-        faTitle: 'اتّحادیه‌ی جهانی اسلام، عربستان سعودی',
+        faTitle: 'اتّحادیه‌ی جهانی اسلامی، عربستان سعودی',
         name: 'Muslim World League',
         params: { fajr: 18, isha: 17 }
       },
       ISNA: {
-        faTitle: '"جامعه‌ی اسلامی آمریکای شمالی',
+        faTitle: 'جامعه‌ی اسلامی آمریکای شمالی',
         name: 'Islamic Society of North America (ISNA)',
         params: { fajr: 15, isha: 15 }
       },
