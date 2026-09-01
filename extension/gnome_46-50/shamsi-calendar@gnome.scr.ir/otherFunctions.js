@@ -58,20 +58,3 @@ const replaceStr = (search, substitute, subject) => {
   return subject;
 }
 
-export function getPrayTimeSetting(tName, schema) {
-  // Schema: Times Setting value="ShowTime,TextNotify,PlaySound,CalcMethod,SoundId"
-  const [
-    ShowTime,
-    TextNotify,
-    PlaySound,
-    CalcMethod,
-    SoundId
-  ] = schema.get_string('praytime-' + tName + '-setting').split(',');
-  return {
-    ShowTime,
-    TextNotify,
-    PlaySound,
-    CalcMethod,
-    SoundId
-  };
-}

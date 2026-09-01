@@ -67,10 +67,12 @@ export function tahvilData(year) {
   if (data !== undefined) {
     text = 'زمان تحویل سال ' + year + ' -> ' +
       ((data[3] === false) ? 'حدود ساعت ' + data[1] + ':' + data[2] : 'ساعت ' + data[1] + ':' + data[2] + ':' + data[3]) +
-      ' در روز ' + ((data[0] === 1) ? data[0] + ' فروردین ' + year : data[0] + ' اسفند ' + (year - 1))
+      ' در روز ' + ((data[0] === 1) ? data[0] + ' فروردین ' + year : data[0] + ' اسفند ' + (year - 1));
+  } else {
+    text = 'اطلاعات تحویل سال برای سال ' + year + ' ثبت نشده است.';
   }
   return {
-    data: data,
+    data: data || null,
     text: text
   };
 };

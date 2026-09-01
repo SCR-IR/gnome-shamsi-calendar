@@ -93,7 +93,7 @@ var julianDay_to_gregorian = (julianDay) => {
   }
   gD = days + 1;
   gDoM = [0, 31, ((gY % 4 === 0 && gY % 100 !== 0) || (gY % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  for (gM = 0; gM < 13, gD > gDoM[gM]; gM++) {
+  for (gM = 0; gM < 13 && gD > gDoM[gM]; gM++) {
     gD -= gDoM[gM];
   }
   return [gY, gM, gD];
@@ -382,7 +382,7 @@ var julianDay_to_islamic = (julianDay) => {
       if (iD > HILAL.iDoM[iY][0]) {
         iD -= HILAL.iDoM[iY][0];
       } else {
-        for (iM = 1; iM < 13, iD > HILAL.iDoM[iY][iM]; iM++) {
+        for (iM = 1; iM < 13 && iD > HILAL.iDoM[iY][iM]; iM++) {
           iD -= HILAL.iDoM[iY][iM];
         }
         break;
@@ -402,7 +402,7 @@ var julianDayFloat_to_islamic = (julianDayFloat) => {
       if (iD > HILAL.iDoM[iY][0]) {
         iD -= HILAL.iDoM[iY][0];
       } else {
-        for (iM = 1; iM < 13, iD > HILAL.iDoM[iY][iM]; iM++) {
+        for (iM = 1; iM < 13 && iD > HILAL.iDoM[iY][iM]; iM++) {
           iD -= HILAL.iDoM[iY][iM];
         }
         break;
@@ -499,14 +499,14 @@ var barrasiyeEkhtelafGhamari = () => {
 }
 
 
-var roozeJulian_be_hameh = (roozeJulian) => {//موقت + اصلاح شود مثل پایین‌تر
+var roozeJulian_be_hameh = (roozeJulian) => {
   return {
     shamsi: julianDay_to_persian(roozeJulian),
     ghamari: julianDay_to_islamic(roozeJulian),
     ghamariA: julianDay_to_islamicA(roozeJulian),
     miladi: julianDay_to_gregorian(roozeJulian),
     roozeHafteh: ((~~(roozeJulian - 0.5) + 3) % 7),
-    zaman: julianDay_to_time(julianDay),
+    zaman: julianDay_to_time(roozeJulian),
     mohreZaman: julianDay_to_timeStamp(roozeJulian),
     roozeJulian: roozeJulian,
     roozeJulianS12: ~~(roozeJulian + 0.5)
@@ -602,8 +602,8 @@ var is_islamicA_leap = (iY) => {
 
 var is_islamic_leap = (iY) => {
   const HILAL = hilalIM(COUNTRY);
-  if (HILAL.iDoM[iM] !== undefined) {
-    return (HILAL.iDoM[iM][0] === 355) ? true : false;
+  if (HILAL.iDoM[iY] !== undefined) {
+    return (HILAL.iDoM[iY][0] === 355) ? true : false;
   } else {
     return is_islamicA_leap(iY);
   }
@@ -612,7 +612,7 @@ var is_islamic_leap = (iY) => {
 var mName = {
   shamsi: ['', 'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
   ghamari: ['', 'محرم', 'صفر', 'ربیع‌الاول', 'ربیع‌الثانی', 'جمادی‌الاولی', 'جمادی‌الثانیه', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذی‌القعده', 'ذی‌الحجه'],
-  miladiEn: ['', 'January', 'February', 'March', 'April', 'May', 'Juan', 'July', 'August', 'September', 'October', 'November', 'December'],
+  miladiEn: ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   miladi: ['', 'ژانویه', 'فوریه', 'مارس', 'آوریل', 'می', 'ژوئن', 'جولای', 'آگوست', 'سپتامبر', 'اکتبر', 'نوامبر', 'دسامبر']
 };
 
@@ -1043,7 +1043,7 @@ var change_islamicA = (change, dateTime = null) => {
   _julianDay += ch_day + islamicA_to_julianDay(year, month, day) + (_miliSeconds / 86400000);
 
   return [
-    ...julianDay_to_persian(~~_julianDay),
+    ...julianDay_to_islamicA(~~_julianDay),
     ...miliSeconds_to_time(_miliSeconds),
     ~~_julianDay
   ];
