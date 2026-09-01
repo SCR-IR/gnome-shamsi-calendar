@@ -8,10 +8,11 @@ import * as Events from './Events.js';
 
 export class Calendar {
 
-  constructor(Schema, cssThemeID, setBottomBarText = (text = '') => { }) {
+  constructor(Schema, cssThemeID, setBottomBarText = (text = '') => { }, googleSync = null) {
     this.schema = Schema;
     this.cssThemeID = cssThemeID;
     this.setBottomBarText = setBottomBarText;
+    this.googleSync = googleSync;
 
     this.actorRight = new St.Widget({
       style_class: 'shcalendar-actor-right',
@@ -34,12 +35,19 @@ export class Calendar {
 
     this.actorRight.connect('scroll-event', this._onScroll);
 
-    this._buildHeader();
-
     this._selectedDateObj = new Tarikh.TarikhObject();
     this._rtl = (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL);
     let defaultTab = this.schema.get_string('default-tab');
     this._selectedTab = (defaultTab === 'prayTimes') ? 'events' : defaultTab;
+
+    this._buildHeader();
+
+    if (this.googleSync) {
+      this._syncListener = () => {
+        this._update();
+      };
+      this.googleSync.addListener(this._syncListener);
+    }
   }
 
   _buildHeader = () => {
@@ -51,14 +59,16 @@ export class Calendar {
     this.actorRight.layout_manager.attach(this._topBox, 0, 0, 7, 1);
 
     let style = 'shcalendar-nav-button';
+    // In RTL, the visually left-most button moves forward in time (next year), right-most moves backward (prev year).
+    // In LTR, left-most is prev year, right-most is next year.
     let prevYearIcon = new St.Icon({ icon_name: this._rtl ? 'go-last-symbolic' : 'go-first-symbolic', icon_size: 16 });
     let prevYearBtn = new St.Button({ style_class: style, child: prevYearIcon });
-    prevYearBtn.connect('clicked', this._rtl ? this._onPrevYearButtonClicked : this._onNextYearButtonClicked);
+    prevYearBtn.connect('clicked', this._rtl ? this._onNextYearButtonClicked : this._onPrevYearButtonClicked);
     this._topBox.add_child(prevYearBtn);
 
     let prevMonthIcon = new St.Icon({ icon_name: this._rtl ? 'go-next-symbolic' : 'go-previous-symbolic', icon_size: 16 });
     let prevMonthBtn = new St.Button({ style_class: style, child: prevMonthIcon });
-    prevMonthBtn.connect('clicked', this._rtl ? this._onPrevMonthButtonClicked : this._onNextMonthButtonClicked);
+    prevMonthBtn.connect('clicked', this._rtl ? this._onNextMonthButtonClicked : this._onPrevMonthButtonClicked);
     this._topBox.add_child(prevMonthBtn);
 
     this._monthLabel = new St.Label({
@@ -70,12 +80,12 @@ export class Calendar {
 
     let nextMonthIcon = new St.Icon({ icon_name: this._rtl ? 'go-previous-symbolic' : 'go-next-symbolic', icon_size: 16 });
     let nextMonthBtn = new St.Button({ style_class: style, child: nextMonthIcon });
-    nextMonthBtn.connect('clicked', this._rtl ? this._onNextMonthButtonClicked : this._onPrevMonthButtonClicked);
+    nextMonthBtn.connect('clicked', this._rtl ? this._onPrevMonthButtonClicked : this._onNextMonthButtonClicked);
     this._topBox.add_child(nextMonthBtn);
 
     let nextYearIcon = new St.Icon({ icon_name: this._rtl ? 'go-first-symbolic' : 'go-last-symbolic', icon_size: 16 });
     let nextYearBtn = new St.Button({ style_class: style, child: nextYearIcon });
-    nextYearBtn.connect('clicked', this._rtl ? this._onNextYearButtonClicked : this._onPrevYearButtonClicked);
+    nextYearBtn.connect('clicked', this._rtl ? this._onPrevYearButtonClicked : this._onNextYearButtonClicked);
     this._topBox.add_child(nextYearBtn);
 
     this._firstDayIndex = this.actorRight.get_children().length;
@@ -103,6 +113,8 @@ export class Calendar {
       if (d > dom) d = dom;
     } else {
       m--;
+      let dom = Tarikh.daysOfMonth_persian(y, m);
+      if (d > dom) d = dom;
     }
     this._selectedDateObj.persian = [y, m, d];
     this._update();
@@ -110,27 +122,33 @@ export class Calendar {
 
   _onNextMonthButtonClicked = () => {
     let [y, m, d] = this._selectedDateObj.persian;
-    if (m === 6 && d === 31) d = 30;
-    else if (m === 11 && d === 30 && !Tarikh.is_persian_leap(y)) d = 29;
-    else if (m === 12) {
+    if (m === 12) {
       y++;
-      m = 0;
+      m = 1;
+    } else {
+      m++;
     }
-    this._selectedDateObj.persian = [y, m + 1, d];
+    let dom = Tarikh.daysOfMonth_persian(y, m);
+    if (d > dom) d = dom;
+    this._selectedDateObj.persian = [y, m, d];
     this._update();
   }
 
   _onPrevYearButtonClicked = () => {
     let [y, m, d] = this._selectedDateObj.persian;
-    if (m === 12 && d === 30) d = 29;
-    this._selectedDateObj.persian = [y - 1, m, d];
+    y--;
+    let dom = Tarikh.daysOfMonth_persian(y, m);
+    if (d > dom) d = dom;
+    this._selectedDateObj.persian = [y, m, d];
     this._update();
   }
 
   _onNextYearButtonClicked = () => {
     let [y, m, d] = this._selectedDateObj.persian;
-    if (m === 12 && d === 30) d = 29;
-    this._selectedDateObj.persian = [y + 1, m, d];
+    y++;
+    let dom = Tarikh.daysOfMonth_persian(y, m);
+    if (d > dom) d = dom;
+    this._selectedDateObj.persian = [y, m, d];
     this._update();
   }
 
@@ -166,28 +184,23 @@ export class Calendar {
 
     this._monthLabel.text = `${Tarikh.mName.shamsi[this._selectedDateObj.persianMonth]} ${Str.numbersFormat(this._selectedDateObj.persianYear)}`;
 
+    // Accurate start of the month grid alignment
     let iterObj = new Tarikh.TarikhObject();
     iterObj.julianDay = this._selectedDateObj.julianDay;
     iterObj.persianDay = 1;
-    iterObj.dayOfWeek = weekStart;
+    let offset = (iterObj.dayOfWeek - weekStart + 7) % 7;
+    iterObj.julianDay -= offset;
 
     let row = 2;
     let selectedDateEvents = [[], false];
     let afterSelectedDateEvents = [[], false];
 
+    // Reusable events generator
+    let eventChecker = new Events.Events(iterObj, this.schema, this.googleSync);
+
     while (true) {
-      let events = new Events.Events(iterObj, this.schema).getEvents();
-      let eventStatus = {
-        persian: { hasEvent: false, isHoliday: false },
-        islamic: { hasEvent: false, isHoliday: false },
-        gregorian: { hasEvent: false, isHoliday: false }
-      };
-      for (let evObj of events[0]) {
-        if (eventStatus[evObj.type]) {
-          eventStatus[evObj.type].hasEvent = true;
-          if (evObj.holiday) eventStatus[evObj.type].isHoliday = true;
-        }
-      }
+      eventChecker.todayObj = iterObj;
+      let events = eventChecker.getEvents();
 
       let isOtherMonth = (iterObj.persianMonth !== this._selectedDateObj.persianMonth);
       let isToday = (iterObj.julianDay === nowObj.julianDay);
@@ -260,10 +273,16 @@ export class Calendar {
       }
     }
 
+    if (!selectedDateEvents || selectedDateEvents[0].length === 0) {
+      let _currObj = new Tarikh.TarikhObject();
+      _currObj.julianDay = this._selectedDateObj.julianDay;
+      selectedDateEvents = new Events.Events(_currObj, this.schema, this.googleSync).getEvents();
+    }
+
     if (!afterSelectedDateEvents || afterSelectedDateEvents[0].length === 0) {
       let _iterObj = new Tarikh.TarikhObject();
       _iterObj.julianDay = this._selectedDateObj.julianDay + 1;
-      afterSelectedDateEvents = new Events.Events(_iterObj, this.schema).getEvents();
+      afterSelectedDateEvents = new Events.Events(_iterObj, this.schema, this.googleSync).getEvents();
     }
 
     // Left Panel - Selected Date Card & Details
@@ -385,14 +404,18 @@ export class Calendar {
     let _scrollBox = new St.ScrollView({
       overlay_scrollbars: true,
       enable_mouse_scrolling: true,
-      hscrollbar_policy: 2,
+      hscrollbar_policy: St.PolicyType ? St.PolicyType.NEVER : 2,
       style_class: 'shcalendar-events-scrollable'
     });
     this.actorLeft.layout_manager.attach(_scrollBox, 0, ++evTopPosition, 1, 1);
 
     if (this._selectedTab === 'events') {
       let _eventsBox = new St.BoxLayout({ vertical: true, style_class: 'shcalendar-events-layout' });
-      _scrollBox.add_child(_eventsBox);
+      if (typeof _scrollBox.set_child === 'function') {
+        _scrollBox.set_child(_eventsBox);
+      } else {
+        _scrollBox.add_child(_eventsBox);
+      }
 
       if (selectedDateEvents[0].length === 0) {
         let emptyLabel = new St.Label({
@@ -430,7 +453,11 @@ export class Calendar {
 
     } else if (this._selectedTab === 'dateConvert') {
       let _converterRoot = new St.BoxLayout({ vertical: true, style_class: 'shcalendar-converter-container' });
-      _scrollBox.add_child(_converterRoot);
+      if (typeof _scrollBox.set_child === 'function') {
+        _scrollBox.set_child(_converterRoot);
+      } else {
+        _scrollBox.add_child(_converterRoot);
+      }
 
       const ConverterTypes = {
         fromPersian: 0,
@@ -613,7 +640,7 @@ export class Calendar {
   }
 
   _rotate = (a, b, x, y, Schema) => {
-    return (Schema.get_boolean('rotaton-to-vertical')) ? [7 - b, 8 - a + 1, y, x] : [a, b, x, y];
+    return (Schema.get_boolean('rotation-to-vertical')) ? [7 - b, 8 - a + 1, y, x] : [a, b, x, y];
   }
 
   _colPosition = (rtl, Schema) => {
@@ -621,5 +648,13 @@ export class Calendar {
       Schema.get_boolean('reverse-direction') && rtl ||
       !Schema.get_boolean('reverse-direction') && !rtl
     ) ? 6 : 0);
+  }
+
+  destroy() {
+    if (this.googleSync && this._syncListener) {
+      this.googleSync.removeListener(this._syncListener);
+      this._syncListener = null;
+    }
+    this.actor.destroy();
   }
 }

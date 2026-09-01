@@ -28,7 +28,7 @@ const CalendarServerIface = `<node>
 const CalendarServerProxy = Gio.DBusProxy.makeProxyWrapper(CalendarServerIface);
 
 // Singleton manager for Google / EDS Calendar Events
-class GoogleCalendarSync {
+export class GoogleCalendarSync {
   constructor() {
     this._proxy = null;
     this._events = new Map(); // id -> { id, summary, startTime, endTime, extras }
@@ -132,12 +132,11 @@ class GoogleCalendarSync {
   }
 }
 
-export const googleCalendarSync = new GoogleCalendarSync();
-
 export class Events {
-  constructor(todayObj, schema) {
+  constructor(todayObj, schema, googleSync = null) {
     this.todayObj = todayObj;
     this.schema = schema;
+    this.googleSync = googleSync;
     this._init();
   }
 

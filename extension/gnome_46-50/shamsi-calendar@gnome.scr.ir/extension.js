@@ -16,8 +16,6 @@ import * as Calendar from './calendar.js';
 import * as Events from './Events.js';
 import * as tahvil from './tahvil.js';
 
-let _mainLabel, _indicator, _timers = [];
-
 function _labelSchemaName(schema, isHoliday = false) {
   return isHoliday ? 'holiday-color' : 'not-holiday-color';
 }
@@ -29,6 +27,7 @@ const Indicator = GObject.registerClass(
       this.schema = _arg.settings;
       this.uuid = _arg.uuid;
       this.path = _arg.path;
+      this._googleSync = _arg.googleSync;
       this._openPreferences = _arg.openPreferences;
       this._restartExtension = _arg.restartExtension;
 
@@ -39,13 +38,13 @@ const Indicator = GObject.registerClass(
 
       this.schema_signals = [];
 
-      _mainLabel = new St.Label({
+      this._mainLabel = new St.Label({
         style_class: 'shcalendar-panel-label',
         y_expand: true,
         y_align: Clutter.ActorAlign.CENTER
       });
 
-      this.add_child(_mainLabel);
+      this.add_child(this._mainLabel);
 
       this._applyLabelStyle();
 
@@ -85,7 +84,8 @@ const Indicator = GObject.registerClass(
       this._calendar = new Calendar.Calendar(
         this.schema,
         '',
-        (text = '') => { bottomBarLabel.set_text(text); }
+        (text = '') => { bottomBarLabel.set_text(text); },
+        this._googleSync
       );
       vbox.add_child(this._calendar.actor);
 
@@ -149,6 +149,9 @@ const Indicator = GObject.registerClass(
 
       this.menu.connect('open-state-changed', (menu, isOpen) => {
         if (isOpen) {
+          if (this._googleSync) {
+            this._googleSync.requestRange();
+          }
           this._calendar._selectedDateObj.setNow();
           this._calendar._update();
         }
@@ -156,26 +159,28 @@ const Indicator = GObject.registerClass(
     }
 
     _applyLabelStyle(isHoliday = false) {
+      if (!this._mainLabel) return;
       if (this.schema.get_boolean('custom-color')) {
         let colorKey = _labelSchemaName(this.schema, isHoliday);
-        _mainLabel.set_style(`color: ${this.schema.get_string(colorKey)};`);
+        this._mainLabel.set_style(`color: ${this.schema.get_string(colorKey)};`);
       } else {
-        _mainLabel.set_style('');
+        this._mainLabel.set_style('');
       }
     }
 
     updateDate(skip_notification = false, force = false) {
+      if (!this._mainLabel) return true;
       let dateObj = new Tarikh.TarikhObject();
 
       if (!force && this._todayJD === dateObj.julianDay) return true;
       this._todayJD = dateObj.julianDay;
 
-      let events = new Events.Events(dateObj, this.schema).getEvents(150);
+      let events = new Events.Events(dateObj, this.schema, this._googleSync).getEvents(150);
       let isHoliday = events[1];
 
       this._applyLabelStyle(isHoliday);
 
-      _mainLabel.set_text(
+      this._mainLabel.set_text(
         Str.numbersFormat(
           Str.dateStrFormat(
             this.schema.get_string('widget-format'),
@@ -191,7 +196,8 @@ const Indicator = GObject.registerClass(
       if (skip_notification) {
         let notifyTxt = '';
         for (let evObj of events[0]) {
-          notifyTxt += Str.numbersFormat(`${evObj.symbol} ${evObj.event}${evObj.holiday ? ' (تعطیل)' : ''}\n`);
+          notifyTxt += Str.numbersFormat(`${evObj.symbol} ${evObj.event}${evObj.holiday ? ' (تعطیل)' : ''}
+`);
         }
         notify(
           Str.numbersFormat(
@@ -210,6 +216,11 @@ const Indicator = GObject.registerClass(
           this.schema.disconnect(sig);
         }
         this.schema_signals = [];
+      }
+      this._mainLabel = null;
+      if (this._calendar) {
+        this._calendar.destroy?.();
+        this._calendar = null;
       }
       super.destroy();
     }
@@ -238,14 +249,26 @@ function notify(title, body = '', iconName = 'x-office-calendar') {
 }
 
 export default class ShamsiCalendarExtension extends Extension {
+  constructor(metadata) {
+    super(metadata);
+    this._indicator = null;
+    this._googleSync = null;
+    this._timers = [];
+  }
 
   enable() {
-    _timers = [];
+    this._timers = [];
+    let settings = this.getSettings();
 
-    _indicator = new Indicator({
-      settings: this.getSettings(),
+    if (settings.get_boolean('enable-google-calendar')) {
+      this._googleSync = new Events.GoogleCalendarSync();
+    }
+
+    this._indicator = new Indicator({
+      settings: settings,
       path: this.dir.get_path(),
       uuid: this.uuid,
+      googleSync: this._googleSync,
       openPreferences: () => this.openPreferences(),
       restartExtension: () => {
         this.disable();
@@ -253,15 +276,15 @@ export default class ShamsiCalendarExtension extends Extension {
       }
     });
 
-    let position = _indicator.schema.get_string('widget-position');
+    let position = settings.get_string('widget-position');
     Main.panel.addToStatusArea(
       this.uuid,
-      _indicator,
+      this._indicator,
       { 'left': '99999', 'center': '99999', 'right': '0' }[position] ?? '99999',
       position
     );
 
-    _indicator.updateDate(_indicator.schema.get_boolean('startup-notification'), true);
+    this._indicator.updateDate(settings.get_boolean('startup-notification'), true);
 
     // Schedule next day update at midnight accurately
     this._scheduleNextUpdate();
@@ -279,29 +302,32 @@ export default class ShamsiCalendarExtension extends Extension {
           GLib.PRIORITY_DEFAULT,
           60,
           () => {
-            _indicator?.updateDate();
+            this._indicator?.updateDate();
             return GLib.SOURCE_CONTINUE;
           }
         );
-        _timers.push(intervalTimer);
-        _indicator?.updateDate();
+        this._timers.push(intervalTimer);
+        this._indicator?.updateDate();
         return GLib.SOURCE_REMOVE;
       }
     );
-    _timers.push(initialTimer);
+    this._timers.push(initialTimer);
   }
 
   disable() {
-    for (let timer of _timers) {
+    for (let timer of this._timers) {
       if (timer) GLib.Source.remove(timer);
     }
-    _timers = [];
+    this._timers = [];
 
-    if (_indicator) {
-      _indicator.destroy();
-      _indicator = null;
+    if (this._indicator) {
+      this._indicator.destroy();
+      this._indicator = null;
     }
 
-    _mainLabel = null;
+    if (this._googleSync) {
+      this._googleSync.destroy();
+      this._googleSync = null;
+    }
   }
 }

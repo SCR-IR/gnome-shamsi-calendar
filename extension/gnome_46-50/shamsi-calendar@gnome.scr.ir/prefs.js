@@ -104,6 +104,9 @@ class App {
     this.schema.bind('custom-color', customColorRow, 'active', Gio.SettingsBindFlags.DEFAULT);
     colorGroup.add(customColorRow);
 
+    this._addColorPickerRow(colorGroup, 'رنگ روزهای عادی', 'not-holiday-color');
+    this._addColorPickerRow(colorGroup, 'رنگ روزهای تعطیل', 'holiday-color');
+
     // Group 3: Default Tab
     let popupGroup = new Adw.PreferencesGroup({
       title: 'پنجره تقویم'
@@ -123,6 +126,29 @@ class App {
       this.schema.set_string('default-tab', tabKeys[tabRow.get_selected()]);
     });
     popupGroup.add(tabRow);
+  }
+
+  _addColorPickerRow(group, title, schemaKey) {
+    let row = new Adw.ActionRow({ title: title });
+    let colorStr = this.schema.get_string(schemaKey) || '#ffffff';
+    let rgba = new Gdk.RGBA();
+    rgba.parse(colorStr);
+
+    let colorDialog = new Gtk.ColorDialog({ with_alpha: false });
+    let colorButton = new Gtk.ColorDialogButton({
+      dialog: colorDialog,
+      rgba: rgba,
+      valign: Gtk.Align.CENTER
+    });
+
+    colorButton.connect('notify::rgba', () => {
+      let col = colorButton.get_rgba();
+      let hex = col.to_string();
+      this.schema.set_string(schemaKey, hex);
+    });
+
+    row.add_suffix(colorButton);
+    group.add(row);
   }
 
   _buildEventsPage() {
@@ -231,7 +257,7 @@ class App {
 
     let versionRow = new Adw.ActionRow({
       title: 'نسخه',
-      subtitle: '50.1.0'
+      subtitle: '45'
     });
     aboutGroup.add(versionRow);
 

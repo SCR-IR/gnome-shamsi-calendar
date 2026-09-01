@@ -58,6 +58,26 @@
       <default>true</default>
       <summary>Display Gregorian date</summary>
     </key>
+    <key name="persian-display-format" type="s">
+      <default>'%WW %d %MM %Y'</default>
+      <summary>Persian date format</summary>
+    </key>
+    <key name="islamic-display-format" type="s">
+      <default>'%d %MM %Y'</default>
+      <summary>Islamic date format</summary>
+    </key>
+    <key name="gregorian-display-format" type="s">
+      <default>'%d %MM %Y'</default>
+      <summary>Gregorian date format</summary>
+    </key>
+    <key name="rotation-to-vertical" type="b">
+      <default>false</default>
+      <summary>Rotate calendar grid vertically</summary>
+    </key>
+    <key name="reverse-direction" type="b">
+      <default>false</default>
+      <summary>Reverse calendar layout direction</summary>
+    </key>
 
     <!-- Events -->
     <key name="show-persian-events" type="b">
