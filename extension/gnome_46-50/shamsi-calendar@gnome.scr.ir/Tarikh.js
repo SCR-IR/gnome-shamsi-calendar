@@ -602,8 +602,8 @@ var is_islamicA_leap = (iY) => {
 
 var is_islamic_leap = (iY) => {
   const HILAL = hilalIM(COUNTRY);
-  if (HILAL.iDoM[iM] !== undefined) {
-    return (HILAL.iDoM[iM][0] === 355) ? true : false;
+  if (HILAL.iDoM[iY] !== undefined) {
+    return (HILAL.iDoM[iY][0] === 355) ? true : false;
   } else {
     return is_islamicA_leap(iY);
   }
