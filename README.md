@@ -1,19 +1,61 @@
-### تقویم هجری‌شمسی و اوقات شرعی برای میزکار گنوم لینوکس
-### Persian calendar and prayer tiems for *Gnome-Shell*
----
-+ قابلیت نمایش همزمان سه تاریخ هجری‌شمسی، هجری‌قمری و میلادی
-+ محاسبه و نمایش اوقات شرعی و پخش اذان با تنظیمات پیشرفته
-+ نمایش تعطیلی‌ها و مناسبت‌های رسمی تقویم ج.ا. ایران
----
-
-![Screenshot](https://github.com/SCR-IR/gnome-shamsi-calendar/blob/main/Screenshot.gif?raw=true)
-
-#### Install , نصب:
-* https://github.com/SCR-IR/gnome-shamsi-calendar/releases
-
-#### Check last version , بررسی آخرین نسخه:
-* https://jdf.scr.ir/gnome_shamsi_calendar
-
-#### Other links , سایر پیوندها:
-* https://extensions.gnome.org/extension/3618/
-* https://github.com/scr-ir/gnome-shamsi-calendar
+# تقویم هجری شمسی مدرن برای گنوم لینوکس (GNOME 46 - 50)
+31. ### Modern Persian Calendar for GNOME Shell
+32. 
+33. نسخه بازطراحی‌شده، سبک و بهینه‌سازی‌شده تقویم شمسی، قمری و میلادی برای میزکار گنوم با استانداردهای مدرن Libadwaita.
+34. 
+35. ---
+36. 
+37. ### ✨ ویژگی‌های کلیدی
+38. 
+39. + **نمایش همزمان تاریخ‌ها:** نمایش دقیق تاریخ‌های خورشیدی، قمری (هلالی) و میلادی.
+40. + **سینک با Google Calendar و یادآورها:** اتصال خودکار به تقویم گوگل و یادآورهای سیستم از طریق `Evolution Data Server` بدون نیاز به تنظیمات پیچیده.
+41. + **مناسبت‌ها و تعطیلات رسمی:** نمایش تعطیلات رسمی تقویم شمسی ایران و رویدادهای بین‌المللی.
+42. + **ابزار تبدیل تاریخ پیشرفته:** تبدیل دوطرفه و دقیق بین تقویم‌های شمسی، میلادی و قمری همراه با امکان کپی و پرش به تاریخ.
+43. + **رابط کاربری مدرن (Libadwaita):** سازگاری ۱۰۰٪ با حالت تیره و روشن گنوم و حذف کامل استایل‌های قدیمی.
+44. + **سبک و بدون کدهای زائد:** حذف کامل پخش صوت، اذان و اسکریپت‌های دستکاری فونت برای دستیابی به حداکثر پایداری و عملکرد.
+45. 
+46. ---
+47. 
+48. ### 🚀 راهنمای نصب
+49. 
+50. #### روش ۱: نصب خودکار با اسکریپت
+51. 
+52. ```bash
+53. git clone https://github.com/xSOH3ILx/gnome-shamsi-calendar.git
+54. cd gnome-shamsi-calendar
+55. chmod +x install.sh
+56. ./install.sh
+57. ```
+58. 
+59. #### روش ۲: نصب دستی
+60. 
+61. ```bash
+62. # ۱. ساخت پوشه مقصد
+63. mkdir -p ~/.local/share/gnome-shell/extensions/shamsi-calendar@gnome.scr.ir
+64. 
+65. # ۲. کپی فایل‌های اکستنشن
+66. cp -r extension/gnome_46-50/shamsi-calendar@gnome.scr.ir/* ~/.local/share/gnome-shell/extensions/shamsi-calendar@gnome.scr.ir/
+67. 
+68. # ۳. کامپایل تنظیمات
+69. glib-compile-schemas ~/.local/share/gnome-shell/extensions/shamsi-calendar@gnome.scr.ir/schemas/
+70. 
+71. # ۴. فعال‌سازی اکستنشن
+72. gnome-extensions enable shamsi-calendar@gnome.scr.ir
+73. ```
+74. 
+75. > **نکته در محیط Wayland:** در صورتی که افزونه در نوار وضعیت ظاهر نشد، یک بار از حساب کاربری خود خارج شده (`Log Out`) و مجدداً وارد شوید (`Log In`).
+76. 
+77. ---
+78. 
+79. ### 🗑️ حذف افزونه
+80. 
+81. ```bash
+82. ./uninstall.sh
+83. ```
+84. 
+85. ---
+86. 
+87. ### 📄 مستندات و معماری فنی
+88. 
+89. برای مطالعه جزییات معماری و مراحل توسعه، فایل [PLAN.md](PLAN.md) را مشاهده فرمایید.
+90. 
