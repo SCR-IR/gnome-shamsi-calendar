@@ -190,9 +190,23 @@ const Indicator = GObject.registerClass(
       preferencesIcon.connect('clicked', _arg.openPreferences);
       actionButtons.add_child(preferencesIcon);
 
-
-
-
+      const stopAzanIcon = new St.Button({
+        child: new St.Icon({
+          icon_name: 'media-playback-stop-symbolic',
+          icon_size: 25,
+          style: 'color: #e55'
+        }),
+        reactive: true,
+        can_focus: true,
+        accessible_name: 'توقف پخش اذان',
+        style_class: 'shcalendar-options-button shcalendar-options-button' + this._cssThemeID
+      });
+      stopAzanIcon.connect('clicked', () => sound.stop());
+      actionButtons.add_child(stopAzanIcon);
+      const unsubscribePlayback = sound.subscribe(playing => {
+        stopAzanIcon.visible = playing;
+      });
+      stopAzanIcon.connect('destroy', unsubscribePlayback);
 
       // Add Nowrooz button
       icon = new St.Icon({
@@ -570,6 +584,7 @@ export default class ShamsiCalendarExtension extends Extension {
   }
 
   disable() {
+    sound.shutdown();
     _prayTimeIs = '';
     // if (player !== null && player.isPlaying()) player.pause();
 
