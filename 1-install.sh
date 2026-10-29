@@ -8,9 +8,12 @@ gnomeVersion=$( gnome-shell --version | sed -Ee 's/GNOME Shell (([0-9]{1,2}).([0
 
 dirName=""
 
-if [ "`echo "${gnomeVersion} >= 46" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 51" | bc`" -eq 1 ]
+if [ "`echo "${gnomeVersion} >= 48" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 52" | bc`" -eq 1 ]
 then
-	dirName="gnome_46-50"
+	dirName="gnome_48-51"
+elif [ "`echo "${gnomeVersion} >= 46" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 48" | bc`" -eq 1 ]
+then
+	dirName="gnome_46-47"
 elif [ "`echo "${gnomeVersion} >= 45" | bc`" -eq 1 -a "`echo "${gnomeVersion} < 46" | bc`" -eq 1 ]
 then
 	dirName="gnome_45"
@@ -27,7 +30,7 @@ elif [ "`echo "${gnomeVersion} >= 3.20" | bc`" -eq 1 -a "`echo "${gnomeVersion} 
 then
 	dirName="gnome_3.20-3.22"
 else
-	echo "Gnome $gnomeVersion is not supported! Please update the extension"
+	echo "Gnome $gnomeVersion is not supported! Please update the extension or edit files: 1-install.sh and metadata.json and ..."
 fi
 
 if [ "$dirName" != "" ]
