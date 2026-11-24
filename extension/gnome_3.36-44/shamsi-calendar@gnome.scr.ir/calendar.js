@@ -1,4 +1,5 @@
 const Clutter = imports.gi.Clutter;
+const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const St = imports.gi.St;
 const Pango = imports.gi.Pango;
@@ -45,6 +46,7 @@ var Calendar = class {
     this._selectedDateObj = new Tarikh.TarikhObject();
     this._rtl = (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL);
     this._selectedTab = this.schema.get_string('default-tab');
+    this._countdownTimerId = null;
   }
 
   _buildHeader() {
@@ -172,6 +174,7 @@ var Calendar = class {
   }
 
   _update() {
+    this.stopCountdown();
     let weekStart = parseInt(this.schema.get_string('week-start'));
     let dateDisplay = {
       persian: this.schema.get_boolean('persian-display'),
@@ -750,6 +753,11 @@ var Calendar = class {
 
       _scrollBox.add_actor(_prayBox_v);
 
+      // countdown to the next pray time (issue #53): bottom of the tab, outside the scroll area
+      if (this.schema.get_boolean('praytime-countdown-show')) {
+        this.actorLeft.layout_manager.attach(this._buildCountdownBox(), 0, ++evTopPosition, 1, 1);
+      }
+
       {
         // const persianDate = nowObj.persian;
         // const iranTZO = (
@@ -1075,6 +1083,131 @@ var Calendar = class {
     hour = parseInt(hour);
     if (hour === 0) hour = 24;
     return ((hour * 60) + parseInt(min));
+  }
+
+  /** Find the first upcoming pray time (from now), checking yesterday/today/tomorrow.
+   *  Uses the same "ehtiyat" rule and ShowTime filter as the pray times list.
+   *
+   * @return {{tName: string, target: number, dayOffset: number} | null} target: timestamp (ms)
+   */
+  _getNextPrayTime() {
+    const azanMethods = [
+      this.schema.get_string('praytime-calc-method-ehtiyat'),
+      this.schema.get_string('praytime-calc-method-main')
+    ];
+    const coords = [
+      this.schema.get_double('praytime-lat'),
+      this.schema.get_double('praytime-lng')
+    ];
+    const PT = new extension.imports.PrayTimes.PrayTimes(); // own instance: don't touch shared prayTimes method
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const todayJD = new Tarikh.TarikhObject().julianDay;
+
+    let next = null;
+    // yesterday is needed for "midnight" after 00:00 (e.g. 00:15 of today)
+    for (let dayOffset = -1; dayOffset <= 1; dayOffset++) {
+      let dayObj = new Tarikh.TarikhObject();
+      dayObj.julianDay = todayJD + dayOffset;
+
+      let times = {};
+      for (let method of azanMethods) {
+        PT.setMethod(method);
+        times[method] = PT.getTimes(dayObj.gregorian, coords);
+      }
+
+      for (let tName in times[azanMethods[0]]) {
+        const settings = this.getPrayTimeSetting(tName, this.schema);
+        if (
+          settings.ShowTime === 'never' ||
+          (settings.ShowTime === 'ramazan' && dayObj.islamicMonth !== 9)
+        ) continue;
+
+        const minutes = azanMethods.map((m) => this.timeStrToMinutes(times[m][tName]));
+        if (minutes.some(isNaN)) continue;
+        const ehtiyat = (
+          tName === 'imsak' ||
+          tName === 'sunrise' ||
+          tName === 'sunset' ||
+          tName === 'midnight'
+        ) ? Math.min(...minutes) : Math.max(...minutes);
+
+        const target = todayStart + ((dayOffset * 1440) + ehtiyat) * 60000;
+        if (target > now.getTime() && (next === null || target < next.target)) {
+          next = { tName, target, dayOffset };
+        }
+      }
+    }
+    return next;
+  }
+
+  _formatCountdown(ms, showSeconds = true) {
+    const pad = (n) => ((n < 10) ? '0' : '') + n;
+    if (!showSeconds) {
+      const totalMin = Math.max(0, Math.floor(ms / 60000));
+      return str.numbersFormat(pad(Math.floor(totalMin / 60)) + ':' + pad(totalMin % 60));
+    }
+    const totalSec = Math.max(0, Math.floor(ms / 1000));
+    return str.numbersFormat(
+      pad(Math.floor(totalSec / 3600)) + ':' +
+      pad(Math.floor((totalSec % 3600) / 60)) + ':' +
+      pad(totalSec % 60)
+    );
+  }
+
+  _buildCountdownBox() {
+    let row = new St.BoxLayout({
+      x_expand: true,
+      y_expand: true,
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.END,
+      style_class: 'shcalendar-praytimes-countdown'
+    });
+
+    const next = this._getNextPrayTime();
+    if (next === null) return row;
+    const showSeconds = this.schema.get_boolean('praytime-countdown-seconds');
+
+    // same look as the pray times table: [time] [name]
+    // fixed-size box (= widest possible time text) so nothing moves when digits change
+    let timeBox = new St.BoxLayout({
+      style_class: 'shcalendar-praytimes-countdown-timebox' + ((showSeconds) ? '' : ' shcalendar-praytimes-countdown-timebox-nosec'),
+      x_expand: false,
+    });
+    let timeLabel = new St.Label({
+      text: this._formatCountdown(next.target - Date.now(), showSeconds),
+      style_class: 'shcalendar-praytimes-countdown-time shcalendar-txt-green' + this.themeID,
+      x_expand: true,
+      x_align: Clutter.ActorAlign.START, // left-aligned: only the changing digits move, not the whole text
+    });
+    timeBox.add(timeLabel);
+    row.add(timeBox);
+    row.add(new St.Label({
+      text: 'مانده تا ' + PrayTimes.persianMap[next.tName] + ((next.dayOffset === 1) ? ' (فردا)' : '') + ':',
+      style_class: 'shcalendar-praytimes-tname shcalendar-txt-color' + this.themeID,
+      x_expand: false,
+    }));
+
+    this._countdownTimerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+      const remaining = next.target - Date.now();
+      if (remaining <= 0) {
+        // time reached: rebuild to refresh ✓ marks and pick the next pray time
+        this._countdownTimerId = null;
+        this._update();
+        return GLib.SOURCE_REMOVE;
+      }
+      timeLabel.set_text(this._formatCountdown(remaining, showSeconds));
+      return GLib.SOURCE_CONTINUE;
+    });
+
+    return row;
+  }
+
+  stopCountdown() {
+    if (this._countdownTimerId !== null) {
+      GLib.source_remove(this._countdownTimerId);
+      this._countdownTimerId = null;
+    }
   }
 
   _rotate(a, b, x, y, Schema) {

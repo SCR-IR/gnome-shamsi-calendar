@@ -511,3 +511,21 @@
 .shcalendar-praytimes-azan-thm1:hover {
   background-color: #690125;
 }
+
+.shcalendar-praytimes-countdown {
+  padding-bottom: 0.6em;
+}
+
+/* fixed width = widest time text in Vazirmatn ("۳۳:۳۳:۳۳" / "۳۳:۳۳") + padding */
+.shcalendar-praytimes-countdown-timebox {
+  width: 4.9em;
+  padding: 0 5px;
+}
+
+.shcalendar-praytimes-countdown-timebox-nosec {
+  width: 3.3em;
+}
+
+.shcalendar-praytimes-countdown-time {
+  text-align: left;
+}

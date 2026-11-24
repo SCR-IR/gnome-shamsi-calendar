@@ -540,6 +540,18 @@ const App = new Lang.Class({
     this.vbox5.add(hbox);
 
 
+    hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 3 });
+    hbox.border_width = 3;
+    this.el['praytime-countdown-seconds'] = new Gtk.CheckButton({ label: 'نمایش ثانیه' });
+    Schema.bind('praytime-countdown-seconds', this.el['praytime-countdown-seconds'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    Schema.bind('praytime-countdown-show', this.el['praytime-countdown-seconds'], 'sensitive', Gio.SettingsBindFlags.GET);
+    this.el['praytime-countdown-show'] = new Gtk.CheckButton({ label: 'نمایش زمان مانده تا وقت شرعی بعدی' });
+    Schema.bind('praytime-countdown-show', this.el['praytime-countdown-show'], 'active', Gio.SettingsBindFlags.DEFAULT);
+    hbox.add(this.el['praytime-countdown-seconds']);
+    hbox.add(this.el['praytime-countdown-show']);
+    this.vbox5.add(hbox);
+
+
     this.vbox5.add(new Gtk.HBox({ border_width: 3 }));
 
 
@@ -927,6 +939,8 @@ const App = new Lang.Class({
         'praytime-calc-method-main': 'ComboBoxText',
         'praytime-calc-method-ehtiyat': 'ComboBoxText',
         'praytime-ehtiyat-show': 'CheckButton',
+        'praytime-countdown-show': 'CheckButton',
+        'praytime-countdown-seconds': 'CheckButton',
         'praytime-lat': 'Entry-Double',
         'praytime-lng': 'Entry-Double',
         'praytime-city': 'Entry-String',

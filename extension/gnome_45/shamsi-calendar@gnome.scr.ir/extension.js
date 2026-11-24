@@ -265,6 +265,8 @@ const Indicator = GObject.registerClass(
         if (isOpen) {
           that._calendar._selectedDateObj.setNow();
           that._calendar._update();
+        } else {
+          that._calendar.stopCountdown();
         }
       });
 
@@ -512,6 +514,7 @@ export default class ShamsiCalendarExtension extends Extension {
     _indicator?.schema.disconnect(_indicator.schema_theme_id_signal);
     _indicator?.schema.disconnect(_indicator.schema_widget_position_signal);
     _indicator?.schema.disconnect(_indicator.schema_window_position_signal);
+    _indicator?._calendar?.stopCountdown();
     _indicator?.destroy();
     for (let i in _timers) GLib.Source.remove(_timers[i]);
     _timers = null;

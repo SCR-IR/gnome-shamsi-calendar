@@ -310,3 +310,21 @@
 .pcalendar-praytimes-azan:hover {
   background-color: #690125;
 }
+
+.pcalendar-praytimes-countdown {
+  padding-bottom: 0.6em;
+}
+
+/* fixed width = widest time text in Vazirmatn ("۳۳:۳۳:۳۳" / "۳۳:۳۳") + padding */
+.pcalendar-praytimes-countdown-timebox {
+  width: 4.9em;
+  padding: 0 5px;
+}
+
+.pcalendar-praytimes-countdown-timebox-nosec {
+  width: 3.3em;
+}
+
+.pcalendar-praytimes-countdown-time {
+  text-align: left;
+}

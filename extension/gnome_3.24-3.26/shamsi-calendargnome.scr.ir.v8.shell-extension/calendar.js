@@ -1,4 +1,5 @@
 const Clutter = imports.gi.Clutter;
+const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const St = imports.gi.St;
 const Pango = imports.gi.Pango;
@@ -36,6 +37,7 @@ Calendar.prototype = {
   _selectedDateObj: new Tarikh.TarikhObject(),
   _rtl: (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL),
   _selectedTab: Schema.get_string('default-tab'),
+  _countdownTimerId: null,
   // weekdayAbbr: ['شـ', 'یـ', 'د', 'سـ', 'چـ', 'پـ', 'جـ'],
 
   _init: function () {
@@ -218,7 +220,133 @@ Calendar.prototype = {
     this._update();
   },
 
+  /** Find the first upcoming pray time (from now), checking yesterday/today/tomorrow.
+   *  Uses the same "ehtiyat" rule and ShowTime filter as the pray times list.
+   *
+   * @return {{tName: string, target: number, dayOffset: number} | null} target: timestamp (ms)
+   */
+  _getNextPrayTime: function () {
+    const azanMethods = [
+      Schema.get_string('praytime-calc-method-ehtiyat'),
+      Schema.get_string('praytime-calc-method-main')
+    ];
+    const coords = [
+      Schema.get_double('praytime-lat'),
+      Schema.get_double('praytime-lng')
+    ];
+    const PT = new extension.imports.PrayTimes.PrayTimes(); // own instance: don't touch shared prayTimes method
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const todayJD = new Tarikh.TarikhObject().julianDay;
+
+    let next = null;
+    // yesterday is needed for "midnight" after 00:00 (e.g. 00:15 of today)
+    for (let dayOffset = -1; dayOffset <= 1; dayOffset++) {
+      let dayObj = new Tarikh.TarikhObject();
+      dayObj.julianDay = todayJD + dayOffset;
+
+      let times = {};
+      for (let method of azanMethods) {
+        PT.setMethod(method);
+        times[method] = PT.getTimes(dayObj.gregorian, coords);
+      }
+
+      for (let tName in times[azanMethods[0]]) {
+        const settings = getPrayTimeSetting(tName);
+        if (
+          settings.ShowTime === 'never' ||
+          (settings.ShowTime === 'ramazan' && dayObj.islamicMonth !== 9)
+        ) continue;
+
+        const minutes = azanMethods.map((m) => timeStrToMinutes(times[m][tName]));
+        if (minutes.some(isNaN)) continue;
+        const ehtiyat = (
+          tName === 'imsak' ||
+          tName === 'sunrise' ||
+          tName === 'sunset' ||
+          tName === 'midnight'
+        ) ? Math.min(...minutes) : Math.max(...minutes);
+
+        const target = todayStart + ((dayOffset * 1440) + ehtiyat) * 60000;
+        if (target > now.getTime() && (next === null || target < next.target)) {
+          next = { tName, target, dayOffset };
+        }
+      }
+    }
+    return next;
+  },
+
+  _formatCountdown: function (ms, showSeconds = true) {
+    const pad = (n) => ((n < 10) ? '0' : '') + n;
+    if (!showSeconds) {
+      const totalMin = Math.max(0, Math.floor(ms / 60000));
+      return str.numbersFormat(pad(Math.floor(totalMin / 60)) + ':' + pad(totalMin % 60));
+    }
+    const totalSec = Math.max(0, Math.floor(ms / 1000));
+    return str.numbersFormat(
+      pad(Math.floor(totalSec / 3600)) + ':' +
+      pad(Math.floor((totalSec % 3600) / 60)) + ':' +
+      pad(totalSec % 60)
+    );
+  },
+
+  _buildCountdownBox: function () {
+    let row = new St.BoxLayout({
+      x_expand: true,
+      y_expand: true,
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.END,
+      style_class: 'pcalendar-praytimes-countdown'
+    });
+
+    const next = this._getNextPrayTime();
+    if (next === null) return row;
+    const showSeconds = Schema.get_boolean('praytime-countdown-seconds');
+
+    // same look as the pray times table: [time] [name]
+    // fixed-size box (= widest possible time text) so nothing moves when digits change
+    let timeBox = new St.BoxLayout({
+      style_class: 'pcalendar-praytimes-countdown-timebox' + ((showSeconds) ? '' : ' pcalendar-praytimes-countdown-timebox-nosec'),
+      x_expand: false,
+    });
+    let timeLabel = new St.Label({
+      text: this._formatCountdown(next.target - Date.now(), showSeconds),
+      style_class: 'pcalendar-praytimes-countdown-time pcalendar-txt-green',
+      x_expand: true,
+      x_align: Clutter.ActorAlign.START, // left-aligned: only the changing digits move, not the whole text
+    });
+    timeBox.add(timeLabel);
+    row.add(timeBox);
+    row.add(new St.Label({
+      text: 'مانده تا ' + PrayTimes.persianMap[next.tName] + ((next.dayOffset === 1) ? ' (فردا)' : '') + ':',
+      style_class: 'pcalendar-praytimes-tname',
+      x_expand: false,
+    }));
+
+    this._countdownTimerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+      const remaining = next.target - Date.now();
+      if (remaining <= 0) {
+        // time reached: rebuild to refresh ✓ marks and pick the next pray time
+        this._countdownTimerId = null;
+        this._update();
+        return GLib.SOURCE_REMOVE;
+      }
+      timeLabel.set_text(this._formatCountdown(remaining, showSeconds));
+      return GLib.SOURCE_CONTINUE;
+    });
+
+    return row;
+  },
+
+  stopCountdown: function () {
+    if (this._countdownTimerId !== null) {
+      GLib.source_remove(this._countdownTimerId);
+      this._countdownTimerId = null;
+    }
+  },
+
   _update: function () {
+    this.stopCountdown();
     let weekStart = parseInt(Schema.get_string('week-start'));
     let dateDisplay = {
       persian: Schema.get_boolean('persian-display'),
@@ -711,6 +839,11 @@ Calendar.prototype = {
 
 
       this.actorLeft.layout_manager.attach(_prayBox_v, 0, ++evTopPosition, 1, 1);
+
+      // countdown to the next pray time (issue #53): bottom of the tab
+      if (Schema.get_boolean('praytime-countdown-show')) {
+        this.actorLeft.layout_manager.attach(this._buildCountdownBox(), 0, ++evTopPosition, 1, 1);
+      }
 
       {
         const persianDate = nowObj.persian;
