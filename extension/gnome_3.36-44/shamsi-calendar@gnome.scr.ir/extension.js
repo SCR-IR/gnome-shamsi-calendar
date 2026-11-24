@@ -292,6 +292,8 @@ const ShamsiCalendar = GObject.registerClass(
         if (isOpen) {
           that._calendar._selectedDateObj.setNow();
           that._calendar._update();
+        } else {
+          that._calendar.stopCountdown();
         }
       }));
 
@@ -533,6 +535,7 @@ function disable() {
   _indicator.schema.disconnect(_indicator.schema_theme_id_signal);
   _indicator.schema.disconnect(_indicator.schema_widget_position_signal);
   _indicator.schema.disconnect(_indicator.schema_window_position_signal);
+  _indicator._calendar.stopCountdown();
   _indicator.destroy();
   MainLoop.source_remove(_timer);
 

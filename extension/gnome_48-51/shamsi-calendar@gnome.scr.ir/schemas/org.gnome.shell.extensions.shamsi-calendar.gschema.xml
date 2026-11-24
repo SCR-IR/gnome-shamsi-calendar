@@ -266,6 +266,14 @@
       <default>true</default>
       <summary>praytime ehtiyat show</summary>
     </key>
+    <key name="praytime-countdown-show" type="b">
+      <default>true</default>
+      <summary>Show countdown to the next pray time</summary>
+    </key>
+    <key name="praytime-countdown-seconds" type="b">
+      <default>true</default>
+      <summary>Show seconds in the pray time countdown</summary>
+    </key>
 
     <key name="praytime-play-and-notify" type="b">
       <default>false</default>

@@ -252,6 +252,8 @@ const ShamsiCalendar = new Lang.Class({
       if (isOpen) {
         that._calendar._selectedDateObj.setNow();
         that._calendar._update();
+      } else {
+        that._calendar.stopCountdown();
       }
     }));
 
@@ -605,6 +607,7 @@ function disable() {
   Schema.disconnect(_indicator.schema_custom_color_signal);
   Schema.disconnect(_indicator.schema_widget_format_signal);
   Schema.disconnect(_indicator.schema_position_signal);
+  _indicator._calendar.stopCountdown();
   _indicator.destroy();
   MainLoop.source_remove(_timer);
 }
